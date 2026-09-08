@@ -34,6 +34,20 @@ for (const type of ['instrument', 'compressor', 'camera', 'desk', 'officechair']
   assert.match(html, new RegExp(`case '${type}'`), `Для ${type} нужно 2D-представление`);
   assert.match(html, new RegExp(`\\n\\s{2}${type}\\(\\)`), `Для ${type} нужно 3D-представление`);
 }
+assert.match(html, /accept="\.png,\.jpg,\.jpeg,\.pdf,image\/png,image\/jpeg,application\/pdf"/, 'Выбор подложки должен ограничивать форматы');
+assert.match(html, /function underlayFileError\(/, 'Формат подложки нужно проверять до чтения файла');
+assert.match(html, /PDF пока нельзя использовать как подложку/, 'Для PDF нужно объяснять ограничение');
+assert.match(html, /underlay\.uw\*=k/, 'Калибровка должна менять масштаб подложки');
+assert.match(html, /visible:underlay\.visible,opacity:underlay\.opacity/, 'Проект должен сохранять настройки подложки');
+
+const underlayValidation = script[1].match(/function underlayFileError\(f\)\{[\s\S]*?\n\}/);
+assert(underlayValidation, 'Не найдена валидация формата подложки');
+const underlaySandbox = {};
+vm.runInNewContext(`${underlayValidation[0]}\nthis.underlayFileError=underlayFileError;`, underlaySandbox);
+assert.equal(underlaySandbox.underlayFileError({ name: 'plan.png', type: 'image/png' }), null, 'PNG должен приниматься');
+assert.equal(underlaySandbox.underlayFileError({ name: 'plan.jpeg', type: 'image/jpeg' }), null, 'JPEG должен приниматься');
+assert.match(underlaySandbox.underlayFileError({ name: 'plan.pdf', type: 'application/pdf' }), /PDF/, 'PDF должен отклоняться с объяснением');
+assert.match(underlaySandbox.underlayFileError({ name: 'plan.svg', type: 'image/svg+xml' }), /PNG и JPG/, 'Посторонний формат должен отклоняться');
 
 const scriptSource = script[1];
 const exportSection = scriptSource.slice(

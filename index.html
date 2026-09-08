@@ -451,7 +451,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 <div id="toasts"></div>
 
-<input type="file" id="fileImg" accept="image/*" hidden>
+<input type="file" id="fileImg" accept=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg,application/pdf" hidden>
 <input type="file" id="fileProj" accept=".json,application/json" hidden>
 
 <script>
@@ -1293,7 +1293,18 @@ function updateUlUI(){
   }
   if(plan.cv)plan.cv.style.cursor=planCursor();
 }
+function underlayFileError(f){
+  const name=String(f&&f.name||'');
+  const type=String(f&&f.type||'').toLowerCase();
+  if(type==='application/pdf'||/\.pdf$/i.test(name))
+    return 'PDF пока нельзя использовать как подложку. Сохраните нужную страницу в PNG или JPG';
+  if(!['image/png','image/jpeg'].includes(type)&&!(/\.(?:png|jpe?g)$/i.test(name)&&!type))
+    return 'Поддерживаются только PNG и JPG';
+  return null;
+}
 function loadImageFile(f){
+  const fileError=underlayFileError(f);
+  if(fileError){toast(fileError,true);return;}
   const maxBytes=15*1024*1024;
   if(f.size>maxBytes){toast('Файл слишком большой. Максимум — 15 МБ',true);return;}
   const rd=new FileReader();
@@ -1370,9 +1381,9 @@ function initUnderlay(){
   pp.addEventListener('drop',e=>{
     e.preventDefault();pp.classList.remove('drop');
     const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(!f)return;
-    if(f.type&&f.type.startsWith('image/'))loadImageFile(f);
+    if((f.type&&f.type.startsWith('image/'))||/\.(?:png|jpe?g|pdf)$/i.test(f.name))loadImageFile(f);
     else if(/\.json$/i.test(f.name))loadProjectFile(f);
-    else toast('Поддерживаются изображения и файлы проекта .json',true);
+    else toast('Поддерживаются PNG, JPG и файлы проекта .json',true);
   });
 }
 

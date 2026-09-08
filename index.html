@@ -16,6 +16,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 [hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 html,body{height:100%}
 body{
   font-family:var(--body); color:var(--coal); background:var(--paper);
@@ -180,6 +181,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #itemBar.show,#wallBar.show{transform:translateX(-50%) translateY(0)}
 #ibName,#wbName{font-size:12.5px;font-weight:500;margin-right:8px}
 #ibDeg{font-family:var(--mono);font-size:12px;min-width:46px;text-align:center;color:#fff}
+#ibAngle{width:58px;height:30px;border:1px solid rgba(252,250,244,.25);border-radius:8px;background:rgba(252,250,244,.1);color:#fff;font:12px var(--mono);padding:0 5px;text-align:right}
+#ibAngle:focus{outline:none;border-color:var(--brand)}
 #wbName em{font-style:normal;font-family:var(--mono);font-size:10.5px;color:rgba(252,250,244,.6);margin-left:6px}
 #itemBar button,#wallBar button{height:30px;min-width:30px;padding:0 8px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;gap:4px;color:rgba(252,250,244,.75);transition:all .13s;font-size:11.5px;font-weight:500}
 #itemBar button:hover,#wallBar button:hover{background:rgba(252,250,244,.14);color:#fff}
@@ -384,9 +387,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
   <div id="itemBar">
     <span id="ibName">—</span>
+    <button data-nudge="up" title="Вверх (↑)" aria-label="Переместить предмет вверх"><i data-lucide="arrow-up"></i></button>
+    <button data-nudge="down" title="Вниз (↓)" aria-label="Переместить предмет вниз"><i data-lucide="arrow-down"></i></button>
+    <button data-nudge="left" title="Влево (←)" aria-label="Переместить предмет влево"><i data-lucide="arrow-left"></i></button>
+    <button data-nudge="right" title="Вправо (→)" aria-label="Переместить предмет вправо"><i data-lucide="arrow-right"></i></button>
+    <span class="div"></span>
     <button id="ibRotLL" title="−45°" aria-label="Повернуть на минус 45 градусов"><i data-lucide="chevrons-left"></i></button>
     <button id="ibRotL" title="−15° (Shift+R)" aria-label="Повернуть на минус 15 градусов"><i data-lucide="rotate-ccw"></i></button>
-    <span id="ibDeg">—</span>
+    <label><span class="sr-only">Угол поворота</span><input id="ibAngle" type="number" min="0" max="359" step="1" aria-label="Угол поворота в градусах"></label>
     <button id="ibRotR" title="+15° (R)" aria-label="Повернуть на 15 градусов"><i data-lucide="rotate-cw"></i></button>
     <button id="ibRotRR" title="+45°" aria-label="Повернуть на 45 градусов"><i data-lucide="chevrons-right"></i></button>
     <span class="div"></span>
@@ -399,6 +407,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <footer id="statusbar">
   <span class="st"><i data-lucide="ruler"></i><span class="lbl">Площадь</span><b id="stArea">108 м²</b></span>
   <span class="st"><i data-lucide="armchair"></i><span class="lbl">Пациентских мест</span><b id="stSeats">0</b></span>
+  <span class="st"><i data-lucide="cctv"></i><span class="lbl">Камер</span><b id="stCameras">0</b></span>
   <span class="st"><i data-lucide="users"></i><span class="lbl">Людей всего</span><b id="stTotal">0</b><span id="meter"><span id="meterFill"></span></span></span>
   <span class="st"><i data-lucide="door-open"></i><span class="lbl">Выходы · ориентир</span><b id="stExits">1 / 1</b></span>
   <span class="pill" id="stPill"><i data-lucide="check-circle-2"></i><span id="stPillTx">—</span></span>
@@ -513,19 +522,24 @@ window.addEventListener('error',e=>showErrOnce(String(e.message||'ошибка')
 window.addEventListener('unhandledrejection',e=>showErrOnce(String(e.reason&&e.reason.message||e.reason).slice(0,90)));
 
 const CATALOG={
-  chair:    {name:'Кресло пациента',        price:385000, w:1.4, d:1.9,  icon:'armchair',     group:'Клинический кабинет'},
+  chair:    {name:'Стоматологическая установка',price:385000, w:1.4, d:1.9,  icon:'armchair',     group:'Клинический кабинет'},
   doctor:   {name:'Табурет врача',          price:24000,  w:0.62,d:0.62, icon:'circle-user',  group:'Клинический кабинет'},
   cabinet:  {name:'Тумба врача',            price:52000,  w:1.2, d:0.6,  icon:'archive',      group:'Клинический кабинет'},
+  instrument:{name:'Стол инструментальный',price:38000,w:0.75,d:0.48,icon:'table-2',       group:'Клинический кабинет'},
   xray:     {name:'Рентген-аппарат',        price:490000, w:0.85,d:0.7,  icon:'radiation',    group:'Диагностика'},
   autoclave:{name:'Автоклав',               price:148000, w:0.72,d:0.62, icon:'shield-check', group:'Стерилизация'},
   sink:     {name:'Стерилизационная мойка', price:96000,  w:1.0, d:0.6,  icon:'droplets',     group:'Стерилизация'},
   tall:     {name:'Шкаф медицинский',       price:64000,  w:1.0, d:0.5,  icon:'layers',       group:'Стерилизация'},
+  compressor:{name:'Компрессор',              price:125000, w:0.75,d:0.65, icon:'gauge',        group:'Техническая зона'},
+  camera:   {name:'Камера видеонаблюдения',price:18000,  w:0.35,d:0.35, icon:'cctv',         group:'Безопасность'},
   reception:{name:'Стойка ресепшн',         price:215000, w:2.4, d:0.85, icon:'store',        group:'Зона пациентов'},
   sofa:     {name:'Диван ожидания',         price:94000,  w:1.9, d:0.85, icon:'sofa',         group:'Зона пациентов'},
   table:    {name:'Журнальный столик',      price:16000,  w:0.9, d:0.5,  icon:'square',       group:'Зона пациентов'},
+  desk:     {name:'Рабочий стол',          price:45000,  w:1.4, d:0.7,  icon:'table',        group:'Мебель'},
+  officechair:{name:'Офисное кресло',        price:22000,  w:0.65,d:0.65, icon:'chair',        group:'Мебель'},
   plant:    {name:'Растение в кадке',       price:7500,   w:0.5, d:0.5,  icon:'leaf',         group:'Зона пациентов'},
 };
-const GROUP_ORDER=['Клинический кабинет','Диагностика','Стерилизация','Зона пациентов'];
+const GROUP_ORDER=['Клинический кабинет','Диагностика','Стерилизация','Техническая зона','Безопасность','Мебель','Зона пациентов'];
 const TEMPLATES=[
   {id:'start',name:'Старт · 1 кресло',room:{w:9,d:7},
    desc:'Компактная точка: приём, мини-ресепшн и стерилизация',
@@ -1036,7 +1050,7 @@ function drawPlan(g,W,H,opts={}){
 
   state.items.forEach(it=>{
     const c=CATALOG[it.type];
-    const brandy=it.type==='chair'||it.type==='sofa'||it.type==='doctor'||it.type==='reception';
+    const brandy=it.type==='chair'||it.type==='sofa'||it.type==='doctor'||it.type==='officechair'||it.type==='reception';
     g.save();
     g.translate(X(it.x),Y(it.z));g.rotate(it.rot);g.scale(fit,fit);
     g.lineWidth=1.5/fit;g.strokeStyle='#3A362E';
@@ -1053,6 +1067,9 @@ function drawPlan(g,W,H,opts={}){
       case 'cabinet':
         rr(g,-.6,-.3,1.2,.6,.03);g.fill();g.stroke();
         g.beginPath();g.moveTo(-.6,.12);g.lineTo(.6,.12);g.stroke();break;
+      case 'instrument':
+        rr(g,-.375,-.24,.75,.48,.03);g.fill();g.stroke();
+        rr(g,-.27,-.14,.54,.28,.02);g.stroke();break;
       case 'tall':
         rr(g,-.5,-.25,1.0,.5,.02);g.fill();g.stroke();
         g.beginPath();g.moveTo(0,-.25);g.lineTo(0,.25);g.stroke();break;
@@ -1068,6 +1085,12 @@ function drawPlan(g,W,H,opts={}){
         rr(g,-.5,-.3,1.0,.6,.03);g.fill();g.stroke();
         rr(g,-.3,-.16,.6,.32,.05);g.stroke();
         g.beginPath();g.arc(0,-.22,.03,0,7);g.fill();break;
+      case 'compressor':
+        g.beginPath();g.arc(0,0,.27,0,7);g.fill();g.stroke();
+        g.beginPath();g.moveTo(-.34,0);g.lineTo(.34,0);g.stroke();break;
+      case 'camera':
+        rr(g,-.14,-.11,.28,.22,.03);g.fill();g.stroke();
+        g.beginPath();g.moveTo(-.13,.1);g.lineTo(-.27,.34);g.lineTo(.27,.34);g.lineTo(.13,.1);g.stroke();break;
       case 'reception':
         rr(g,-1.2,-.42,2.4,.84,.03);g.fill();g.stroke();
         g.lineWidth=4/fit;g.strokeStyle=state.brand;
@@ -1081,6 +1104,12 @@ function drawPlan(g,W,H,opts={}){
         g.beginPath();g.moveTo(0,-.22);g.lineTo(0,.42);g.stroke();break;
       case 'table':
         rr(g,-.45,-.25,.9,.5,.05);g.fill();g.stroke();break;
+      case 'desk':
+        rr(g,-.7,-.35,1.4,.7,.03);g.fill();g.stroke();
+        g.beginPath();g.moveTo(-.5,-.35);g.lineTo(-.5,.35);g.moveTo(.5,-.35);g.lineTo(.5,.35);g.stroke();break;
+      case 'officechair':
+        g.beginPath();g.arc(0,0,.27,0,7);g.fill();g.stroke();
+        g.beginPath();g.arc(0,0,.34,Math.PI*.7,Math.PI*1.3);g.stroke();break;
       case 'plant':
         g.beginPath();g.arc(0,0,.24,0,7);g.fill();g.stroke();
         for(let a=0;a<6;a++){g.beginPath();g.moveTo(0,0);g.lineTo(Math.cos(a*1.047)*.2,Math.sin(a*1.047)*.2);g.stroke();}
@@ -1475,6 +1504,7 @@ function loadProjectFile(f){
 /* ═══════════════ ПРЕДМЕТЫ ═══════════════ */
 function addItem(item,opts={}){
   item.id=item.id||('i'+(state.seq++)+'_'+Math.random().toString(36).slice(2,6));
+  clampItem(item);
   state.items.push(item);
   if(window.__three3d)ensureMesh(item,opts);
   return item;
@@ -1534,11 +1564,20 @@ function moveItem(it){
 function normDeg(r){let d=Math.round(r/D2R)%360;if(d<0)d+=360;return d;}
 function updateIbDeg(){
   const it=state.items.find(x=>x.id===state.sel);
-  $('#ibDeg').textContent=it?normDeg(it.rot)+'°':'—';
+  $('#ibAngle').value=it?normDeg(it.rot):'';
 }
 function rotateSel(deg){
   const it=state.items.find(x=>x.id===state.sel);if(!it)return;
   it.rot+=deg*D2R;moveItem(it);commit();updateIbDeg();
+}
+function setSelectedAngle(deg){
+  const it=state.items.find(x=>x.id===state.sel);if(!it)return;
+  const n=Number(deg);if(!Number.isFinite(n))return;
+  it.rot=((n%360)+360)%360*D2R;moveItem(it);commit();updateIbDeg();
+}
+function nudgeSelectedItem(dx,dz,step=.1){
+  const it=state.items.find(x=>x.id===state.sel);if(!it)return;
+  it.x+=dx*step;it.z+=dz*step;moveItem(it);commit();
 }
 
 /* ═══════════════ ЭВАКУАЦИЯ ═══════════════ */
@@ -1571,7 +1610,7 @@ function computeStats(){
   const b=roomBounds();
   const a=b.area;
   const cnt=t=>state.items.filter(i=>i.type===t).length;
-  const chairs=cnt('chair'),sofas=cnt('sofa'),rec=cnt('reception');
+  const chairs=cnt('chair'),cameras=cnt('camera'),sofas=cnt('sofa'),rec=cnt('reception');
   const patients=chairs,waiting=sofas*2;
   const staff=chairs*2+(rec?1:0)+((cnt('autoclave')||cnt('sink'))?1:0);
   const total=patients+waiting+staff;
@@ -1579,7 +1618,7 @@ function computeStats(){
   /* Это только ориентир для макета, а не расчёт пожарных норм. */
   const exitHint=(total>15||a>60)?2:1;
   const hasExits=exitPoints().length;
-  return{a,chairs,patients,waiting,staff,total,perChair,exitHint,hasExits,closed:b.closed};
+  return{a,chairs,cameras,patients,waiting,staff,total,perChair,exitHint,hasExits,closed:b.closed};
 }
 function updateRoomInfo(){
   const b=roomBounds();
@@ -1590,6 +1629,7 @@ function updateRoomInfo(){
 function updateCapacity(){
   const s=computeStats();
   tweenNum($('#stSeats'),s.patients);
+  tweenNum($('#stCameras'),s.cameras);
   tweenNum($('#stTotal'),s.total);
   $('#stArea').textContent=fmtM(s.a)+' м²';
   $('#stExits').textContent=s.hasExits+' / '+s.exitHint;
@@ -1816,6 +1856,10 @@ const BUILDERS={
     g.add(bx(1.26,.05,.66,M.white,0,.75,0));
     [.16,.4,.62].forEach(y=>{g.add(cy(.014,.014,.1,M.metal,-.3,y,.31,10));g.add(cy(.014,.014,.1,M.metal,.3,y,.31,10));});
     return g;},
+  instrument(){const g=new THREE.Group();
+    g.add(bx(.75,.06,.48,M.white,0,.82,0));
+    [[-.3,-.17],[.3,-.17],[-.3,.17],[.3,.17]].forEach(p=>g.add(cy(.018,.018,.8,M.metal,p[0],.4,p[1],12)));
+    g.add(bx(.56,.08,.3,M.metal,0,.9,0));return g;},
   xray(){const g=new THREE.Group();
     g.add(bx(.16,1.9,.16,M.white,0,.95,-.25));
     g.add(bx(.72,.07,.07,M.white,.2,1.5,-.12));
@@ -1842,6 +1886,14 @@ const BUILDERS={
     g.add(cy(.013,.013,.12,M.metal,-.07,.95,.27,10));
     g.add(cy(.013,.013,.12,M.metal,.07,.95,.27,10));
     return g;},
+  compressor(){const g=new THREE.Group();
+    const tank=cy(.25,.25,.62,M.white,0,.42,0,24);tank.rotation.z=Math.PI/2;g.add(tank);
+    g.add(bx(.42,.28,.34,M.dark,0,.82,0));
+    [-.24,.24].forEach(x=>g.add(cy(.07,.07,.06,M.dark,x,.08,0,16)));return g;},
+  camera(){const g=new THREE.Group();
+    g.add(cy(.035,.035,1.8,M.metal,0,.9,0,12));
+    const body=bx(.3,.18,.22,M.white,0,1.82,0);body.rotation.x=-.15;g.add(body);
+    const lens=cy(.055,.075,.08,M.dark,0,1.8,.14,20);lens.rotation.x=Math.PI/2;g.add(lens);return g;},
   reception(){const g=new THREE.Group();
     g.add(bx(2.4,1.06,.14,M.brand,0,.53,.33));
     g.add(bx(.5,.17,.03,M.white,0,.82,.41));
@@ -1859,6 +1911,10 @@ const BUILDERS={
     g.add(bx(.9,.045,.5,M.woodD,0,.42,0));
     [[-.4,-.2],[.4,-.2],[-.4,.2],[.4,.2]].forEach(p=>g.add(cy(.018,.018,.4,M.dark,p[0],.2,p[1],12)));
     return g;},
+  desk(){const g=new THREE.Group();
+    g.add(bx(1.4,.07,.7,M.woodD,0,.75,0));
+    [-.58,.58].forEach(x=>[-.25,.25].forEach(z=>g.add(cy(.025,.025,.72,M.metal,x,.36,z,12))));return g;},
+  officechair(){return BUILDERS.doctor();},
   plant(){const g=new THREE.Group();
     g.add(cy(.17,.13,.36,M.pot,0,.18,0));
     g.add(cy(.02,.03,.5,M.woodD,0,.55,0,10));
@@ -2625,6 +2681,8 @@ function initKeys(){
       return;
     }
     if(!state.sel)return;
+    const arrows={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+    if(arrows[e.key]){e.preventDefault();nudgeSelectedItem(arrows[e.key][0],arrows[e.key][1],e.shiftKey ? .01 : .1);return;}
     if(e.key==='r'||e.key==='R'||e.key==='к'||e.key==='К')rotateSel(e.shiftKey?-15:15);
     if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();delSel();}
     if(e.key==='d'||e.key==='D'||e.key==='в'||e.key==='В')dupSel();
@@ -2635,6 +2693,11 @@ function initKeys(){
   $('#ibRotRR').addEventListener('click',()=>rotateSel(45));
   $('#ibDup').addEventListener('click',dupSel);
   $('#ibDel').addEventListener('click',delSel);
+  $('#ibAngle').addEventListener('change',e=>setSelectedAngle(e.target.value));
+  $$('#itemBar [data-nudge]').forEach(b=>b.addEventListener('click',()=>{
+    const delta={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[b.dataset.nudge];
+    nudgeSelectedItem(delta[0],delta[1]);
+  }));
 }
 function closeModals(){$('#tplModal').classList.remove('open');$('#exModal').classList.remove('open');}
 
@@ -2827,7 +2890,7 @@ function buildSheet(){
     g.fillText('План клиники',142,100);
     g.fillStyle='#8B8371';g.font='13px "IBM Plex Mono",monospace';
     g.fillText('DentPlan · сгенерировано '+new Date().toLocaleDateString('ru-RU'),143,122);
-    const kpi=[['ПЛОЩАДЬ',fmtM(s.a)+' м²'],['КРЕСЕЛ',String(s.chairs)],['ЛЮДЕЙ',String(s.total)],['СМЕТА',fmt(estimateTotal()*1.08)+' ₽']];
+    const kpi=[['ПЛОЩАДЬ',fmtM(s.a)+' м²'],['УСТАНОВОК',String(s.chairs)],['CAMERAS',String(s.cameras)],['СМЕТА',fmt(estimateTotal()*1.08)+' ₽']];
     let kx=W-64;g.textAlign='right';
     kpi.slice().reverse().forEach(p=>{
       g.fillStyle='#26241F';g.font='500 24px "IBM Plex Mono",monospace';g.fillText(p[1],kx,92);

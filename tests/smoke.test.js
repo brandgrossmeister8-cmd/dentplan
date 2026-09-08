@@ -19,6 +19,19 @@ assert.doesNotMatch(html, /Нормы соблюдены/, 'В интерфей�
 assert.doesNotMatch(html, /#planPane\{display:none!important\}/, 'План не должен безусловно исчезать на узком экране');
 assert.match(html, /aria-label=/, 'Интерактивные элементы должны иметь доступные подписи');
 
+assert.match(html, /camera:\s*\{[^}]*group:'Безопасность'/, 'В каталоге должна быть камера видеонаблюдения');
+assert.match(html, /function nudgeSelectedItem\(/, 'Выбранный предмет должен двигаться клавишами');
+assert.match(html, /id="ibAngle"[^>]*type="number"/, 'Панель предмета должна принимать точный угол');
+assert.match(html, /cameras=cnt\('camera'\)/, 'Камеры должны считаться в статистике');
+assert.match(html, /CAMERAS[^\n]*String\(s\.cameras\)/, 'Число камер должно попадать в PDF-экспорт');
+assert.match(html, /BUILDERS=\{[\s\S]*camera\(\)/, 'Для камеры нужна 3D-модель');
+assert.match(html, /function addItem\([^]*?clampItem\(item\)/, 'Новый предмет должен сразу ограничиваться контуром');
+assert.match(html, /function nudgeSelectedItem\([^]*?moveItem\(it\)/, 'Сдвиг клавишами должен сохранять предмет в контуре');
+for (const type of ['instrument', 'compressor', 'camera', 'desk', 'officechair']) {
+  assert.match(html, new RegExp(`case '${type}'`), `Для ${type} нужно 2D-представление`);
+  assert.match(html, new RegExp(`\\n\\s{2}${type}\\(\\)`), `Для ${type} нужно 3D-представление`);
+}
+
 const scriptSource = script[1];
 const projectSection = scriptSource.slice(
   scriptSource.indexOf('const PROJECT_LIMITS='),
@@ -26,7 +39,7 @@ const projectSection = scriptSource.slice(
 );
 const sandbox = {
   window: { addEventListener() {} },
-  CATALOG: { chair: {}, sofa: {} },
+  CATALOG: { chair: {}, sofa: {}, camera: {} },
   console,
 };
 vm.runInNewContext(`${projectSection}\nthis.validateProjectData=validateProjectData;`, sandbox);
@@ -41,6 +54,11 @@ const validProject = {
   brand: '#0E7C7B',
 };
 assert.equal(sandbox.validateProjectData(validProject), null, 'Корректный проект должен приниматься');
+assert.equal(
+  sandbox.validateProjectData({ ...validProject, items: [{ type: 'camera', x: 1, z: 1, rot: Math.PI / 3 }] }),
+  null,
+  'Камера с произвольным углом должна попадать в JSON проекта',
+);
 assert.match(
   sandbox.validateProjectData({ ...validProject, layout: { ...validProject.layout, walls: {} } }),
   /геометрия/,

@@ -3174,7 +3174,7 @@ function initView(){
     pp.classList.toggle('wide',v==='plan');
     if(v==='plan')camTo(topPreset(),1000);
     if(v==='3d')camTo(perspPreset(),1200);
-    if(v==='both')resizeAll();
+    resizeAll();
     planRedraw();updateEvacSvg();
   }));
 }
@@ -3237,16 +3237,22 @@ function setProjectProfile(profile,dirty=true){
 }
 
 /* ═══════════════ РАЗМЕРЫ / ЦИКЛ ═══════════════ */
+function canvasBackingSize(cssW,cssH,dpr){
+  const width=Math.max(1,Math.round(cssW*dpr));
+  const height=Math.max(1,Math.round(cssH*dpr));
+  return{width,height,scaleX:width/cssW,scaleY:height/cssH};
+}
 function resizeAll(){
   const pp=$('#planPane'),tp=$('#threePane');
   if(plan.cv&&!pp.classList.contains('hidden')&&pp.clientWidth){
     const rect=pp.getBoundingClientRect();
     const cssW=Math.max(1,rect.width),cssH=Math.max(1,rect.height);
     const dpr=Math.min(devicePixelRatio||1,3);
-    plan.cv.width=Math.max(1,Math.round(cssW*dpr));
-    plan.cv.height=Math.max(1,Math.round(cssH*dpr));
+    const backing=canvasBackingSize(cssW,cssH,dpr);
+    plan.cv.width=backing.width;
+    plan.cv.height=backing.height;
     plan.cssW=cssW;plan.cssH=cssH;
-    plan.cv.getContext('2d').setTransform(plan.cv.width/cssW,0,0,plan.cv.height/cssH,0,0);
+    plan.cv.getContext('2d').setTransform(backing.scaleX,0,0,backing.scaleY,0,0);
     planRedraw();
   }
   if(renderer&&camera&&tp&&tp.clientWidth&&!tp.classList.contains('hidden')){
@@ -3289,7 +3295,12 @@ initView();initModes();initRoom();initBrand();initUnderlay();initRest();initKeys
 setProjectProfile(state.profile,false);
 icons();
 resizeAll();
-if(window.ResizeObserver)new ResizeObserver(resizeAll).observe($('#center'));
+if(window.ResizeObserver){
+  const layoutObserver=new ResizeObserver(resizeAll);
+  layoutObserver.observe($('#center'));
+  layoutObserver.observe($('#planPane'));
+  layoutObserver.observe($('#threePane'));
+}
 window.addEventListener('resize',resizeAll);
 applyTemplate(TEMPLATES[1]);
 requestAnimationFrame(loop);

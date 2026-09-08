@@ -52,7 +52,10 @@ assert.match(html, /underlay\.uw\*=k/, 'Калибровка должна мен
 assert.match(html, /visible:underlay\.visible,opacity:underlay\.opacity/, 'Проект должен сохранять настройки подложки');
 assert.match(html, /function shouldSmoothUnderlay\(/, 'Для подложки нужно управлять интерполяцией');
 assert.match(html, /imageSmoothingQuality='high'/, 'При уменьшении чертежа нужна качественная фильтрация');
-assert.match(html, /setTransform\(plan\.cv\.width\/cssW,0,0,plan\.cv\.height\/cssH,0,0\)/, '2D-canvas должен использовать фактический масштаб backing store');
+assert.match(html, /setTransform\(backing\.scaleX,0,0,backing\.scaleY,0,0\)/, '2D-canvas должен использовать фактический масштаб backing store');
+assert.match(html, /function canvasBackingSize\(/, 'Расчёт backing store должен быть отделён от DOM');
+assert.doesNotMatch(html, /if\(v==='both'\)resizeAll\(\)/, 'После любого переключения вида canvas нужно измерить заново');
+assert.match(html, /layoutObserver\.observe\(\$\('#planPane'\)\)/, 'ResizeObserver должен следить за размером панели плана');
 
 const underlayValidation = script[1].match(/function underlayFileError\(f\)\{[\s\S]*?\n\}/);
 assert(underlayValidation, 'Не найдена валидация формата подложки');
@@ -69,6 +72,16 @@ const smoothingSandbox = {};
 vm.runInNewContext(`${smoothingRule[0]}\nthis.shouldSmoothUnderlay=shouldSmoothUnderlay;`, smoothingSandbox);
 assert.equal(smoothingSandbox.shouldSmoothUnderlay(2000, 500), true, 'При уменьшении растра нужна фильтрация');
 assert.equal(smoothingSandbox.shouldSmoothUnderlay(500, 1000), false, 'При увеличении растра интерполяция не должна размывать линии');
+
+const backingRule = script[1].match(/function canvasBackingSize\(cssW,cssH,dpr\)\{[\s\S]*?\n\}/);
+assert(backingRule, 'Не найден расчёт backing store');
+const backingSandbox = {};
+vm.runInNewContext(`${backingRule[0]}\nthis.canvasBackingSize=canvasBackingSize;`, backingSandbox);
+assert.deepEqual(
+  JSON.parse(JSON.stringify(backingSandbox.canvasBackingSize(801.5, 600.25, 2))),
+  { width: 1603, height: 1201, scaleX: 2, scaleY: 1201 / 600.25 },
+  'Дробный CSS-размер должен давать точный backing store и transform',
+);
 
 const scriptSource = script[1];
 const templateFilterSource = scriptSource.match(/function templatesForProfile\(templates,profile\)\{[^}]+\}/);

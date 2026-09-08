@@ -30,6 +30,9 @@ assert.match(html, /if\(dirty\)commit\(\)/, 'Переключение профи
 assert.doesNotMatch(html, /#planPane\{display:none!important\}/, 'План не должен безусловно исчезать на узком экране');
 assert.match(html, /aria-label=/, 'Интерактивные элементы должны иметь доступные подписи');
 assert.match(html, /function openingMetrics\(/, 'Геометрия проёма должна иметь единый расчёт размеров');
+assert.match(html, /function angleDeviation\(/, 'Для углов нужна единая чистая функция');
+assert.match(html, /angleHintForNode\(drawState\.lastNodeId/, 'Подсказка угла должна вызываться в preview цепочного рисования');
+assert.match(html, /angleHintForNode\(n\.id,\{x:n\.x,z:n\.z\},w\.id\)/, 'Подсказка угла должна вызываться при изменении конца стены');
 assert.match(html, /function shouldPrioritizeOpeningHit\(/, 'Существующий проём должен иметь приоритет над добавлением нового');
 const openingToolBranch = script[1].slice(script[1].indexOf('if(TOOL_DEF[t])'), script[1].indexOf("if(t==='erase')", script[1].indexOf('if(TOOL_DEF[t])')));
 assert.ok(openingToolBranch.indexOf('const existingOpening=openingAt(p)') < openingToolBranch.indexOf('const wh=wallAt(p)'), 'Hit-test существующего проёма должен идти раньше поиска стены');
@@ -225,13 +228,22 @@ const engineSection = scriptSource.slice(
 );
 const engine = {
   clamp: (value, min, max) => Math.max(min, Math.min(max, value)),
+  D2R: Math.PI / 180,
   toast() {},
   fmtM: String,
 };
-vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit};`, engine);
+vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode};`, engine);
 engine.TOOL_DEF = { door: {}, window: {}, evac: {} };
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', { id: 'o1' }), true, 'При клике по двери нужно начать её перенос');
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', null), false, 'Без проёма нужно оставить возможность его добавить');
+const angle90 = engine.api.angleDeviation({ x: 1, z: 0 }, { x: 0, z: 1 });
+assert.equal(angle90.angle, 90, '90° должны давать нулевое отклонение');
+assert.equal(angle90.deviation, 0);
+const angle88 = engine.api.angleDeviation({ x: 1, z: 0 }, { x: Math.cos(88 * Math.PI / 180), z: Math.sin(88 * Math.PI / 180) });
+assert.ok(Math.abs(angle88.angle - 88) < 1e-9, '88° должны нормализоваться к 0–180°');
+assert.ok(Math.abs(angle88.deviation - 2) < 1e-9);
+assert.equal(engine.api.angleDeviation({ x: 1, z: 0 }, { x: 1, z: 0 }).deviation, 90, '0° должен давать отклонение 90°');
+assert.equal(engine.api.angleDeviation({ x: 1, z: 0 }, { x: -1, z: 0 }).deviation, 90, '180° должен давать отклонение 90°');
 const a = engine.api.addNode(0, 0);
 const b = engine.api.addNode(4, 0);
 const wall = engine.api.addWall(a, b, 'inner');
@@ -244,5 +256,11 @@ assert.deepEqual(
 assert.equal(engine.api.openingFits(wall.id, 2.4, 1, door.id), true, 'Проём можно двигать в свободном диапазоне');
 engine.api.addOpening(wall, 0.85, 0.5, 'window');
 assert.equal(engine.api.openingFits(wall.id, 2.9, 1, door.id), false, 'Проёмы не должны пересекаться');
+const c = engine.api.addNode(0, 4);
+engine.api.addWall(a, c, 'inner');
+const nodeHint = engine.api.angleHintForNode(a.id, { x: 0, z: 1 }, null);
+assert.equal(nodeHint.angle, 90, 'Узел с соседней стеной должен давать подсказку');
+const isolated = engine.api.addNode(8, 8);
+assert.equal(engine.api.angleHintForNode(isolated.id, { x: 9, z: 8 }, null), null, 'Без соседней стены нельзя показывать ложную перпендикулярность');
 
 console.log('DentPlan smoke checks passed');

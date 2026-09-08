@@ -614,6 +614,28 @@ function wallGeom(w){
   const dx=B.x-A.x,dz=B.z-A.z,len=Math.hypot(dx,dz)||.0001;
   return{A,B,dx,dz,len,ux:dx/len,uz:dz/len,ang:Math.atan2(-dz,dx)};
 }
+function angleDeviation(v1,v2){
+  const l1=Math.hypot(v1.x,v1.z),l2=Math.hypot(v2.x,v2.z);
+  if(l1<1e-9||l2<1e-9)return null;
+  const dot=clamp((v1.x*v2.x+v1.z*v2.z)/(l1*l2),-1,1);
+  const angle=Math.max(0,Math.min(180,Math.acos(dot)/D2R));
+  return{angle,deviation:Math.abs(90-angle)};
+}
+function angleHintForNode(nodeId,point,mainWallId){
+  const node=nById(nodeId);if(!node||!point)return null;
+  const neighbors=state.walls.filter(w=>w.a===nodeId||w.b===nodeId);
+  if(!neighbors.length)return null;
+  const main=mainWallId?neighbors.find(w=>w.id===mainWallId):null;
+  const mainOther=main&&nById(main.a===nodeId?main.b:main.a);
+  const ref=neighbors.find(w=>!main||w.id!==main.id);
+  const refOther=ref&&nById(ref.a===nodeId?ref.b:ref.a);
+  if(!refOther||!((!main&&point)||mainOther))return null;
+  const vertex=main?point:node;
+  const vMain=main?{x:mainOther.x-vertex.x,z:mainOther.z-vertex.z}:{x:point.x-vertex.x,z:point.z-vertex.z};
+  const vRef={x:refOther.x-vertex.x,z:refOther.z-vertex.z};
+  return angleDeviation(vMain,vRef);
+}
+function angleHintText(hint){return hint?'угол '+fmt2(hint.angle)+'° · отклонение '+fmt2(hint.deviation)+'°':'';}
 function buildRectWalls(w,d,withEvac){
   state.nodes=[];state.walls=[];state.openings=[];
   const a=addNode(-w/2,-d/2),b=addNode(w/2,-d/2),c=addNode(w/2,d/2),e=addNode(-w/2,d/2);
@@ -1219,6 +1241,8 @@ function drawPlan(g,W,H,opts={}){
     g.beginPath();g.moveTo(X(drawState.last.x),Y(drawState.last.z));g.lineTo(X(m.x),Y(m.z));g.stroke();g.setLineDash([]);
     const L=Math.hypot(m.x-drawState.last.x,m.z-drawState.last.z);
     drawTag(g,(X(drawState.last.x)+X(m.x))/2,(Y(drawState.last.z)+Y(m.z))/2-14,fmt2(L)+' м',state.brand,'#fff');
+    const angleHint=drawState.lastNodeId&&angleHintForNode(drawState.lastNodeId,m,null);
+    if(angleHint)drawTag(g,X(m.x),Y(m.z)+18,angleHintText(angleHint),state.brand,'#fff');
     g.fillStyle=state.brand;g.beginPath();g.arc(X(drawState.last.x),Y(drawState.last.z),5,0,7);g.fill();
     if(drawState.snapId){
       const sn=nById(drawState.snapId);
@@ -2137,9 +2161,9 @@ function setTool(t){
 }
 function updateToolHint(){
   const HINTS={
-    select:'Тяните узлы ● и стены целиком; белые ручки на концах выбранной стены меняют её длину (живой размер у курсора), у проёма ручки меняют ширину. Стрелки ← / → двигают выбранный проём по стене, + / − — ширина. Двойной клик — разделить, правый клик — удалить.',
-    wall:'Кликайте точки — перегородка ляжет цепочкой, длина каждого сегмента показывается на лету. Привязка к узлам, осям и сетке 5 см. Esc, правый клик или двойной клик — завершить.',
-    outer:'Кликайте точки — сегмент наружной стены с живым размером. Замкните контур, чтобы площадь считалась точно.',
+    select:'Тяните узлы ● и стены целиком; белые ручки на концах выбранной стены меняют её длину; при изменении угла показываются отклонение от 90°. У проёма ручки меняют его ширину. Стрелки ← / → двигают выбранный проём по стене, + / − — ширина. Двойной клик — разделить, правый клик — удалить.',
+    wall:'Кликайте точки — перегородка ляжет цепочкой, длина и угол от 90° показываются на лету у узла с соседней стеной. Привязка к узлам, осям и сетке 5 см. Esc, правый клик или двойной клик — завершить.',
+    outer:'Кликайте точки — сегмент наружной стены с живым размером и отклонением от 90° у узла с соседней стеной. Замкните контур, чтобы площадь считалась точно.',
     door:'Наведите на стену — призрак показывает расстояния от обоих углов и ширину. Колесо мыши или ← / → двигают примерку по стене (Shift — по 1 см), + / − — ширина. Клик ставит дверь; дальше — тянуть, кнопки ‹ › и стрелки.',
     window:'Наведите на стену — призрак показывает расстояния от углов и ширину; колесо и ← / → двигают, + / − меняют ширину. Клик ставит окно (в 3D оно стеклянное).',
     evac:'Клик по внешней стене ставит эвакуационный выход. Колесо и ← / → двигают примерку, + / − — ширина; после установки — ручки и те же клавиши.',
@@ -2529,7 +2553,8 @@ function initPlan(){
             const sp=snapPoint(m,null);
             n.x=sp.x;n.z=sp.z;resizeDrag.moved=true;
             const g=wallGeom(w);
-            liveLabel={x:m.x,z:m.z,text:fmt2(g.len)+' м'};
+            const angleHint=angleHintForNode(n.id,{x:n.x,z:n.z},w.id);
+            liveLabel={x:m.x,z:m.z,text:fmt2(g.len)+' м'+(angleHint?' · '+angleHintText(angleHint):'')};
             staticDirty=true;planRedraw();
           }
         }
@@ -2542,8 +2567,10 @@ function initPlan(){
           const sp=snapPoint(m,null);
           if(sp.x!==n.x||sp.z!==n.z){
             n.x=sp.x;n.z=sp.z;wallDrag.moved=true;staticDirty=true;
-            const inc=state.walls.filter(wl=>wl.a===wallDrag.id||wl.b===wallDrag.id).map(wl=>fmt2(wallGeom(wl).len));
-            liveLabel={x:m.x,z:m.z,text:inc.join(' · ')+(inc.length?' м':'')};
+            const incWalls=state.walls.filter(wl=>wl.a===wallDrag.id||wl.b===wallDrag.id);
+            const inc=incWalls.map(wl=>fmt2(wallGeom(wl).len));
+            const angleHint=incWalls.length>1&&angleHintForNode(n.id,{x:n.x,z:n.z},incWalls[0].id);
+            liveLabel={x:m.x,z:m.z,text:inc.join(' · ')+(inc.length?' м':'')+(angleHint?' · '+angleHintText(angleHint):'')};
             planRedraw();
           }
         }else if(wallDrag.type==='wall'){

@@ -23,6 +23,10 @@ assert.match(html, /profile:state\.profile/, 'Профиль должен сох
 assert.match(html, /setProjectProfile\(normalizeProjectProfile\(p\.profile\)/, 'Профиль должен восстанавливаться при загрузке');
 assert.match(html, /data-profile="dental"/, 'Стоматологические рекомендации должны быть отдельным блоком');
 assert.match(html, /body\.dataset\.profile=profile/, 'General-профиль должен управлять видимостью стоматологических рекомендаций');
+assert.match(html, /function templatesForProfile\(/, 'Шаблоны должны фильтроваться по профилю');
+assert.match(html, /buildTplGrid\(\)/, 'Переключение профиля должно перерисовывать список шаблонов');
+assert.match(html, /p:state\.profile/, 'Профиль должен входить в снимок истории действий');
+assert.match(html, /if\(dirty\)commit\(\)/, 'Переключение профиля должно добавляться в историю действий');
 assert.doesNotMatch(html, /#planPane\{display:none!important\}/, 'План не должен безусловно исчезать на узком экране');
 assert.match(html, /aria-label=/, 'Интерактивные элементы должны иметь доступные подписи');
 assert.match(html, /function openingMetrics\(/, 'Геометрия проёма должна иметь единый расчёт размеров');
@@ -67,6 +71,13 @@ assert.equal(smoothingSandbox.shouldSmoothUnderlay(2000, 500), true, 'При у�
 assert.equal(smoothingSandbox.shouldSmoothUnderlay(500, 1000), false, 'При увеличении растра интерполяция не должна размывать линии');
 
 const scriptSource = script[1];
+const templateFilterSource = scriptSource.match(/function templatesForProfile\(templates,profile\)\{[^}]+\}/);
+assert(templateFilterSource, 'Не найдена функция безопасного списка шаблонов');
+const templateSandbox = {};
+vm.runInNewContext(`${templateFilterSource[0]}\nthis.templatesForProfile=templatesForProfile;`, templateSandbox);
+const templateFixtures = [{ id: 'start' }, { id: 'family' }, { id: 'flag' }, { id: 'empty' }];
+assert.deepEqual(JSON.parse(JSON.stringify(templateSandbox.templatesForProfile(templateFixtures, 'general'))), [{ id: 'empty' }], 'General должен показывать только нейтральный чистый лист');
+assert.equal(templateSandbox.templatesForProfile(templateFixtures, 'dental').length, 4, 'Dental должен сохранять стоматологические шаблоны');
 const exportSection = scriptSource.slice(
   scriptSource.indexOf('const DATA_EXPORT_SCHEMA='),
   scriptSource.indexOf('/* ═══════════════ ЭКСПОРТ ═══════════════ */'),

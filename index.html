@@ -312,7 +312,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
         <option value="general">Общее помещение</option>
       </select>
       <p id="profileDescription" class="ul-hint"></p>
-      <div class="profile-guidance" data-profile="dental"><strong>Предварительные ориентиры</strong><br>Проверьте функциональное зонирование, состав помещений, санитарную эксплуатацию, эвакуацию и доступность. Конкретные размеры и решения должен подтвердить профильный специалист.<br><a href="https://minstroyrf.gov.ru/docs/" target="_blank" rel="noopener">СП 158.13330.2014, изм. № 5</a> · <a href="https://publication.pravo.gov.ru/document/0001202407120010" target="_blank" rel="noopener">СП 2.1.3678-20, изм. от 20.03.2024</a><br>Источники проверены 09.09.2026.</div>
+      <div class="profile-guidance" data-profile="dental"><strong>Предварительные ориентиры</strong><br>Проверьте функциональное зонирование, состав помещений, санитарную эксплуатацию, эвакуацию и доступность. Конкретные размеры и решения должен подтвердить профильный специалист.<br><a href="https://minstroyrf.gov.ru/docs/?PAGEN_1=8" target="_blank" rel="noopener">Каталог Минстроя: запись об изменении № 5 к СП 158.13330.2014</a> · <a href="https://publication.pravo.gov.ru/document/0001202407120010" target="_blank" rel="noopener">Официальное опубликование: изменение СП 2.1.3678-20 от 20.03.2024</a><br>Ссылки ведут на официальные записи, а не на цитируемые пункты. Источники проверены 09.09.2026.</div>
     </div>
 
     <div class="sec">
@@ -779,7 +779,7 @@ window.addEventListener('beforeunload',e=>{
   if(projectDirty){e.preventDefault();e.returnValue='';}
 });
 function snapAll(){
-  return JSON.stringify({n:state.nodes,w:state.walls,o:state.openings,i:state.items,seq:state.seq,nid,wid,oid});
+  return JSON.stringify({p:state.profile,n:state.nodes,w:state.walls,o:state.openings,i:state.items,seq:state.seq,nid,wid,oid});
 }
 function syncMeshes(){
   if(!itemsRoot)return;
@@ -794,6 +794,7 @@ function syncMeshes(){
 function restore(s){
   const d=JSON.parse(s);
   state.nodes=d.n;state.walls=d.w;state.openings=d.o;state.items=d.i;state.seq=d.seq;
+  setProjectProfile(d.p||'dental',false);
   nid=d.nid;wid=d.wid;oid=d.oid;
   state.sel=null;select(null);
   if(state.selObj){
@@ -2913,8 +2914,12 @@ const TPL_META={
   flag:'Реальный формат: флагманский центр — 5 установок, два зала ожидания, собственный рентген-кабинет.',
   empty:'Свой объект: загрузите чертёж помещения (фото/скан), откалибруйте масштаб — и обведите стены поверх.',
 };
+function templatesForProfile(templates,profile){return profile==='general'?templates.filter(t=>t.id==='empty'):templates;}
 function buildTplGrid(){
-  $('#tplGrid').innerHTML=TEMPLATES.map(t=>{
+  const general=state.profile==='general';
+  $('#tplModal h2').textContent=general?'Шаблоны помещений':'Шаблоны клиник';
+  $('#tplModal .tpl-head p').textContent=general?'Начните с чистого плана и добавьте нужные элементы':'Выберите основу и доработайте под свой бизнес';
+  $('#tplGrid').innerHTML=templatesForProfile(TEMPLATES,state.profile).map(t=>{
     const a=(t.room.w*t.room.d).toFixed(0);
     const ch=t.items.filter(i=>i.type==='chair').length;
     const bud=t.items.reduce((s,i)=>s+CATALOG[i.type].price,0);
@@ -3003,7 +3008,7 @@ function buildDataExport(source,catalog,generatedAt){
   });
   const items=(source.items||[]).map((it,i)=>{const c=catalog[it.type]||{},rot=roundExport(+it.rot||0,6);return{id:String(it.id||'item-'+(i+1)),type:String(it.type),name:c.name||String(it.type),x:roundExport(+it.x||0),z:roundExport(+it.z||0),rot,rotationDeg:roundExport(rot*180/Math.PI),sizeM:{width:roundExport(+c.w||0),depth:roundExport(+c.d||0)}};});
   const count=k=>openings.filter(o=>o.kind===k).length;
-  const guidance=projectProfile==='dental'?{applicability:'preliminary',reviewedAt:'2026-09-09',recommendations:['Проверить функциональное зонирование и состав помещений по СП 158.13330.2014 с изменением № 5.','Проверить санитарную эксплуатацию по СП 2.1.3678-20 с изменением от 20.03.2024.','Проверить эвакуацию, доступность и все численные параметры у профильных специалистов.'],sources:[{title:'СП 158.13330.2014, изменение № 5',url:'https://minstroyrf.gov.ru/docs/',publishedAt:'2024-12-28'},{title:'СП 2.1.3678-20, изменение от 20.03.2024',url:'https://publication.pravo.gov.ru/document/0001202407120010',publishedAt:'2024-07-12'}]}:{applicability:'not-applicable',recommendations:[]};
+  const guidance=projectProfile==='dental'?{applicability:'preliminary',reviewedAt:'2026-09-09',recommendations:['Проверить функциональное зонирование и состав помещений по СП 158.13330.2014 с изменением № 5.','Проверить санитарную эксплуатацию по СП 2.1.3678-20 с изменением от 20.03.2024.','Проверить эвакуацию, доступность и все численные параметры у профильных специалистов.'],sources:[{title:'Каталог Минстроя: запись об изменении № 5 к СП 158.13330.2014',url:'https://minstroyrf.gov.ru/docs/?PAGEN_1=8',publishedAt:'2024-12-28',sourceType:'official-catalog-entry'},{title:'Официальное опубликование: изменение СП 2.1.3678-20 от 20.03.2024',url:'https://publication.pravo.gov.ru/document/0001202407120010',publishedAt:'2024-07-12',publicationId:'0001202407120010'}]}:{applicability:'not-applicable',recommendations:[]};
   return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),projectProfile,units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,guidance,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM:WALL_HEIGHT_M,openingHeightM:{...OPENING_HEIGHT_M}}},walls,openings},counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
 }
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
@@ -3227,7 +3232,8 @@ function setProjectProfile(profile,dirty=true){
   state.profile=profile;document.body.dataset.profile=profile;
   const select=$('#projectProfile');if(select)select.value=profile;
   const desc=$('#profileDescription');if(desc)desc.textContent=profile==='dental'?'Показываем предварительные стоматологические ориентиры. Все решения проверяет профильный специалист.':'Стоматологические рекомендации скрыты. Геометрия и пользовательские ограничения доступны.';
-  if(dirty)markDirty();updateCapacity();
+  buildTplGrid();
+  if(dirty)commit();updateCapacity();
 }
 
 /* ═══════════════ РАЗМЕРЫ / ЦИКЛ ═══════════════ */

@@ -26,7 +26,7 @@ assert.match(html, /camera:\s*\{[^}]*group:'Безопасность'/, 'В ка
 assert.match(html, /function nudgeSelectedItem\(/, 'Выбранный предмет должен двигаться клавишами');
 assert.match(html, /id="ibAngle"[^>]*type="number"/, 'Панель предмета должна принимать точный угол');
 assert.match(html, /cameras=cnt\('camera'\)/, 'Камеры должны считаться в статистике');
-assert.match(html, /CAMERAS[^\n]*String\(s\.cameras\)/, 'Число камер должно попадать в PDF-экспорт');
+assert.match(html, /КАМЕР[^\n]*String\(s\.cameras\)/, 'Число камер должно попадать в PDF-экспорт');
 assert.match(html, /BUILDERS=\{[\s\S]*camera\(\)/, 'Для камеры нужна 3D-модель');
 assert.match(html, /function addItem\([^]*?clampItem\(item\)/, 'Новый предмет должен сразу ограничиваться контуром');
 assert.match(html, /function nudgeSelectedItem\([^]*?moveItem\(it\)/, 'Сдвиг клавишами должен сохранять предмет в контуре');
@@ -36,6 +36,55 @@ for (const type of ['instrument', 'compressor', 'camera', 'desk', 'officechair']
 }
 
 const scriptSource = script[1];
+const exportSection = scriptSource.slice(
+  scriptSource.indexOf('const DATA_EXPORT_SCHEMA='),
+  scriptSource.indexOf('/* ═══════════════ ЭКСПОРТ ═══════════════ */'),
+);
+const exportSandbox = {};
+vm.runInNewContext(`${exportSection}\nthis.buildDataExport=buildDataExport;this.dataExportToCsv=dataExportToCsv;`, exportSandbox);
+const exportState = {
+  room: { w: 4, d: 3 },
+  nodes: [
+    { id: 'n1', x: 0, z: 0 }, { id: 'n2', x: 4, z: 0 },
+    { id: 'n3', x: 4, z: 3 }, { id: 'n4', x: 0, z: 3 },
+  ],
+  walls: [
+    { id: 'w1', a: 'n1', b: 'n2', kind: 'outer' }, { id: 'w2', a: 'n2', b: 'n3', kind: 'outer' },
+    { id: 'w3', a: 'n3', b: 'n4', kind: 'outer' }, { id: 'w4', a: 'n4', b: 'n1', kind: 'outer' },
+  ],
+  openings: [
+    { id: 'o1', wallId: 'w1', t: 0.5, w: 1, kind: 'door', flip: false },
+    { id: 'o2', wallId: 'w2', t: 0.5, w: 1.2, kind: 'window', flip: false },
+    { id: 'o3', wallId: 'w3', t: 0.5, w: 1, kind: 'evac', flip: true },
+  ],
+  items: [{ id: 'i1', type: 'chair', x: 2, z: 1.5, rot: Math.PI / 2 }],
+};
+const exportCatalog = { chair: { name: 'Кресло', w: 1.4, d: 1.9 } };
+const dataExport = exportSandbox.buildDataExport(exportState, exportCatalog, '2026-09-08T00:00:00.000Z');
+assert.equal(dataExport.schema, 'dentplan-data-export');
+assert.equal(dataExport.layout.contour.status, 'closed');
+assert.equal(dataExport.layout.floorAreaM2, 12);
+assert.equal(dataExport.layout.wallArea.netM2, 36);
+assert.deepEqual(JSON.parse(JSON.stringify(dataExport.counts)), { doors: 1, windows: 1, evacuationOpenings: 1, equipment: 1, cameras: 0 });
+assert.equal(dataExport.items[0].rotationDeg, 90);
+assert.equal(dataExport.items[0].rot, 1.570796);
+assert.deepEqual(JSON.parse(JSON.stringify(dataExport.items[0].sizeM)), { width: 1.4, depth: 1.9 });
+assert.match(exportSandbox.dataExportToCsv(dataExport), /item,i1,chair/);
+exportState.items[0].x = 2.5;
+exportState.items.push({ id: 'i2', type: 'camera', x: 1, z: 1, rot: 0 });
+const editedExport = exportSandbox.buildDataExport(exportState, { ...exportCatalog, camera: { name: 'Камера', w: 0.2, d: 0.2 } }, '2026-09-08T00:01:00.000Z');
+assert.equal(editedExport.items[0].x, 2.5, 'Повторная выгрузка должна видеть отредактированные координаты');
+assert.equal(editedExport.counts.equipment, 2);
+assert.equal(editedExport.counts.cameras, 1);
+
+const openExport = exportSandbox.buildDataExport({ ...exportState, walls: exportState.walls.slice(0, 3), openings: [] }, exportCatalog, '2026-09-08T00:00:00.000Z');
+assert.equal(openExport.layout.contour.status, 'open');
+assert.equal(openExport.layout.floorAreaM2, null);
+const emptyExport = exportSandbox.buildDataExport({ room: { w: 10, d: 8 }, nodes: [], walls: [], openings: [], items: [] }, exportCatalog, '2026-09-08T00:00:00.000Z');
+assert.equal(emptyExport.layout.contour.status, 'empty');
+assert.equal(emptyExport.layout.floorAreaM2, null);
+assert.equal(emptyExport.normativeConclusion, null);
+
 const projectSection = scriptSource.slice(
   scriptSource.indexOf('const PROJECT_LIMITS='),
   scriptSource.indexOf('function saveProject()'),

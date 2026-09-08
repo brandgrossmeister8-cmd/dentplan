@@ -287,7 +287,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   </div>
   <div class="tb-sep"></div>
   <button class="btn" id="btnEstimate"><i data-lucide="receipt"></i>Смета <span class="sum" id="estSum">0 ₽</span></button>
-  <button class="btn primary" id="btnExport"><i data-lucide="printer"></i>Экспорт PDF</button>
+  <button class="btn primary" id="btnExport"><i data-lucide="download"></i>Экспорт</button>
 </header>
 
 <div id="main">
@@ -441,6 +441,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     <div id="sheetWrap"><img id="exSheet" alt="Лист макета"></div>
     <div class="ex-actions" id="exActions">
       <button class="btn primary" id="exDl"><i data-lucide="download"></i>Скачать PDF</button>
+      <button class="btn" id="exJson"><i data-lucide="braces"></i>JSON</button>
+      <button class="btn" id="exCsv"><i data-lucide="table-2"></i>CSV</button>
       <button class="btn" id="exPrint"><i data-lucide="printer"></i>Печать</button>
       <button class="btn" id="exClose"><i data-lucide="x"></i>Закрыть</button>
     </div>
@@ -2909,10 +2911,78 @@ function applyTemplate(t){
   toast('Шаблон «'+t.name+'» загружен · '+t.items.length+' предметов');
 }
 
+const DATA_EXPORT_SCHEMA='dentplan-data-export';
+const DATA_EXPORT_VERSION=1;
+const WALL_HEIGHT_M=3;
+const OPENING_HEIGHT_M={door:2.1,evac:2.1,window:1.5};
+function roundExport(n,d=3){const p=10**d;return Math.round(n*p)/p;}
+function buildDataExport(source,catalog,generatedAt){
+  const nodes=(source.nodes||[]).map(n=>({id:String(n.id),x:roundExport(+n.x||0),z:roundExport(+n.z||0)}));
+  const nodeMap=new Map(nodes.map(n=>[n.id,n]));
+  const rawWalls=(source.walls||[]).filter(w=>nodeMap.has(String(w.a))&&nodeMap.has(String(w.b)));
+  const outer=rawWalls.filter(w=>w.kind==='outer');
+  let contourStatus='empty',contourNodes=[];
+  if(outer.length){
+    const adj=new Map();
+    outer.forEach(w=>{[String(w.a),String(w.b)].forEach(id=>{if(!adj.has(id))adj.set(id,[]);adj.get(id).push(w);});});
+    const closed=outer.length>=3&&[...adj.values()].every(ws=>ws.length===2);
+    contourStatus=closed?'closed':'open';
+    if(closed){
+      let current=outer[0],from=String(current.a);const used=new Set();
+      contourNodes.push(nodeMap.get(from));
+      while(current&&!used.has(current.id)){
+        used.add(current.id);
+        const next=String(current.a)===from?String(current.b):String(current.a);
+        contourNodes.push(nodeMap.get(next));
+        current=(adj.get(next)||[]).find(w=>!used.has(w.id));from=next;
+      }
+      contourNodes.pop();
+      if(used.size!==outer.length)contourStatus='open';
+    }
+  }
+  const xs=nodes.map(n=>n.x),zs=nodes.map(n=>n.z);
+  const dimensions=nodes.length?{widthM:roundExport(Math.max(...xs)-Math.min(...xs)),depthM:roundExport(Math.max(...zs)-Math.min(...zs))}:{widthM:null,depthM:null};
+  let floorAreaM2=null;
+  if(contourStatus==='closed'){
+    let sum=0;contourNodes.forEach((p,i)=>{const q=contourNodes[(i+1)%contourNodes.length];sum+=p.x*q.z-q.x*p.z;});
+    floorAreaM2=roundExport(Math.abs(sum)/2);
+  }
+  const openings=(source.openings||[]).map(o=>{
+    const wall=rawWalls.find(w=>String(w.id)===String(o.wallId));
+    if(!wall)return null;
+    const a=nodeMap.get(String(wall.a)),b=nodeMap.get(String(wall.b)),t=Math.max(0,Math.min(1,+o.t||0));
+    return{id:String(o.id),kind:o.kind,wallId:String(o.wallId),center:{x:roundExport(a.x+(b.x-a.x)*t),z:roundExport(a.z+(b.z-a.z)*t)},widthM:roundExport(+o.w||0),heightM:OPENING_HEIGHT_M[o.kind]||2.1,flip:!!o.flip};
+  }).filter(Boolean);
+  let gross=0,deductions=0;
+  const walls=rawWalls.map(w=>{
+    const a=nodeMap.get(String(w.a)),b=nodeMap.get(String(w.b));
+    const length=Math.hypot(b.x-a.x,b.z-a.z),angle=Math.atan2(b.z-a.z,b.x-a.x)*180/Math.PI;
+    const wallOpenings=openings.filter(o=>o.wallId===String(w.id));
+    const deduction=wallOpenings.reduce((sum,o)=>sum+Math.min(o.widthM,length)*o.heightM,0);
+    gross+=length*WALL_HEIGHT_M;deductions+=deduction;
+    return{id:String(w.id),kind:w.kind,startNodeId:String(w.a),endNodeId:String(w.b),start:{x:a.x,z:a.z},end:{x:b.x,z:b.z},lengthM:roundExport(length),angleDeg:roundExport(angle),heightM:WALL_HEIGHT_M,grossAreaM2:roundExport(length*WALL_HEIGHT_M),openingsAreaM2:roundExport(deduction),netAreaM2:roundExport(Math.max(0,length*WALL_HEIGHT_M-deduction))};
+  });
+  const items=(source.items||[]).map((it,i)=>{const c=catalog[it.type]||{},rot=roundExport(+it.rot||0,6);return{id:String(it.id||'item-'+(i+1)),type:String(it.type),name:c.name||String(it.type),x:roundExport(+it.x||0),z:roundExport(+it.z||0),rot,rotationDeg:roundExport(rot*180/Math.PI),sizeM:{width:roundExport(+c.w||0),depth:roundExport(+c.d||0)}};});
+  const count=k=>openings.filter(o=>o.kind===k).length;
+  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM:WALL_HEIGHT_M,openingHeightM:{...OPENING_HEIGHT_M}}},walls,openings},counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
+}
+function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+function dataExportToCsv(data){
+  const rows=[['recordType','id','type','name','xM','zM','angleDeg','widthM','depthM','lengthM','heightM','wallId']];
+  data.layout.walls.forEach(w=>rows.push(['wall',w.id,w.kind,'',w.start.x,w.start.z,w.angleDeg,'','',w.lengthM,w.heightM,'']));
+  data.layout.openings.forEach(o=>rows.push(['opening',o.id,o.kind,'',o.center.x,o.center.z,'',o.widthM,'','',o.heightM,o.wallId]));
+  data.items.forEach(i=>rows.push(['item',i.id,i.type,i.name,i.x,i.z,i.rotationDeg,i.sizeM.width,i.sizeM.depth,'','','']));
+  return '\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\n');
+}
+function currentDataExport(){return buildDataExport(state,CATALOG);}
+function downloadText(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),0);}
+function downloadDataJson(){downloadText('dentplan-dannye.json',JSON.stringify(currentDataExport(),null,2),'application/json;charset=utf-8');toast('Данные JSON сохранены');}
+function downloadDataCsv(){downloadText('dentplan-elementy.csv',dataExportToCsv(currentDataExport()),'text/csv;charset=utf-8');toast('Таблица CSV сохранена');}
+
 /* ═══════════════ ЭКСПОРТ ═══════════════ */
 function buildSheet(){
   return new Promise(resolve=>{
-    const s=computeStats(),W=1754,H=1240;
+    const s=computeStats(),data=currentDataExport(),W=1754,H=1240;
     const cv=document.createElement('canvas');cv.width=W;cv.height=H;
     const g=cv.getContext('2d');
     g.fillStyle='#fff';g.fillRect(0,0,W,H);
@@ -2923,7 +2993,8 @@ function buildSheet(){
     g.fillText('План клиники',142,100);
     g.fillStyle='#8B8371';g.font='13px "IBM Plex Mono",monospace';
     g.fillText('DentPlan · сгенерировано '+new Date().toLocaleDateString('ru-RU'),143,122);
-    const kpi=[['ПЛОЩАДЬ',fmtM(s.a)+' м²'],['УСТАНОВОК',String(s.chairs)],['CAMERAS',String(s.cameras)],['СМЕТА',fmt(estimateTotal()*1.08)+' ₽']];
+    const area=data.layout.floorAreaM2;
+    const kpi=[['ПЛОЩАДЬ',area===null?'—':fmtM(area)+' м²'],['УСТАНОВОК',String(s.chairs)],['КАМЕР',String(s.cameras)],['СМЕТА',fmt(estimateTotal()*1.08)+' ₽']];
     let kx=W-64;g.textAlign='right';
     kpi.slice().reverse().forEach(p=>{
       g.fillStyle='#26241F';g.font='500 24px "IBM Plex Mono",monospace';g.fillText(p[1],kx,92);
@@ -2983,6 +3054,16 @@ function buildSheet(){
       g.fillStyle='#fff';g.font='600 15px Jost,sans-serif';g.fillText('ИТОГО',1120,sy+4);
       g.font='500 16px "IBM Plex Mono",monospace';g.textAlign='right';
       g.fillText(fmt(estimateTotal()+inst)+' ₽',1676,sy+4);g.textAlign='left';
+      const dims=data.layout.dimensions,wa=data.layout.wallArea,cnt=data.counts;
+      g.fillStyle='#26241F';g.font='600 13px Jost,sans-serif';
+      g.fillText('ДАННЫЕ ПРОЕКТА',66,1032);
+      g.fillStyle='#4C473D';g.font='12px "IBM Plex Mono",monospace';
+      const contour=data.layout.contour.status==='closed'?'замкнут':'не замкнут';
+      g.fillText('Габариты: '+(dims.widthM??'—')+' × '+(dims.depthM??'—')+' м · контур: '+contour,66,1058);
+      g.fillText('Площадь стен без проёмов: '+fmtM(wa.netM2)+' м² · высота стен: '+fmtM(wa.assumptions.wallHeightM)+' м',66,1082);
+      g.fillText('Двери: '+cnt.doors+' · окна: '+cnt.windows+' · эвак. проёмы: '+cnt.evacuationOpenings+' · оборудование: '+cnt.equipment+' · камеры: '+cnt.cameras,66,1106);
+      g.fillStyle='#8B8371';g.font='11px "IBM Plex Sans",sans-serif';
+      g.fillText('Геометрический отчёт. Не содержит нормативного заключения.',66,1132);
       g.strokeStyle='#DCCFB4';g.beginPath();g.moveTo(64,H-64);g.lineTo(W-64,H-64);g.stroke();
       g.fillStyle='#8B8371';g.font='11px "IBM Plex Mono",monospace';
       g.fillText('DentPlan · планировщик стоматологических клиник',64,H-40);
@@ -3092,6 +3173,8 @@ function initRest(){
   });
   $('#btnExport').addEventListener('click',openExport);
   $('#exDl').addEventListener('click',downloadPdf);
+  $('#exJson').addEventListener('click',downloadDataJson);
+  $('#exCsv').addEventListener('click',downloadDataCsv);
   $('#exPrint').addEventListener('click',printSheet);
   $('#exClose').addEventListener('click',()=>$('#exModal').classList.remove('open'));
   $('#exModal').addEventListener('click',e=>{if(e.target.id==='exModal')e.target.classList.remove('open');});

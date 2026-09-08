@@ -650,6 +650,7 @@ function openingFits(wallId,center,width,ignoreId){
   return !state.openings.some(o=>o.wallId===wallId&&o.id!==ignoreId&&
     Math.abs(center-o.t*g.len)<(width+o.w)/2+.06);
 }
+function shouldPrioritizeOpeningHit(tool,opening){return !!opening&&!!TOOL_DEF[tool];}
 function deleteWall(w){
   state.openings=state.openings.filter(o=>o.wallId!==w.id);
   state.walls=state.walls.filter(x=>x.id!==w.id);
@@ -2304,8 +2305,9 @@ function initPlan(){
     state.openings.forEach(o=>{
       const w=wById(o.wallId);if(!w)return;
       const g=wallGeom(w);
-      const c={x:g.A.x+g.ux*o.t*g.len,z:g.A.z+g.uz*o.t*g.len};
-      const d=Math.hypot(p.x-px(c),p.y-py(c));
+      const s={x:g.A.x+g.ux*(o.t*g.len-o.w/2),z:g.A.z+g.uz*(o.t*g.len-o.w/2)};
+      const e={x:g.A.x+g.ux*(o.t*g.len+o.w/2),z:g.A.z+g.uz*(o.t*g.len+o.w/2)};
+      const d=distSeg(p,s,e);
       if(d<bd){bd=d;best=o;}
     });
     return best;
@@ -2400,6 +2402,14 @@ function initPlan(){
         chainClick(toMeters(p));return;
       }
       if(TOOL_DEF[t]){
+        const existingOpening=openingAt(p);
+        if(shouldPrioritizeOpeningHit(t,existingOpening)){
+          setTool('select');
+          selectWallObj({type:'opening',id:existingOpening.id});
+          wallDrag={type:'opening',id:existingOpening.id,moved:false};
+          plan.cv.style.cursor='grabbing';
+          return;
+        }
         const wh=wallAt(p);
         if(wh){
           const def=TOOL_DEF[t];
@@ -2409,7 +2419,7 @@ function initPlan(){
           const m=toMeters(p);
           const proj=clamp((m.x-g.A.x)*g.ux+(m.z-g.A.z)*g.uz,w/2+.03,g.len-w/2-.03);
           const op=addOpening(wh,proj/g.len,w,def.kind);
-          if(op){selectWallObj({type:'opening',id:op.id});staticDirty=true;refresh();commit();
+          if(op){setTool('select');selectWallObj({type:'opening',id:op.id});staticDirty=true;refresh();commit();
             toast(def.label+' '+fmt2(w)+' м установлена');}
         }
         return;

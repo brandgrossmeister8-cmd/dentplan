@@ -30,6 +30,10 @@ assert.match(html, /if\(dirty\)commit\(\)/, 'Переключение профи
 assert.doesNotMatch(html, /#planPane\{display:none!important\}/, 'План не должен безусловно исчезать на узком экране');
 assert.match(html, /aria-label=/, 'Интерактивные элементы должны иметь доступные подписи');
 assert.match(html, /function openingMetrics\(/, 'Геометрия проёма должна иметь единый расчёт размеров');
+assert.match(html, /function shouldPrioritizeOpeningHit\(/, 'Существующий проём должен иметь приоритет над добавлением нового');
+const openingToolBranch = script[1].slice(script[1].indexOf('if(TOOL_DEF[t])'), script[1].indexOf("if(t==='erase')", script[1].indexOf('if(TOOL_DEF[t])')));
+assert.ok(openingToolBranch.indexOf('const existingOpening=openingAt(p)') < openingToolBranch.indexOf('const wh=wallAt(p)'), 'Hit-test существующего проёма должен идти раньше поиска стены');
+assert.match(openingToolBranch, /if\(op\)\{setTool\('select'\);selectWallObj/, 'После установки нового проёма инструмент должен перейти в выбор');
 assert.match(html, /слева[\s\S]{0,160}ширина[\s\S]{0,160}справа/i, 'Выбранный проём должен показывать отступы и ширину');
 assert.match(html, /от начала[\s\S]{0,120}ширина/i, 'При переносе проёма нужно показывать положение и ширину');
 
@@ -224,7 +228,10 @@ const engine = {
   toast() {},
   fmtM: String,
 };
-vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits};`, engine);
+vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit};`, engine);
+engine.TOOL_DEF = { door: {}, window: {}, evac: {} };
+assert.equal(engine.api.shouldPrioritizeOpeningHit('door', { id: 'o1' }), true, 'При клике по двери нужно начать её перенос');
+assert.equal(engine.api.shouldPrioritizeOpeningHit('door', null), false, 'Без проёма нужно оставить возможность его добавить');
 const a = engine.api.addNode(0, 0);
 const b = engine.api.addNode(4, 0);
 const wall = engine.api.addWall(a, b, 'inner');

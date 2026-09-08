@@ -14,8 +14,15 @@ assert.match(html, /function confirmReplaceProject\(/, 'Перед замено�
 assert.match(html, /projectDirty/, 'Должен отслеживаться статус несохранённых изменений');
 assert.match(html, /document\.createTextNode\(String\(msg\)\)/, 'Текст тоста нельзя вставлять как HTML');
 assert.match(html, /if\(!confirmReplaceProject\(\)\)return;/, 'Импорт и шаблоны должны уважать отмену замены проекта');
-assert.match(html, /Предварительная проверка пройдена/, 'Нельзя заявлять о полном соблюдении нормативов');
+assert.doesNotMatch(html, /проверка пройдена/i, 'Даже предварительный статус не должен звучать как заключение');
 assert.doesNotMatch(html, /Нормы соблюдены/, 'В интерфейсе не должно быть неподтверждённого заявления о нормативах');
+assert.doesNotMatch(html, /соответствует требованиям/i, 'Нельзя выдавать юридическое заключение о соответствии');
+assert.match(html, /id="projectProfile"/, 'В интерфейсе должен быть переключатель профиля проекта');
+assert.match(html, /function normalizeProjectProfile\(/, 'Старые проекты должны получать совместимый профиль');
+assert.match(html, /profile:state\.profile/, 'Профиль должен сохраняться в JSON проекта');
+assert.match(html, /setProjectProfile\(normalizeProjectProfile\(p\.profile\)/, 'Профиль должен восстанавливаться при загрузке');
+assert.match(html, /data-profile="dental"/, 'Стоматологические рекомендации должны быть отдельным блоком');
+assert.match(html, /body\.dataset\.profile=profile/, 'General-профиль должен управлять видимостью стоматологических рекомендаций');
 assert.doesNotMatch(html, /#planPane\{display:none!important\}/, 'План не должен безусловно исчезать на узком экране');
 assert.match(html, /aria-label=/, 'Интерактивные элементы должны иметь доступные подписи');
 assert.match(html, /function openingMetrics\(/, 'Геометрия проёма должна иметь единый расчёт размеров');
@@ -94,6 +101,12 @@ assert.equal(dataExport.items[0].rotationDeg, 90);
 assert.equal(dataExport.items[0].rot, 1.570796);
 assert.deepEqual(JSON.parse(JSON.stringify(dataExport.items[0].sizeM)), { width: 1.4, depth: 1.9 });
 assert.match(exportSandbox.dataExportToCsv(dataExport), /item,i1,chair/);
+assert.equal(dataExport.projectProfile, 'dental', 'Старое состояние без профиля экспортируется как dental');
+assert.match(exportSandbox.dataExportToCsv(dataExport), /meta,project-profile,dental/);
+const generalExport = exportSandbox.buildDataExport({ ...exportState, profile: 'general' }, exportCatalog, '2026-09-08T00:00:00.000Z');
+assert.equal(generalExport.projectProfile, 'general');
+assert.deepEqual(JSON.parse(JSON.stringify(generalExport.guidance)), { applicability: 'not-applicable', recommendations: [] });
+assert.doesNotMatch(exportSandbox.dataExportToCsv(generalExport), /стоматолог/i, 'В CSV general-профиля не должно быть стоматологических рекомендаций');
 exportState.items[0].x = 2.5;
 exportState.items.push({ id: 'i2', type: 'camera', x: 1, z: 1, rot: 0 });
 const editedExport = exportSandbox.buildDataExport(exportState, { ...exportCatalog, camera: { name: 'Камера', w: 0.2, d: 0.2 } }, '2026-09-08T00:01:00.000Z');
@@ -130,6 +143,9 @@ const validProject = {
   brand: '#0E7C7B',
 };
 assert.equal(sandbox.validateProjectData(validProject), null, 'Корректный проект должен приниматься');
+assert.equal(sandbox.validateProjectData({ ...validProject, profile: 'dental' }), null);
+assert.equal(sandbox.validateProjectData({ ...validProject, profile: 'general' }), null);
+assert.match(sandbox.validateProjectData({ ...validProject, profile: 'unknown' }), /профиль/, 'Неизвестный профиль должен отклоняться');
 assert.equal(
   sandbox.validateProjectData({ ...validProject, items: [{ type: 'camera', x: 1, z: 1, rot: Math.PI / 3 }] }),
   null,

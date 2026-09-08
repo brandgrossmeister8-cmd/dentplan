@@ -108,6 +108,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ul-btn:hover{border-color:var(--brand);color:var(--brand)}
 .ul-btn svg{width:15px;height:15px}
 .ul-hint{font-size:10.5px;color:var(--mut);margin-top:8px;line-height:1.5}
+.profile-select{width:100%;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--paper2);padding:0 9px;color:var(--coal);font:12px var(--body)}
+.profile-guidance{font-size:10.5px;line-height:1.5;color:var(--coal2);border-left:3px solid var(--warn);padding:7px 9px;margin-top:8px;background:var(--paper);border-radius:0 8px 8px 0}
+body[data-profile="general"] [data-profile="dental"]{display:none!important}
 #toolHint{background:var(--paper);border-left:3px solid var(--brand);padding:7px 9px;border-radius:0 8px 8px 0}
 .ul-file{display:flex;align-items:center;gap:8px;font-size:10.5px;font-family:var(--mono);color:var(--coal2);border:1px solid var(--line);border-radius:8px;padding:5px 6px 5px 9px;margin-bottom:9px}
 .ul-file svg{width:13px;height:13px;flex:none;color:var(--mut)}
@@ -299,6 +302,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <button data-mode="walls"><i data-lucide="pencil-ruler"></i>Стены</button>
       </div>
       <p class="ul-hint" id="toolHint" hidden></p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">Профиль проекта</div>
+      <label class="sr-only" for="projectProfile">Тип помещения</label>
+      <select id="projectProfile" class="profile-select">
+        <option value="dental">Стоматологическое помещение</option>
+        <option value="general">Общее помещение</option>
+      </select>
+      <p id="profileDescription" class="ul-hint"></p>
+      <div class="profile-guidance" data-profile="dental"><strong>Предварительные ориентиры</strong><br>Проверьте функциональное зонирование, состав помещений, санитарную эксплуатацию, эвакуацию и доступность. Конкретные размеры и решения должен подтвердить профильный специалист.<br><a href="https://minstroyrf.gov.ru/docs/" target="_blank" rel="noopener">СП 158.13330.2014, изм. № 5</a> · <a href="https://publication.pravo.gov.ru/document/0001202407120010" target="_blank" rel="noopener">СП 2.1.3678-20, изм. от 20.03.2024</a><br>Источники проверены 09.09.2026.</div>
     </div>
 
     <div class="sec">
@@ -581,6 +595,7 @@ const TEMPLATES=[
 ];
 
 const state={
+  profile:'dental',
   room:{w:12,d:9},
   nodes:[],walls:[],openings:[],
   items:[],seq:1,sel:null,
@@ -1397,8 +1412,10 @@ function initUnderlay(){
 /* ═══════════════ ПРОЕКТ ═══════════════ */
 const PROJECT_LIMITS={nodes:500,walls:500,openings:1000,items:500,underlayBytes:25*1024*1024};
 const finiteNumber=v=>typeof v==='number'&&Number.isFinite(v);
+function normalizeProjectProfile(profile){return profile===undefined||profile===null||profile===''?'dental':profile;}
 function validateProjectData(p){
   if(!p||p.app!=='dentplan')return 'Это не файл проекта DentPlan';
+  if(!['dental','general'].includes(normalizeProjectProfile(p.profile)))return 'В файле указан неизвестный профиль проекта';
   if(p.layout!==undefined){
     const l=p.layout;
     if(!l||!Array.isArray(l.nodes)||!Array.isArray(l.walls)||
@@ -1457,6 +1474,7 @@ function confirmReplaceProject(){
 }
 function saveProject(){
   const proj={app:'dentplan',v:2,saved:new Date().toISOString(),
+    profile:state.profile,
     brand:state.brand,
     layout:{
       nodes:state.nodes.map(n=>({id:n.id,x:+n.x.toFixed(3),z:+n.z.toFixed(3)})),
@@ -1497,6 +1515,7 @@ function loadProjectFile(f){
     if(!confirmReplaceProject())return;
     const loadedW=clamp(Number(p.room&&p.room.w)||12,8,18);
     const loadedD=clamp(Number(p.room&&p.room.d)||9,6,14);
+    setProjectProfile(normalizeProjectProfile(p.profile),false);
     clearItems();
     state.items=[];state.sel=null;state.selObj=null;
     state.room={w:loadedW,d:loadedD};
@@ -1680,11 +1699,12 @@ function updateCapacity(){
   $('#meterFill').style.background=s.total>s.a/4?'var(--bad)':'var(--brand)';
   const pill=$('#stPill'),tx=$('#stPillTx');
   pill.classList.remove('ok','warn','bad');
-  if(!s.chairs){pill.classList.add('warn');tx.textContent='Добавьте первое кресло из каталога';}
+  if(state.profile==='general'){pill.classList.add(s.closed?'ok':'warn');tx.textContent=s.closed?'Геометрия готова к пользовательской проверке':'Контур не замкнут — площадь считается по габаритам';}
+  else if(!s.chairs){pill.classList.add('warn');tx.textContent='Добавьте первое кресло из каталога';}
   else if(s.perChair<14){pill.classList.add('warn');tx.textContent='Мало места в среднем: '+fmtM(s.perChair)+' м² на кресло · проверьте кабинеты отдельно';}
   else if(s.hasExits<s.exitHint){pill.classList.add('warn');tx.textContent='Ориентир: добавьте выходов — '+s.exitHint+' · проверьте требования специалистом';}
   else if(!s.closed){pill.classList.add('warn');tx.textContent='Контур не замкнут — площадь считается по габаритам';}
-  else{pill.classList.add('ok');tx.textContent='Предварительная проверка пройдена · нужна проверка специалистом';}
+  else{pill.classList.add('ok');tx.textContent='Макет заполнен · параметры должен проверить специалист';}
 }
 
 /* ═══════════════ СМЕТА ═══════════════ */
@@ -2935,6 +2955,7 @@ const WALL_HEIGHT_M=3;
 const OPENING_HEIGHT_M={door:2.1,evac:2.1,window:1.5};
 function roundExport(n,d=3){const p=10**d;return Math.round(n*p)/p;}
 function buildDataExport(source,catalog,generatedAt){
+  const projectProfile=source.profile==='general'?'general':'dental';
   const nodes=(source.nodes||[]).map(n=>({id:String(n.id),x:roundExport(+n.x||0),z:roundExport(+n.z||0)}));
   const nodeMap=new Map(nodes.map(n=>[n.id,n]));
   const rawWalls=(source.walls||[]).filter(w=>nodeMap.has(String(w.a))&&nodeMap.has(String(w.b)));
@@ -2982,11 +3003,13 @@ function buildDataExport(source,catalog,generatedAt){
   });
   const items=(source.items||[]).map((it,i)=>{const c=catalog[it.type]||{},rot=roundExport(+it.rot||0,6);return{id:String(it.id||'item-'+(i+1)),type:String(it.type),name:c.name||String(it.type),x:roundExport(+it.x||0),z:roundExport(+it.z||0),rot,rotationDeg:roundExport(rot*180/Math.PI),sizeM:{width:roundExport(+c.w||0),depth:roundExport(+c.d||0)}};});
   const count=k=>openings.filter(o=>o.kind===k).length;
-  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM:WALL_HEIGHT_M,openingHeightM:{...OPENING_HEIGHT_M}}},walls,openings},counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
+  const guidance=projectProfile==='dental'?{applicability:'preliminary',reviewedAt:'2026-09-09',recommendations:['Проверить функциональное зонирование и состав помещений по СП 158.13330.2014 с изменением № 5.','Проверить санитарную эксплуатацию по СП 2.1.3678-20 с изменением от 20.03.2024.','Проверить эвакуацию, доступность и все численные параметры у профильных специалистов.'],sources:[{title:'СП 158.13330.2014, изменение № 5',url:'https://minstroyrf.gov.ru/docs/',publishedAt:'2024-12-28'},{title:'СП 2.1.3678-20, изменение от 20.03.2024',url:'https://publication.pravo.gov.ru/document/0001202407120010',publishedAt:'2024-07-12'}]}:{applicability:'not-applicable',recommendations:[]};
+  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),projectProfile,units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,guidance,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM:WALL_HEIGHT_M,openingHeightM:{...OPENING_HEIGHT_M}}},walls,openings},counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
 }
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function dataExportToCsv(data){
-  const rows=[['recordType','id','type','name','xM','zM','angleDeg','widthM','depthM','lengthM','heightM','wallId']];
+  const rows=[['recordType','id','type','name','xM','zM','angleDeg','widthM','depthM','lengthM','heightM','wallId'],['meta','project-profile',data.projectProfile,'','','','','','','','','']];
+  if(data.projectProfile==='dental')data.guidance.recommendations.forEach((text,i)=>rows.push(['guidance','dental-'+(i+1),'preliminary',text,'','','','','','','','']));
   data.layout.walls.forEach(w=>rows.push(['wall',w.id,w.kind,'',w.start.x,w.start.z,w.angleDeg,'','',w.lengthM,w.heightM,'']));
   data.layout.openings.forEach(o=>rows.push(['opening',o.id,o.kind,'',o.center.x,o.center.z,'',o.widthM,'','',o.heightM,o.wallId]));
   data.items.forEach(i=>rows.push(['item',i.id,i.type,i.name,i.x,i.z,i.rotationDeg,i.sizeM.width,i.sizeM.depth,'','','']));
@@ -3008,7 +3031,7 @@ function buildSheet(){
     g.fillStyle=state.brand;g.fillRect(64,64,58,58);
     g.fillStyle='#fff';g.font='700 26px Jost,sans-serif';g.textAlign='center';g.fillText('D',93,103);
     g.textAlign='left';g.fillStyle='#26241F';g.font='700 36px Jost,sans-serif';
-    g.fillText('План клиники',142,100);
+    g.fillText(state.profile==='dental'?'План стоматологического помещения':'План помещения',142,100);
     g.fillStyle='#8B8371';g.font='13px "IBM Plex Mono",monospace';
     g.fillText('DentPlan · сгенерировано '+new Date().toLocaleDateString('ru-RU'),143,122);
     const area=data.layout.floorAreaM2;
@@ -3081,10 +3104,10 @@ function buildSheet(){
       g.fillText('Площадь стен без проёмов: '+fmtM(wa.netM2)+' м² · высота стен: '+fmtM(wa.assumptions.wallHeightM)+' м',66,1082);
       g.fillText('Двери: '+cnt.doors+' · окна: '+cnt.windows+' · эвак. проёмы: '+cnt.evacuationOpenings+' · оборудование: '+cnt.equipment+' · камеры: '+cnt.cameras,66,1106);
       g.fillStyle='#8B8371';g.font='11px "IBM Plex Sans",sans-serif';
-      g.fillText('Геометрический отчёт. Не содержит нормативного заключения.',66,1132);
+      g.fillText(state.profile==='dental'?'Стоматологический профиль · предварительные ориентиры, нужна проверка специалистом.':'Общий профиль · стоматологические рекомендации не применяются.',66,1132);
       g.strokeStyle='#DCCFB4';g.beginPath();g.moveTo(64,H-64);g.lineTo(W-64,H-64);g.stroke();
       g.fillStyle='#8B8371';g.font='11px "IBM Plex Mono",monospace';
-      g.fillText('DentPlan · планировщик стоматологических клиник',64,H-40);
+      g.fillText('DentPlan · профиль: '+(state.profile==='dental'?'стоматологическое помещение':'общее помещение'),64,H-40);
       g.textAlign='right';
       g.fillText('Вместимость: '+s.total+' чел · выходов: '+s.hasExits+' · ориентир '+s.exitHint+' · цвет '+state.brand.toUpperCase(),W-64,H-40);
       g.textAlign='left';
@@ -3176,6 +3199,7 @@ function initBrand(){
   $('#brandInput').addEventListener('input',e=>{setBrand(e.target.value);markDirty();});
 }
 function initRest(){
+  $('#projectProfile').addEventListener('change',e=>setProjectProfile(e.target.value,true));
   $('#btnTemplates').addEventListener('click',()=>$('#tplModal').classList.add('open'));
   $('#tplClose').addEventListener('click',()=>$('#tplModal').classList.remove('open'));
   $('#tplModal').addEventListener('click',e=>{if(e.target.id==='tplModal')e.target.classList.remove('open');});
@@ -3197,6 +3221,13 @@ function initRest(){
   $('#exClose').addEventListener('click',()=>$('#exModal').classList.remove('open'));
   $('#exModal').addEventListener('click',e=>{if(e.target.id==='exModal')e.target.classList.remove('open');});
   $('#btnCamReset').addEventListener('click',()=>camTo(perspPreset(),900));
+}
+function setProjectProfile(profile,dirty=true){
+  profile=profile==='general'?'general':'dental';
+  state.profile=profile;document.body.dataset.profile=profile;
+  const select=$('#projectProfile');if(select)select.value=profile;
+  const desc=$('#profileDescription');if(desc)desc.textContent=profile==='dental'?'Показываем предварительные стоматологические ориентиры. Все решения проверяет профильный специалист.':'Стоматологические рекомендации скрыты. Геометрия и пользовательские ограничения доступны.';
+  if(dirty)markDirty();updateCapacity();
 }
 
 /* ═══════════════ РАЗМЕРЫ / ЦИКЛ ═══════════════ */
@@ -3249,6 +3280,7 @@ function loop(now){
 /* ═══════════════ ФАЗА 1 ═══════════════ */
 initPlan();buildCatalog();buildTplGrid();
 initView();initModes();initRoom();initBrand();initUnderlay();initRest();initKeys();
+setProjectProfile(state.profile,false);
 icons();
 resizeAll();
 if(window.ResizeObserver)new ResizeObserver(resizeAll).observe($('#center'));

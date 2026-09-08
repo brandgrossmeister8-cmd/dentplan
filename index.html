@@ -821,7 +821,7 @@ function updateUndoUI(){
 }
 
 /* ═══════════════ 2D-ПЛАН ═══════════════ */
-const plan={cv:null,fit:0,cx:0,cy:0,dirty:true};
+const plan={cv:null,fit:0,cx:0,cy:0,cssW:0,cssH:0,dirty:true};
 function planRedraw(){plan.dirty=true;}
 function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
 function drawTag(g,x,y,text,bg,fg){
@@ -897,10 +897,14 @@ function drawPlan(g,W,H,opts={}){
 
   if(underlay.img&&underlay.visible){
     const s=underlaySize();
+    const tx=typeof g.getTransform==='function'?g.getTransform():null;
+    const pixelRatio=tx?Math.hypot(tx.a,tx.b):1;
     g.save();
     g.translate(X(underlay.ux),Y(underlay.uz));
     g.rotate(underlay.rot);
     g.globalAlpha=underlay.opacity;
+    g.imageSmoothingEnabled=shouldSmoothUnderlay(s.iw,s.w*fit*pixelRatio);
+    if(g.imageSmoothingEnabled)g.imageSmoothingQuality='high';
     g.drawImage(underlay.img,-s.w*fit/2,-s.h*fit/2,s.w*fit,s.h*fit);
     g.globalAlpha=1;
     if(underlay.mode||underlay.calibrating){
@@ -1262,6 +1266,9 @@ function underlaySize(){
   const img=underlay.img;
   const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;
   return{iw,ih,w:underlay.uw,h:underlay.uw*ih/iw};
+}
+function shouldSmoothUnderlay(sourcePixels,destinationPixels){
+  return destinationPixels<sourcePixels;
 }
 function fitUnderlay(){
   if(!underlay.img)return;
@@ -3196,9 +3203,13 @@ function initRest(){
 function resizeAll(){
   const pp=$('#planPane'),tp=$('#threePane');
   if(plan.cv&&!pp.classList.contains('hidden')&&pp.clientWidth){
-    const dpr=Math.min(devicePixelRatio,2);
-    plan.cv.width=pp.clientWidth*dpr;plan.cv.height=pp.clientHeight*dpr;
-    plan.cv.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+    const rect=pp.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width),cssH=Math.max(1,rect.height);
+    const dpr=Math.min(devicePixelRatio||1,3);
+    plan.cv.width=Math.max(1,Math.round(cssW*dpr));
+    plan.cv.height=Math.max(1,Math.round(cssH*dpr));
+    plan.cssW=cssW;plan.cssH=cssH;
+    plan.cv.getContext('2d').setTransform(plan.cv.width/cssW,0,0,plan.cv.height/cssH,0,0);
     planRedraw();
   }
   if(renderer&&camera&&tp&&tp.clientWidth&&!tp.classList.contains('hidden')){
@@ -3229,7 +3240,7 @@ function loop(now){
   }else if(M.sign)M.sign.emissiveIntensity=.3;
   if(plan.dirty&&plan.cv&&!$('#planPane').classList.contains('hidden')&&plan.cv.clientWidth){
     plan.dirty=false;
-    drawPlan(plan.cv.getContext('2d'),plan.cv.clientWidth,plan.cv.clientHeight);
+    drawPlan(plan.cv.getContext('2d'),plan.cssW||plan.cv.clientWidth,plan.cssH||plan.cv.clientHeight);
     updateEvacSvg();
   }
   if(renderer&&scene&&!$('#threePane').classList.contains('hidden'))renderer.render(scene,camera);

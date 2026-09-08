@@ -39,6 +39,9 @@ assert.match(html, /function underlayFileError\(/, 'Формат подложк�
 assert.match(html, /PDF пока нельзя использовать как подложку/, 'Для PDF нужно объяснять ограничение');
 assert.match(html, /underlay\.uw\*=k/, 'Калибровка должна менять масштаб подложки');
 assert.match(html, /visible:underlay\.visible,opacity:underlay\.opacity/, 'Проект должен сохранять настройки подложки');
+assert.match(html, /function shouldSmoothUnderlay\(/, 'Для подложки нужно управлять интерполяцией');
+assert.match(html, /imageSmoothingQuality='high'/, 'При уменьшении чертежа нужна качественная фильтрация');
+assert.match(html, /setTransform\(plan\.cv\.width\/cssW,0,0,plan\.cv\.height\/cssH,0,0\)/, '2D-canvas должен использовать фактический масштаб backing store');
 
 const underlayValidation = script[1].match(/function underlayFileError\(f\)\{[\s\S]*?\n\}/);
 assert(underlayValidation, 'Не найдена валидация формата подложки');
@@ -48,6 +51,13 @@ assert.equal(underlaySandbox.underlayFileError({ name: 'plan.png', type: 'image/
 assert.equal(underlaySandbox.underlayFileError({ name: 'plan.jpeg', type: 'image/jpeg' }), null, 'JPEG должен приниматься');
 assert.match(underlaySandbox.underlayFileError({ name: 'plan.pdf', type: 'application/pdf' }), /PDF/, 'PDF должен отклоняться с объяснением');
 assert.match(underlaySandbox.underlayFileError({ name: 'plan.svg', type: 'image/svg+xml' }), /PNG и JPG/, 'Посторонний формат должен отклоняться');
+
+const smoothingRule = script[1].match(/function shouldSmoothUnderlay\(sourcePixels,destinationPixels\)\{[\s\S]*?\n\}/);
+assert(smoothingRule, 'Не найдено правило сглаживания подложки');
+const smoothingSandbox = {};
+vm.runInNewContext(`${smoothingRule[0]}\nthis.shouldSmoothUnderlay=shouldSmoothUnderlay;`, smoothingSandbox);
+assert.equal(smoothingSandbox.shouldSmoothUnderlay(2000, 500), true, 'При уменьшении растра нужна фильтрация');
+assert.equal(smoothingSandbox.shouldSmoothUnderlay(500, 1000), false, 'При увеличении растра интерполяция не должна размывать линии');
 
 const scriptSource = script[1];
 const exportSection = scriptSource.slice(

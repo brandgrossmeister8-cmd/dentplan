@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DentPlan — планировщик стоматологических клиник</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F6F2E9; --paper2:#FCFAF4; --oat:#E8E0CE; --oat2:#DCD2BC;
@@ -241,7 +241,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 ::-webkit-scrollbar{width:9px}
 ::-webkit-scrollbar-thumb{background:var(--oat2);border-radius:5px;border:2px solid var(--paper2)}
 @media (max-width:1180px){#planPane{flex-basis:40%}.st-hint{display:none}}
-@media (max-width:940px){#planPane{display:none!important}#catalog{width:228px}}
+@media (max-width:940px){
+  #catalog{width:228px}
+  #topbar,#statusbar{overflow-x:auto}
+}
+@media (max-width:680px){
+  #catalog{width:190px}
+  #topbar{gap:6px;padding:0 8px}
+  .brand-sub,.lib,.swatches,.tb-sep{display:none}
+  #planPane{flex-basis:50%}
+  #statusbar{gap:10px;padding:0 10px}
+}
 </style>
 </head>
 <body>
@@ -260,17 +270,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     <button data-view="plan"><i data-lucide="map"></i>План</button>
     <button data-view="3d"><i data-lucide="box"></i>3D</button>
   </div>
-  <button class="fire" id="fireToggle"><i data-lucide="flame"></i>Пожарные меры<span class="switch"></span></button>
+  <button class="fire" id="fireToggle" aria-pressed="false" title="Показать ориентировочные направления к выходам"><i data-lucide="flame"></i>Направления эвакуации<span class="switch"></span></button>
   <div class="spacer"></div>
   <span class="lib" id="libStatus"><span class="dot"></span><span id="libTx">3D: загрузка…</span></span>
   <div class="swatches" id="swatches" title="Фирменный цвет">
-    <button class="sw on" data-c="#0E7C7B" style="background:#0E7C7B" title="Глубокая бирюза"></button>
-    <button class="sw" data-c="#C05B39" style="background:#C05B39" title="Терракота"></button>
-    <button class="sw" data-c="#3E6B48" style="background:#3E6B48" title="Хвоя"></button>
-    <button class="sw" data-c="#8E4A5B" style="background:#8E4A5B" title="Слива"></button>
-    <button class="sw" data-c="#B0812A" style="background:#B0812A" title="Охра"></button>
-    <button class="sw" data-c="#22384D" style="background:#22384D" title="Ночной синий"></button>
-    <label class="sw-custom" title="Свой цвет"><i data-lucide="pipette"></i><input type="color" id="brandInput" value="#0E7C7B"></label>
+    <button class="sw on" data-c="#0E7C7B" style="background:#0E7C7B" title="Глубокая бирюза" aria-label="Цвет: глубокая бирюза"></button>
+    <button class="sw" data-c="#C05B39" style="background:#C05B39" title="Терракота" aria-label="Цвет: терракота"></button>
+    <button class="sw" data-c="#3E6B48" style="background:#3E6B48" title="Хвоя" aria-label="Цвет: хвоя"></button>
+    <button class="sw" data-c="#8E4A5B" style="background:#8E4A5B" title="Слива" aria-label="Цвет: слива"></button>
+    <button class="sw" data-c="#B0812A" style="background:#B0812A" title="Охра" aria-label="Цвет: охра"></button>
+    <button class="sw" data-c="#22384D" style="background:#22384D" title="Ночной синий" aria-label="Цвет: ночной синий"></button>
+    <label class="sw-custom" title="Свой цвет"><i data-lucide="pipette"></i><input type="color" id="brandInput" value="#0E7C7B" aria-label="Выбрать свой цвет"></label>
   </div>
   <div class="tb-sep"></div>
   <button class="btn" id="btnEstimate"><i data-lucide="receipt"></i>Смета <span class="sum" id="estSum">0 ₽</span></button>
@@ -305,16 +315,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <p class="ul-hint">PNG или JPG со сканом плана — ляжет под планировку. Можно перетащить файл прямо на план.</p>
       </div>
       <div id="ulCtrl" hidden>
-        <div class="ul-file"><i data-lucide="image"></i><span id="ulName">чертёж.png</span><button id="btnUlRemove" title="Убрать чертёж"><i data-lucide="trash-2"></i></button></div>
-        <div class="ul-row2"><span>Показать подложку</span><button class="mini-tgl on" id="btnUlVis"><span class="switch"></span></button></div>
+        <div class="ul-file"><i data-lucide="image"></i><span id="ulName">чертёж.png</span><button id="btnUlRemove" title="Удалить чертёж" aria-label="Удалить чертёж"><i data-lucide="trash-2"></i></button></div>
+        <div class="ul-row2"><span>Показать подложку</span><button class="mini-tgl on" id="btnUlVis" aria-pressed="true" aria-label="Показать подложку"><span class="switch"></span></button></div>
         <div class="room-row"><span class="ul-lbl">Плотность</span><input type="range" id="ulOpacity" min="10" max="100" value="55"><span class="val" id="ulOpVal">55%</span></div>
         <div class="ul-btns">
           <button class="mini" id="btnUlFit"><i data-lucide="maximize-2"></i>Вписать</button>
           <button class="mini" id="btnUlRot"><i data-lucide="rotate-cw"></i>90°</button>
         </div>
         <div class="ul-btns">
-          <button class="mini" id="btnUlCal"><i data-lucide="crosshair"></i>Калибровка</button>
-          <button class="mini" id="btnUlMove"><i data-lucide="move"></i>Двигать</button>
+          <button class="mini" id="btnUlCal" aria-pressed="false"><i data-lucide="crosshair"></i>Калибровка</button>
+          <button class="mini" id="btnUlMove" aria-pressed="false"><i data-lucide="move"></i>Двигать</button>
         </div>
         <div class="ul-info" id="ulInfo">—</div>
       </div>
@@ -324,11 +334,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <div class="sec-title">Проект</div>
       <div class="ul-btns" style="margin-top:0">
         <button class="mini" id="btnUndo" title="Ctrl+Z"><i data-lucide="undo-2"></i>Отменить</button>
-        <button class="mini" id="btnRedo" title="Ctrl+Y"><i data-lucide="redo-2"></i>Вернуть</button>
+        <button class="mini" id="btnRedo" title="Ctrl+Y"><i data-lucide="redo-2"></i>Повторить</button>
       </div>
       <div class="ul-btns">
-        <button class="mini" id="btnProjSave"><i data-lucide="save"></i>Сохранить</button>
-        <button class="mini" id="btnProjOpen"><i data-lucide="folder-open"></i>Открыть</button>
+        <button class="mini" id="btnProjSave"><i data-lucide="save"></i>Сохранить проект</button>
+        <button class="mini" id="btnProjOpen"><i data-lucide="folder-open"></i>Открыть проект</button>
       </div>
       <p class="ul-hint">История — последние 60 действий (Ctrl+Z / Ctrl+Y). Файл .json хранит стены, проёмы, мебель, цвет и подложку.</p>
     </div>
@@ -344,15 +354,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <span class="pane-tag">ПЛАН ЭТАЖА · ВИД СВЕРХУ</span>
       <div id="wallTools" hidden>
         <span class="wt-lbl">Стены</span>
-        <button data-tool="select" class="on" title="Выбор и перенос — 1"><i data-lucide="mouse-pointer-2"></i></button>
-        <button data-tool="wall" title="Перегородка цепочкой — 2"><i data-lucide="pen-line"></i></button>
-        <button data-tool="outer" title="Наружная стена цепочкой — 3"><i data-lucide="box-select"></i></button>
+        <button data-tool="select" class="on" title="Выбор и перенос — 1" aria-label="Выбор и перенос"><i data-lucide="mouse-pointer-2"></i></button>
+        <button data-tool="wall" title="Перегородка цепочкой — 2" aria-label="Нарисовать перегородку"><i data-lucide="pen-line"></i></button>
+        <button data-tool="outer" title="Наружная стена цепочкой — 3" aria-label="Нарисовать наружную стену"><i data-lucide="box-select"></i></button>
         <span class="wt-div"></span>
-        <button data-tool="door" title="Дверь: клик по стене — 4"><i data-lucide="door-open"></i></button>
-        <button data-tool="window" title="Окно: клик по стене — 5"><i data-lucide="blinds"></i></button>
-        <button data-tool="evac" title="Эвакуационный выход — 6"><i data-lucide="door-closed"></i></button>
+        <button data-tool="door" title="Дверь: клик по стене — 4" aria-label="Добавить дверь"><i data-lucide="door-open"></i></button>
+        <button data-tool="window" title="Окно: клик по стене — 5" aria-label="Добавить окно"><i data-lucide="blinds"></i></button>
+        <button data-tool="evac" title="Эвакуационный выход — 6" aria-label="Добавить выход"><i data-lucide="door-closed"></i></button>
         <span class="wt-div"></span>
-        <button data-tool="erase" title="Стереть: клик по стене / проёму / узлу — 7"><i data-lucide="eraser"></i></button>
+        <button data-tool="erase" title="Стереть: клик по стене / проёму / узлу — 7" aria-label="Стереть элемент"><i data-lucide="eraser"></i></button>
       </div>
       <canvas id="plan2d"></canvas>
       <svg id="evacSvg"></svg>
@@ -360,13 +370,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <span class="cp-wrap"><span class="cp-t">Реальная длина отрезка</span><span class="cp-m" id="cpMeas">—</span></span>
         <input type="number" id="cpInput" min="0.1" step="0.01">
         <span class="cp-u">м</span>
-        <button id="cpOk" title="Применить"><i data-lucide="check"></i></button>
-        <button id="cpNo" title="Отмена (Esc)"><i data-lucide="x"></i></button>
+        <button id="cpOk" title="Применить" aria-label="Применить калибровку"><i data-lucide="check"></i></button>
+        <button id="cpNo" title="Отмена (Esc)" aria-label="Отменить калибровку"><i data-lucide="x"></i></button>
       </div>
     </div>
     <div class="pane" id="threePane">
       <span class="pane-tag">3D-ПЕРСПЕКТИВА</span>
-      <button id="btnCamReset" title="Вернуть камеру"><i data-lucide="crosshair"></i></button>
+      <button id="btnCamReset" title="Вернуть камеру" aria-label="Вернуть камеру"><i data-lucide="crosshair"></i></button>
       <div id="glMsg">Загружаю 3D-движок…<br>План и смета уже работают.</div>
       <canvas id="gl"></canvas>
     </div>
@@ -374,14 +384,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
   <div id="itemBar">
     <span id="ibName">—</span>
-    <button id="ibRotLL" title="−45°"><i data-lucide="chevrons-left"></i></button>
-    <button id="ibRotL" title="−15° (Shift+R)"><i data-lucide="rotate-ccw"></i></button>
+    <button id="ibRotLL" title="−45°" aria-label="Повернуть на минус 45 градусов"><i data-lucide="chevrons-left"></i></button>
+    <button id="ibRotL" title="−15° (Shift+R)" aria-label="Повернуть на минус 15 градусов"><i data-lucide="rotate-ccw"></i></button>
     <span id="ibDeg">—</span>
-    <button id="ibRotR" title="+15° (R)"><i data-lucide="rotate-cw"></i></button>
-    <button id="ibRotRR" title="+45°"><i data-lucide="chevrons-right"></i></button>
+    <button id="ibRotR" title="+15° (R)" aria-label="Повернуть на 15 градусов"><i data-lucide="rotate-cw"></i></button>
+    <button id="ibRotRR" title="+45°" aria-label="Повернуть на 45 градусов"><i data-lucide="chevrons-right"></i></button>
     <span class="div"></span>
-    <button id="ibDup" title="Дублировать (D)"><i data-lucide="copy"></i></button>
-    <button id="ibDel" title="Удалить (Del)"><i data-lucide="trash-2"></i></button>
+    <button id="ibDup" title="Дублировать (D)" aria-label="Дублировать предмет"><i data-lucide="copy"></i></button>
+    <button id="ibDel" title="Удалить (Del)" aria-label="Удалить предмет"><i data-lucide="trash-2"></i></button>
   </div>
   <div id="wallBar"></div>
 </div>
@@ -390,7 +400,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <span class="st"><i data-lucide="ruler"></i><span class="lbl">Площадь</span><b id="stArea">108 м²</b></span>
   <span class="st"><i data-lucide="armchair"></i><span class="lbl">Пациентских мест</span><b id="stSeats">0</b></span>
   <span class="st"><i data-lucide="users"></i><span class="lbl">Людей всего</span><b id="stTotal">0</b><span id="meter"><span id="meterFill"></span></span></span>
-  <span class="st"><i data-lucide="door-open"></i><span class="lbl">Выходы</span><b id="stExits">1 / 1</b></span>
+  <span class="st"><i data-lucide="door-open"></i><span class="lbl">Выходы · ориентир</span><b id="stExits">1 / 1</b></span>
   <span class="pill" id="stPill"><i data-lucide="check-circle-2"></i><span id="stPillTx">—</span></span>
   <span class="st-hint">колесо / ← → — двигать дверь или окно по стене (Shift — 1 см) · Ctrl+Z — отменить</span>
 </footer>
@@ -398,7 +408,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <aside id="estPanel">
   <div class="est-head">
     <div><h3>Смета оснащения</h3><p>обновляется при каждой расстановке</p></div>
-    <button id="estClose"><i data-lucide="x"></i></button>
+    <button id="estClose" aria-label="Закрыть смету"><i data-lucide="x"></i></button>
   </div>
   <div id="estBody"></div>
   <div id="estFoot">
@@ -411,7 +421,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <div id="tplCard">
     <div class="tpl-head">
       <div><h2>Шаблоны клиник</h2><p>Выберите основу и доработайте под свой бизнес</p></div>
-      <button id="tplClose"><i data-lucide="x"></i></button>
+      <button id="tplClose" aria-label="Закрыть шаблоны"><i data-lucide="x"></i></button>
     </div>
     <div id="tplGrid"></div>
   </div>
@@ -479,7 +489,9 @@ function runTweens(now){
 }
 function toast(msg,isErr){
   const el=document.createElement('div');el.className='toast'+(isErr?' err':'');
-  el.innerHTML='<i data-lucide="'+(isErr?'alert-triangle':'check-circle-2')+'"></i>'+msg;
+  const icon=document.createElement('i');
+  icon.setAttribute('data-lucide',isErr?'alert-triangle':'check-circle-2');
+  el.append(icon,document.createTextNode(String(msg)));
   $('#toasts').appendChild(el);icons();
   requestAnimationFrame(()=>el.classList.add('in'));
   setTimeout(()=>{el.classList.remove('in');setTimeout(()=>el.remove(),380);},3600);
@@ -716,7 +728,11 @@ function snapPoint(m,lastPt){
 }
 
 /* ═══════════════ ИСТОРИЯ ═══════════════ */
-let hist=[],redoStack=[];
+let hist=[],redoStack=[],projectDirty=false;
+function markDirty(){projectDirty=true;}
+window.addEventListener('beforeunload',e=>{
+  if(projectDirty){e.preventDefault();e.returnValue='';}
+});
 function snapAll(){
   return JSON.stringify({n:state.nodes,w:state.walls,o:state.openings,i:state.items,seq:state.seq,nid,wid,oid});
 }
@@ -751,9 +767,10 @@ function commit(){
   hist.push(s);
   if(hist.length>60)hist.shift();
   redoStack=[];
+  markDirty();
   updateUndoUI();
 }
-function resetHistory(){hist=[snapAll()];redoStack=[];updateUndoUI();}
+function resetHistory(){hist=[snapAll()];redoStack=[];projectDirty=false;updateUndoUI();}
 function undo(){
   if(hist.length<=1)return;
   redoStack.push(hist.pop());
@@ -765,7 +782,7 @@ function redo(){
   const s=redoStack.pop();
   if(!s)return;
   hist.push(s);restore(s);updateUndoUI();
-  toast('Возвращено');
+  toast('Повторено');
 }
 function updateUndoUI(){
   const bU=$('#btnUndo'),bR=$('#btnRedo');
@@ -1222,31 +1239,38 @@ function updateUlUI(){
   if(has){
     $('#ulName').textContent=underlay.name;
     $('#btnUlVis').classList.toggle('on',underlay.visible);
+    $('#btnUlVis').setAttribute('aria-pressed',String(underlay.visible));
     $('#btnUlMove').classList.toggle('on',underlay.mode);
+    $('#btnUlMove').setAttribute('aria-pressed',String(underlay.mode));
     $('#btnUlCal').classList.toggle('on',underlay.calibrating);
+    $('#btnUlCal').setAttribute('aria-pressed',String(underlay.calibrating));
     updateUlInfo();
   }
   if(plan.cv)plan.cv.style.cursor=planCursor();
 }
 function loadImageFile(f){
+  const maxBytes=15*1024*1024;
+  if(f.size>maxBytes){toast('Файл слишком большой. Максимум — 15 МБ',true);return;}
   const rd=new FileReader();
   rd.onload=()=>{
     const img=new Image();
     img.onload=()=>{
       underlay.img=img;underlay.name=f.name;underlay.visible=true;underlay.opacity=.55;underlay.calibrated=false;
       $('#ulOpacity').value=55;$('#ulOpVal').textContent='55%';
-      fitUnderlay();updateUlUI();
-      toast('Чертёж подложен. Нажмите «Калибровка» и кликните две точки известного размера');
+      fitUnderlay();updateUlUI();markDirty();
+      toast('Чертёж добавлен. Нажмите «Калибровка» и укажите две точки известного размера');
     };
     img.onerror=()=>toast('Не удалось прочитать изображение',true);
     img.src=rd.result;
   };
+  rd.onerror=()=>toast('Не удалось прочитать изображение',true);
   rd.readAsDataURL(f);
 }
 function removeUnderlay(){
+  const had=!!underlay.img;
   underlay.img=null;underlay.name='';underlay.mode=false;underlay.calibrating=false;
   underlay.calP1=null;underlay.calP2=null;underlay.calibrated=false;
-  hideCalPop();updateUlUI();planRedraw();
+  hideCalPop();updateUlUI();planRedraw();if(had)markDirty();
 }
 function startCalib(){underlay.calibrating=true;underlay.calP1=null;underlay.calP2=null;underlay.mode=false;updateUlUI();planRedraw();}
 function cancelCalib(){underlay.calibrating=false;underlay.calP1=null;underlay.calP2=null;hideCalPop();updateUlUI();planRedraw();}
@@ -1271,7 +1295,7 @@ function applyCalib(){
   underlay.ux=p1.x+(underlay.ux-p1.x)*k;
   underlay.uz=p1.z+(underlay.uz-p1.z)*k;
   underlay.calibrated=true;
-  underlay.calibrating=false;underlay.calP1=null;underlay.calP2=null;
+  underlay.calibrating=false;underlay.calP1=null;underlay.calP2=null;markDirty();
   hideCalPop();updateUlUI();planRedraw();
   toast('Готово: отрезок теперь '+fmtM(v)+' м — подложка в реальном масштабе');
 }
@@ -1279,10 +1303,10 @@ function initUnderlay(){
   $('#btnUlUpload').addEventListener('click',()=>$('#fileImg').click());
   $('#fileImg').addEventListener('change',e=>{const f=e.target.files[0];if(f)loadImageFile(f);e.target.value='';});
   $('#btnUlRemove').addEventListener('click',removeUnderlay);
-  $('#btnUlVis').addEventListener('click',()=>{underlay.visible=!underlay.visible;updateUlUI();planRedraw();});
-  $('#ulOpacity').addEventListener('input',e=>{underlay.opacity=+e.target.value/100;$('#ulOpVal').textContent=e.target.value+'%';planRedraw();});
-  $('#btnUlFit').addEventListener('click',()=>{fitUnderlay();toast('Подложка вписана');});
-  $('#btnUlRot').addEventListener('click',()=>{underlay.rot=(underlay.rot+Math.PI/2)%(Math.PI*2);planRedraw();});
+  $('#btnUlVis').addEventListener('click',()=>{underlay.visible=!underlay.visible;markDirty();updateUlUI();planRedraw();});
+  $('#ulOpacity').addEventListener('input',e=>{underlay.opacity=+e.target.value/100;$('#ulOpVal').textContent=e.target.value+'%';markDirty();planRedraw();});
+  $('#btnUlFit').addEventListener('click',()=>{fitUnderlay();markDirty();toast('Подложка вписана');});
+  $('#btnUlRot').addEventListener('click',()=>{underlay.rot=(underlay.rot+Math.PI/2)%(Math.PI*2);markDirty();planRedraw();});
   $('#btnUlCal').addEventListener('click',()=>{underlay.calibrating?cancelCalib():startCalib();});
   $('#btnUlMove').addEventListener('click',()=>{
     underlay.mode=!underlay.mode;
@@ -1308,6 +1332,57 @@ function initUnderlay(){
 }
 
 /* ═══════════════ ПРОЕКТ ═══════════════ */
+const PROJECT_LIMITS={nodes:500,walls:500,openings:1000,items:500,underlayBytes:25*1024*1024};
+const finiteNumber=v=>typeof v==='number'&&Number.isFinite(v);
+function validateProjectData(p){
+  if(!p||p.app!=='dentplan')return 'Это не файл проекта DentPlan';
+  if(p.layout!==undefined){
+    const l=p.layout;
+    if(!l||!Array.isArray(l.nodes)||!Array.isArray(l.walls)||
+       (l.openings!==undefined&&!Array.isArray(l.openings)))return 'В файле повреждена геометрия помещения';
+    if(l.nodes.length>PROJECT_LIMITS.nodes||l.walls.length>PROJECT_LIMITS.walls||
+       (l.openings||[]).length>PROJECT_LIMITS.openings)return 'В файле слишком много элементов';
+    const nodeIds=new Set();
+    for(const n of l.nodes){
+      const id=String(n&&n.id||'');
+      if(!id||id.length>80||nodeIds.has(id)||!finiteNumber(n.x)||!finiteNumber(n.z)||Math.abs(n.x)>1000||Math.abs(n.z)>1000)
+        return 'В файле повреждены узлы стен';
+      nodeIds.add(id);
+    }
+    const wallIds=new Set();
+    for(const w of l.walls){
+      const id=String(w&&w.id||'');
+      if(!id||id.length>80||wallIds.has(id)||!nodeIds.has(String(w.a))||!nodeIds.has(String(w.b))||
+         !['inner','outer'].includes(w.kind))return 'В файле повреждены стены';
+      wallIds.add(id);
+    }
+    const openingIds=new Set();
+    for(const o of (l.openings||[])){
+      const id=String(o&&o.id||'');
+      if(!id||id.length>80||openingIds.has(id)||!wallIds.has(String(o.wallId))||
+         !finiteNumber(o.t)||o.t<0||o.t>1||!finiteNumber(o.w)||o.w<.5||o.w>3||
+         !['door','evac','window'].includes(o.kind))return 'В файле повреждены проёмы';
+      openingIds.add(id);
+    }
+  }
+  if(p.items!==undefined){
+    if(!Array.isArray(p.items)||p.items.length>PROJECT_LIMITS.items)return 'В файле слишком много предметов';
+    for(const it of p.items){
+      if(!it||!CATALOG[it.type]||!finiteNumber(it.x)||!finiteNumber(it.z)||!finiteNumber(it.rot)||
+         Math.abs(it.x)>1000||Math.abs(it.z)>1000||Math.abs(it.rot)>1000)return 'В файле повреждены предметы';
+    }
+  }
+  if(p.brand!==undefined&&(!/^#[0-9a-f]{6}$/i.test(String(p.brand))))return 'В файле повреждён фирменный цвет';
+  if(p.underlay!==undefined&&p.underlay!==null){
+    if(typeof p.underlay!=='object'||typeof p.underlay.data!=='string'||
+       !/^data:image\/(?:png|jpe?g|webp);base64,/i.test(p.underlay.data)||
+       p.underlay.data.length>PROJECT_LIMITS.underlayBytes)return 'В файле повреждена или слишком большая подложка';
+  }
+  return null;
+}
+function confirmReplaceProject(){
+  return !projectDirty||window.confirm('Заменить текущий проект? Несохранённые изменения будут потеряны.');
+}
 function saveProject(){
   const proj={app:'dentplan',v:2,saved:new Date().toISOString(),
     brand:state.brand,
@@ -1329,13 +1404,14 @@ function saveProject(){
       proj.underlay={data:c.toDataURL('image/jpeg',.82),name:underlay.name,
         visible:underlay.visible,opacity:underlay.opacity,
         ux:underlay.ux,uz:underlay.uz,uw:underlay.uw,rot:underlay.rot,calibrated:underlay.calibrated};
-    }catch(e){}
+    }catch(e){toast('Не удалось сохранить подложку. Проект не скачан',true);return;}
   }
   try{
     const blob=new Blob([JSON.stringify(proj)],{type:'application/json'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);a.download='dentplan-proekt.json';a.click();
     setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+    projectDirty=false;
     toast('Проект сохранён: dentplan-proekt.json');
   }catch(e){toast('Не удалось сохранить файл',true);}
 }
@@ -1344,9 +1420,16 @@ function loadProjectFile(f){
   rd.onload=()=>{
     let p;
     try{p=JSON.parse(rd.result);}catch(e){toast('Файл не является корректным JSON',true);return;}
-    if(!p||p.app!=='dentplan'){toast('Это не файл проекта DentPlan',true);return;}
+    const validationError=validateProjectData(p);
+    if(validationError){toast(validationError,true);return;}
+    if(!confirmReplaceProject())return;
+    const loadedW=clamp(Number(p.room&&p.room.w)||12,8,18);
+    const loadedD=clamp(Number(p.room&&p.room.d)||9,6,14);
     clearItems();
     state.items=[];state.sel=null;state.selObj=null;
+    state.room={w:loadedW,d:loadedD};
+    $('#roomW').value=loadedW;$('#roomD').value=loadedD;
+    $('#roomWv').textContent=fmtM(loadedW)+' м';$('#roomDv').textContent=fmtM(loadedD)+' м';
     if(p.layout&&Array.isArray(p.layout.nodes)&&p.layout.walls){
       state.nodes=p.layout.nodes.map(n=>({id:String(n.id),x:+n.x||0,z:+n.z||0}));
       state.walls=p.layout.walls.map(w=>({id:String(w.id),a:String(w.a),b:String(w.b),kind:w.kind==='inner'?'inner':'outer'}));
@@ -1363,6 +1446,7 @@ function loadProjectFile(f){
       if(CATALOG[it.type])addItem({type:it.type,x:+it.x||0,z:+it.z||0,rot:+it.rot||0});
     });
     state.seq++;
+    if(underlay.img)removeUnderlay();
     if(p.underlay&&p.underlay.data){
       const img=new Image();
       img.onload=()=>{
@@ -1376,13 +1460,15 @@ function loadProjectFile(f){
         $('#ulOpVal').textContent=Math.round(underlay.opacity*100)+'%';
         updateUlUI();planRedraw();
       };
+      img.onerror=()=>{projectDirty=true;toast('Не удалось восстановить подложку из файла проекта',true);};
       img.src=p.underlay.data;
-    }else if(underlay.img){removeUnderlay();}
+    }
     setMode('items');
     refresh();
     resetHistory();
     toast('Проект загружен: '+((p.items||[]).length)+' предметов, '+state.walls.length+' стен');
   };
+  rd.onerror=()=>toast('Не удалось прочитать файл проекта',true);
   rd.readAsText(f);
 }
 
@@ -1490,9 +1576,10 @@ function computeStats(){
   const staff=chairs*2+(rec?1:0)+((cnt('autoclave')||cnt('sink'))?1:0);
   const total=patients+waiting+staff;
   const perChair=chairs?a/chairs:0;
-  const reqExits=(total>15||a>60)?2:1;
+  /* Это только ориентир для макета, а не расчёт пожарных норм. */
+  const exitHint=(total>15||a>60)?2:1;
   const hasExits=exitPoints().length;
-  return{a,chairs,patients,waiting,staff,total,perChair,reqExits,hasExits,closed:b.closed};
+  return{a,chairs,patients,waiting,staff,total,perChair,exitHint,hasExits,closed:b.closed};
 }
 function updateRoomInfo(){
   const b=roomBounds();
@@ -1505,16 +1592,16 @@ function updateCapacity(){
   tweenNum($('#stSeats'),s.patients);
   tweenNum($('#stTotal'),s.total);
   $('#stArea').textContent=fmtM(s.a)+' м²';
-  $('#stExits').textContent=s.hasExits+' / '+s.reqExits;
+  $('#stExits').textContent=s.hasExits+' / '+s.exitHint;
   $('#meterFill').style.width=clamp(s.total/(s.a/5)*100,2,100)+'%';
   $('#meterFill').style.background=s.total>s.a/4?'var(--bad)':'var(--brand)';
   const pill=$('#stPill'),tx=$('#stPillTx');
   pill.classList.remove('ok','warn','bad');
   if(!s.chairs){pill.classList.add('warn');tx.textContent='Добавьте первое кресло из каталога';}
-  else if(s.perChair<12){pill.classList.add('bad');tx.textContent='Тесно: '+fmtM(s.perChair)+' м² на кресло (норма от 12)';}
-  else if(s.hasExits<s.reqExits){pill.classList.add('warn');tx.textContent='Нужен выход №'+s.reqExits+' — инструмент «Эвакуационный выход» на внешней стене';}
+  else if(s.perChair<14){pill.classList.add('warn');tx.textContent='Мало места в среднем: '+fmtM(s.perChair)+' м² на кресло · проверьте кабинеты отдельно';}
+  else if(s.hasExits<s.exitHint){pill.classList.add('warn');tx.textContent='Ориентир: добавьте выходов — '+s.exitHint+' · проверьте требования специалистом';}
   else if(!s.closed){pill.classList.add('warn');tx.textContent='Контур не замкнут — площадь считается по габаритам';}
-  else{pill.classList.add('ok');tx.textContent='Нормы соблюдены · выходов: '+s.hasExits;}
+  else{pill.classList.add('ok');tx.textContent='Предварительная проверка пройдена · нужна проверка специалистом';}
 }
 
 /* ═══════════════ СМЕТА ═══════════════ */
@@ -2259,6 +2346,7 @@ function initPlan(){
     if(ulDrag){
       underlay.ux=ulDrag.ox+(p.x-ulDrag.sx)/plan.fit;
       underlay.uz=ulDrag.oz+(p.y-ulDrag.sy)/plan.fit;
+      ulDrag.moved=true;
       planRedraw();return;
     }
     if(state.mode==='walls'){
@@ -2440,6 +2528,7 @@ function initPlan(){
     }
     if(rotDrag){commit();rotDrag=null;updateIbDeg();}
     if(itemDrag){if(itemMoved)commit();itemDrag=null;itemMoved=false;}
+    if(ulDrag&&ulDrag.moved)markDirty();
     ulDrag=null;liveLabel=null;
     plan.cv.style.cursor=planCursor();
   };
@@ -2684,7 +2773,7 @@ function sceneSVG(id){
 }
 const TPL_META={
   start:'Реальный формат: кабинет на 1 установку ≈ 14 м² + мини-ресепшн — типовой проект «клиника у дома».',
-  family:'Реальный формат: сетевая клиника на 3 кабинета; стерилизационная — отдельным узлом, как требуют санитарные нормы.',
+  family:'Реальный формат: сетевая клиника на 3 кабинета; стерилизационная — отдельным узлом.',
   flag:'Реальный формат: флагманский центр — 5 установок, два зала ожидания, собственный рентген-кабинет.',
   empty:'Свой объект: загрузите чертёж помещения (фото/скан), откалибруйте масштаб — и обведите стены поверх.',
 };
@@ -2703,6 +2792,7 @@ function buildTplGrid(){
   }).join('');
   $$('#tplGrid .tpl').forEach(b=>b.addEventListener('click',()=>{
     const t=TEMPLATES.find(x=>x.id===b.dataset.id);
+    if(!t||!confirmReplaceProject())return;
     applyTemplate(t);$('#tplModal').classList.remove('open');
   }));
 }
@@ -2801,7 +2891,7 @@ function buildSheet(){
       g.fillStyle='#8B8371';g.font='11px "IBM Plex Mono",monospace';
       g.fillText('DentPlan · планировщик стоматологических клиник',64,H-40);
       g.textAlign='right';
-      g.fillText('Вместимость: '+s.total+' чел · выходов: '+s.hasExits+' из '+s.reqExits+' · цвет '+state.brand.toUpperCase(),W-64,H-40);
+      g.fillText('Вместимость: '+s.total+' чел · выходов: '+s.hasExits+' · ориентир '+s.exitHint+' · цвет '+state.brand.toUpperCase(),W-64,H-40);
       g.textAlign='left';
       resolve(cv);
     };
@@ -2848,7 +2938,7 @@ function setStatus3d(s){
   const el=$('#libStatus'),tx=$('#libTx');
   el.classList.remove('ok','err');
   if(s==='ok'){el.classList.add('ok');tx.textContent='3D: готово';$('#glMsg').style.display='none';}
-  else if(s==='err'){el.classList.add('err');tx.textContent='3D: нет CDN';
+  else if(s==='err'){el.classList.add('err');tx.textContent='3D недоступна';
     $('#glMsg').innerHTML='3D-движок не загрузился — проверьте интернет и обновите страницу.<br>План, стены, смета и экспорт продолжают работать.';}
 }
 function initView(){
@@ -2887,8 +2977,8 @@ function initRoom(){
   });
 }
 function initBrand(){
-  $$('.sw').forEach(b=>b.addEventListener('click',()=>setBrand(b.dataset.c)));
-  $('#brandInput').addEventListener('input',e=>setBrand(e.target.value));
+  $$('.sw').forEach(b=>b.addEventListener('click',()=>{setBrand(b.dataset.c);markDirty();}));
+  $('#brandInput').addEventListener('input',e=>{setBrand(e.target.value);markDirty();});
 }
 function initRest(){
   $('#btnTemplates').addEventListener('click',()=>$('#tplModal').classList.add('open'));
@@ -2899,9 +2989,10 @@ function initRest(){
   $('#fireToggle').addEventListener('click',()=>{
     state.fire=!state.fire;
     $('#fireToggle').classList.toggle('on',state.fire);
+    $('#fireToggle').setAttribute('aria-pressed',String(state.fire));
     updateEvac();
     if(state.fire&&!exitPoints().length)toast('Выходов не найдено — инструмент «Эвакуационный выход» на внешней стене',true);
-    else toast(state.fire?'Показаны пути эвакуации и выходы':'Противопожарный слой скрыт');
+    else toast(state.fire?'Показаны ориентировочные направления к выходам':'Направления к выходам скрыты');
   });
   $('#btnExport').addEventListener('click',openExport);
   $('#exDl').addEventListener('click',downloadPdf);
@@ -2979,7 +3070,7 @@ requestAnimationFrame(loop);
       cam.theta=0;cam.phi=.14;cam.radius=topPreset().radius;
       setTimeout(()=>camTo(perspPreset(),1500),350);
       setStatus3d('ok');
-      toast('3D готова. Примерка дверей и окон: расстояния от углов, колесо и стрелки');
+      toast('3D-визуализация готова. Двери и окна можно перемещать по стенам');
     }catch(e){
       setStatus3d('err');
       toast('3D не запустился: '+String(e.message).slice(0,60),true);

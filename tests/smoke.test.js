@@ -18,6 +18,9 @@ assert.match(html, /Предварительная проверка пройде
 assert.doesNotMatch(html, /Нормы соблюдены/, 'В интерфейсе не должно быть неподтверждённого заявления о нормативах');
 assert.doesNotMatch(html, /#planPane\{display:none!important\}/, 'План не должен безусловно исчезать на узком экране');
 assert.match(html, /aria-label=/, 'Интерактивные элементы должны иметь доступные подписи');
+assert.match(html, /function openingMetrics\(/, 'Геометрия проёма должна иметь единый расчёт размеров');
+assert.match(html, /слева[\s\S]{0,160}ширина[\s\S]{0,160}справа/i, 'Выбранный проём должен показывать отступы и ширину');
+assert.match(html, /от начала[\s\S]{0,120}ширина/i, 'При переносе проёма нужно показывать положение и ширину');
 
 assert.match(html, /camera:\s*\{[^}]*group:'Безопасность'/, 'В каталоге должна быть камера видеонаблюдения');
 assert.match(html, /function nudgeSelectedItem\(/, 'Выбранный предмет должен двигаться клавишами');
@@ -74,5 +77,52 @@ assert.match(
   /стены/,
   'Стена со ссылкой на отсутствующий узел должна отклоняться',
 );
+assert.match(
+  sandbox.validateProjectData({ ...validProject, layout: { ...validProject.layout, walls: [{ id: 'w1', a: 'n1', b: 'n1', kind: 'outer' }] } }),
+  /стены/,
+  'Вырожденная стена должна отклоняться',
+);
+assert.match(
+  sandbox.validateProjectData({
+    ...validProject,
+    layout: { ...validProject.layout, openings: [{ id: 'o1', wallId: 'w1', t: 0.05, w: 1, kind: 'door' }] },
+  }),
+  /проёмы/,
+  'Проём не должен выходить за край стены',
+);
+assert.match(
+  sandbox.validateProjectData({
+    ...validProject,
+    layout: { ...validProject.layout, openings: [
+      { id: 'o1', wallId: 'w1', t: 0.4, w: 1, kind: 'door' },
+      { id: 'o2', wallId: 'w1', t: 0.5, w: 1, kind: 'window' },
+    ] },
+  }),
+  /проёмы/,
+  'Пересекающиеся проёмы должны отклоняться',
+);
+
+const engineSection = scriptSource.slice(
+  scriptSource.indexOf('const state='),
+  scriptSource.indexOf('/* ═══════════════ ИСТОРИЯ'),
+);
+const engine = {
+  clamp: (value, min, max) => Math.max(min, Math.min(max, value)),
+  toast() {},
+  fmtM: String,
+};
+vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits};`, engine);
+const a = engine.api.addNode(0, 0);
+const b = engine.api.addNode(4, 0);
+const wall = engine.api.addWall(a, b, 'inner');
+const door = engine.api.addOpening(wall, 0.5, 1, 'door');
+assert.deepEqual(
+  { ...engine.api.openingMetrics(door), wall: undefined, g: undefined },
+  { wall: undefined, g: undefined, center: 2, left: 1.5, right: 1.5, width: 1 },
+  'Размерная цепочка проёма должна считаться от его краёв',
+);
+assert.equal(engine.api.openingFits(wall.id, 2.4, 1, door.id), true, 'Проём можно двигать в свободном диапазоне');
+engine.api.addOpening(wall, 0.85, 0.5, 'window');
+assert.equal(engine.api.openingFits(wall.id, 2.9, 1, door.id), false, 'Проёмы не должны пересекаться');
 
 console.log('DentPlan smoke checks passed');

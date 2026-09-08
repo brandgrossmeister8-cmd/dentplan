@@ -616,8 +616,22 @@ function addOpening(wall,t,w,kind){
     c=hit.t*g.len+(c>=hit.t*g.len?hit.w/2+w/2+.06:-(hit.w/2+w/2+.06));
   }
   c=clamp(c,w/2+.03,g.len-w/2-.03);
+  const blocked=others.some(o=>{const oc=o.t*g.len;return Math.abs(c-oc)<(w+o.w)/2+.06;});
+  if(blocked){toast('На стене нет свободного места для проёма',true);return null;}
   const o={id:'o'+(oid++),wallId:wall.id,t:c/g.len,w,kind,flip:false};
   state.openings.push(o);return o;
+}
+function openingMetrics(op){
+  const wall=wById(op.wallId);if(!wall)return null;
+  const g=wallGeom(wall),center=op.t*g.len;
+  return{wall,g,center,left:center-op.w/2,right:g.len-center-op.w/2,width:op.w};
+}
+function openingFits(wallId,center,width,ignoreId){
+  const wall=wById(wallId);if(!wall)return false;
+  const g=wallGeom(wall);
+  if(width<.5||center-width/2<.03||center+width/2>g.len-.03)return false;
+  return !state.openings.some(o=>o.wallId===wallId&&o.id!==ignoreId&&
+    Math.abs(center-o.t*g.len)<(width+o.w)/2+.06);
 }
 function deleteWall(w){
   state.openings=state.openings.filter(o=>o.wallId!==w.id);
@@ -1371,26 +1385,35 @@ function validateProjectData(p){
        (l.openings!==undefined&&!Array.isArray(l.openings)))return 'В файле повреждена геометрия помещения';
     if(l.nodes.length>PROJECT_LIMITS.nodes||l.walls.length>PROJECT_LIMITS.walls||
        (l.openings||[]).length>PROJECT_LIMITS.openings)return 'В файле слишком много элементов';
-    const nodeIds=new Set();
+    const nodeIds=new Set(),nodeMap=new Map();
     for(const n of l.nodes){
       const id=String(n&&n.id||'');
       if(!id||id.length>80||nodeIds.has(id)||!finiteNumber(n.x)||!finiteNumber(n.z)||Math.abs(n.x)>1000||Math.abs(n.z)>1000)
         return 'В файле повреждены узлы стен';
       nodeIds.add(id);
+      nodeMap.set(id,n);
     }
-    const wallIds=new Set();
+    const wallIds=new Set(),wallMap=new Map();
     for(const w of l.walls){
       const id=String(w&&w.id||'');
       if(!id||id.length>80||wallIds.has(id)||!nodeIds.has(String(w.a))||!nodeIds.has(String(w.b))||
          !['inner','outer'].includes(w.kind))return 'В файле повреждены стены';
+      const a=nodeMap.get(String(w.a)),b=nodeMap.get(String(w.b));
+      if(String(w.a)===String(w.b)||Math.hypot(b.x-a.x,b.z-a.z)<.3)return 'В файле повреждены стены';
       wallIds.add(id);
+      wallMap.set(id,{w,len:Math.hypot(b.x-a.x,b.z-a.z)});
     }
-    const openingIds=new Set();
+    const openingIds=new Set(),openingsByWall=new Map();
     for(const o of (l.openings||[])){
       const id=String(o&&o.id||'');
       if(!id||id.length>80||openingIds.has(id)||!wallIds.has(String(o.wallId))||
          !finiteNumber(o.t)||o.t<0||o.t>1||!finiteNumber(o.w)||o.w<.5||o.w>3||
          !['door','evac','window'].includes(o.kind))return 'В файле повреждены проёмы';
+      const wallId=String(o.wallId),len=wallMap.get(wallId).len,center=o.t*len;
+      if(center-o.w/2<.03||center+o.w/2>len-.03)return 'В файле повреждены проёмы';
+      const siblings=openingsByWall.get(wallId)||[];
+      if(siblings.some(x=>Math.abs(center-x.center)<(o.w+x.width)/2+.06))return 'В файле повреждены проёмы';
+      siblings.push({center,width:o.w});openingsByWall.set(wallId,siblings);
       openingIds.add(id);
     }
   }
@@ -2122,6 +2145,11 @@ function mergeNode(n){
     if(w.b===n.id)w.b=near.id;
   });
   state.nodes=state.nodes.filter(o=>o.id!==n.id);
+  const collapsed=new Set(state.walls.filter(w=>w.a===w.b).map(w=>w.id));
+  if(collapsed.size){
+    state.openings=state.openings.filter(o=>!collapsed.has(o.wallId));
+    state.walls=state.walls.filter(w=>!collapsed.has(w.id));
+  }
   return true;
 }
 function eraseNode(n){
@@ -2138,6 +2166,7 @@ function nudgeOpening(id,d){
   const w=wById(op.wallId);if(!w)return;
   const g=wallGeom(w);
   const c=clamp(op.t*g.len+d,op.w/2+.03,g.len-op.w/2-.03);
+  if(!openingFits(op.wallId,c,op.w,op.id))return;
   op.t=+(c/g.len).toFixed(4);
   planRedraw();
 }
@@ -2165,7 +2194,8 @@ function renderWallBar(){
     const op=state.openings.find(x=>x.id===o.id);
     if(!op){bar.classList.remove('show');return;}
     const names={door:'Дверь',evac:'Эвак. выход',window:'Окно'};
-    bar.innerHTML='<span id="wbName">Проём · '+names[op.kind]+'<em>'+fmt2(op.w)+' м</em></span>'+
+    const m=openingMetrics(op);
+    bar.innerHTML='<span id="wbName">Проём · '+names[op.kind]+'<em>слева '+fmt2(m.left)+' м · ширина '+fmt2(m.width)+' м · справа '+fmt2(m.right)+' м</em></span>'+
       '<button data-act="okind" data-k="door" class="'+(op.kind==='door'?'on':'')+'">Дверь</button>'+
       '<button data-act="okind" data-k="evac" class="'+(op.kind==='evac'?'on':'')+'">Эвак.</button>'+
       '<button data-act="okind" data-k="window" class="'+(op.kind==='window'?'on':'')+'">Окно</button>'+
@@ -2201,8 +2231,10 @@ function wallBarAct(act,k,fine){
     if(act==='wminus'||act==='wplus'){
       const w=wById(op.wallId);if(!w)return;
       const g=wallGeom(w);
-      op.w=clamp(op.w+(act==='wplus'?.1:-.1),.5,Math.max(.5,g.len-.15));
-      op.t=clamp(op.t*g.len,op.w/2+.03,g.len-op.w/2-.03)/g.len;
+      const nextW=clamp(op.w+(act==='wplus'?.1:-.1),.5,Math.max(.5,g.len-.15));
+      const center=clamp(op.t*g.len,nextW/2+.03,g.len-nextW/2-.03);
+      if(!openingFits(op.wallId,center,nextW,op.id)){toast('Проём нельзя расширить: рядом другой проём',true);return;}
+      op.w=nextW;op.t=center/g.len;
       staticDirty=true;refresh();commit();renderWallBar();
     }
     if(act==='del'){
@@ -2431,9 +2463,10 @@ function initPlan(){
                 tNew=(ePos-wNew/2)/g.len;
               }
               tNew=clamp(tNew,(wNew/2+.03)/g.len,(g.len-wNew/2-.03)/g.len);
+              if(!openingFits(op.wallId,tNew*g.len,wNew,op.id))return;
               op.w=+wNew.toFixed(3);op.t=+tNew.toFixed(4);
               resizeDrag.moved=true;
-              liveLabel={x:m.x,z:m.z,text:fmt2(op.w)+' м'};
+              liveLabel={x:m.x,z:m.z,text:'от начала '+fmt2(op.t*g.len)+' м · ширина '+fmt2(op.w)+' м'};
               planRedraw();
             }
           }
@@ -2479,9 +2512,9 @@ function initPlan(){
           const m=toMeters(p);
           const proj=clamp((m.x-g.A.x)*g.ux+(m.z-g.A.z)*g.uz,op.w/2+.03,g.len-op.w/2-.03);
           const nt=+(proj/g.len).toFixed(4);
-          if(nt!==op.t){
+          if(nt!==op.t&&openingFits(op.wallId,nt*g.len,op.w,op.id)){
             op.t=nt;wallDrag.moved=true;
-            liveLabel={x:m.x,z:m.z,text:fmt2(op.w)+' м'};
+            liveLabel={x:m.x,z:m.z,text:'от начала '+fmt2(nt*g.len)+' м · ширина '+fmt2(op.w)+' м'};
             planRedraw();
           }
         }
@@ -2647,7 +2680,7 @@ function initKeys(){
         let d=0;
         if(isPlus)d=+.1;
         if(isMinus)d=-.1;
-        if(isArrow)d=(e.key==='ArrowRight'?.05:-.05);
+        if(isArrow)d=(e.key==='ArrowRight'?1:-1)*(e.shiftKey?.01:.05);
         e.preventDefault();
         if(state.selObj&&state.selObj.type==='wall'&&(isPlus||isMinus)){wallBarAct(d>0?'lenplus':'lenminus');return;}
         if(state.selObj&&state.selObj.type==='opening'){

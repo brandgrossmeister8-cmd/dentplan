@@ -652,6 +652,13 @@ function moveOpeningTo(op,center){
   if(!openingFits(op.wallId,c,op.w,op.id))return false;
   op.t=+(c/g.len).toFixed(4);return true;
 }
+const WALL_HOVER_LABELS={outer:'Наружная стена',inner:'Перегородка'};
+const OPENING_HOVER_LABELS={door:'Дверь',window:'Окно',evac:'Эвакуационный проём'};
+function wallHoverLabel(opening,wall){
+  if(opening)return OPENING_HOVER_LABELS[opening.kind]||'Проём';
+  if(wall)return WALL_HOVER_LABELS[wall.kind]||'Стена';
+  return '';
+}
 function shouldPrioritizeOpeningHit(tool,opening){return !!opening&&!!TOOL_DEF[tool];}
 function deleteWall(w){
   state.openings=state.openings.filter(o=>o.wallId!==w.id);
@@ -1240,7 +1247,10 @@ function drawPlan(g,W,H,opts={}){
     });
   }
 
-  /* живая плашка у курсора при перетаскивании */
+  /* подпись элемента под курсором и живая плашка при перетаскивании */
+  if(wallsMode&&hoverLabel&&!opts.plain){
+    drawTag(g,X(hoverLabel.x),Y(hoverLabel.z)-18,hoverLabel.text,state.brand,'#fff');
+  }
   if(wallsMode&&liveLabel&&!opts.plain){
     drawTag(g,X(liveLabel.x),Y(liveLabel.z)-20,liveLabel.text,state.brand,'#fff');
   }
@@ -2107,7 +2117,7 @@ const TOOL_DEF={
   evac:{kind:'evac',label:'Эвакуационный выход'},
 };
 const toolW={door:.9,window:1.2,evac:1.0};
-let hoverNode=null,hoverErase=null,ghost=null,drawState=null,wallDrag=null,resizeDrag=null,liveLabel=null,rotDrag=null;
+let hoverNode=null,hoverErase=null,hoverLabel=null,ghost=null,drawState=null,wallDrag=null,resizeDrag=null,liveLabel=null,rotDrag=null;
 
 function planCursor(){
   if(underlay.calibrating)return 'crosshair';
@@ -2121,7 +2131,7 @@ function planCursor(){
 function setTool(t){
   state.tool=t;
   $$('#wallTools button').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
-  endDraw();ghost=null;hoverErase=null;
+  endDraw();ghost=null;hoverErase=null;hoverLabel=null;
   updateToolHint();updateUlUI();planRedraw();
 }
 function updateToolHint(){
@@ -2138,6 +2148,7 @@ function updateToolHint(){
 }
 function setMode(m){
   state.mode=m;
+  hoverLabel=null;
   $$('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
   $('#wallTools').hidden=m!=='walls';
   $('#toolHint').hidden=m!=='walls';
@@ -2369,11 +2380,12 @@ function initPlan(){
       staticDirty=true;refresh();commit();renderWallBar();
     }
   },{passive:false});
-  plan.cv.addEventListener('pointerleave',()=>{ghost=null;hoverErase=null;hoverNode=null;liveLabel=null;planRedraw();});
+  plan.cv.addEventListener('pointerleave',()=>{ghost=null;hoverErase=null;hoverNode=null;hoverLabel=null;liveLabel=null;planRedraw();});
 
   plan.cv.addEventListener('pointerdown',e=>{
     plan.cv.setPointerCapture(e.pointerId);
     const p=pos(e);
+    hoverLabel=null;
     if(underlay.calibrating){
       const m=toMeters(p);
       if(!underlay.calP1||underlay.calP2){underlay.calP1=m;underlay.calP2=null;underlay.calMouse=m;}
@@ -2475,6 +2487,7 @@ function initPlan(){
       planRedraw();return;
     }
     if(state.mode==='walls'){
+      hoverLabel=null;
       if(drawState){
         const sp=snapPoint(toMeters(p),drawState.last);
         drawState.mouse={x:sp.x,z:sp.z};drawState.snapId=sp.nodeId||null;
@@ -2585,7 +2598,12 @@ function initPlan(){
       }else if(state.tool==='select'){
         hoverNode=nodeAt(p);
       }
-      plan.cv.style.cursor=state.tool==='select'?(hoverNode?'grab':((openingAt(p)||wallAt(p))?'pointer':'default')):'crosshair';
+      const nodeHit=(state.tool==='select'||state.tool==='erase')?nodeAt(p):null;
+      const hoverOpening=nodeHit?null:openingAt(p);
+      const hoverWall=hoverOpening?null:wallAt(p);
+      const hoverText=wallHoverLabel(hoverOpening,hoverWall);
+      if(hoverText){const m=toMeters(p);hoverLabel={x:m.x,z:m.z,text:hoverText};}
+      plan.cv.style.cursor=state.tool==='select'?(hoverNode?'grab':((hoverOpening||hoverWall)?'pointer':'default')):'crosshair';
       planRedraw();
       return;
     }

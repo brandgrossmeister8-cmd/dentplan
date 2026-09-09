@@ -48,6 +48,13 @@ assert.match(html, /translateWall\(w,dx,dz,wallDrag\.oa,wallDrag\.ob\)/, 'Drag �
 assert.match(html, /moveOpeningTo\(op,proj\)/, 'Drag проёма должен менять его положение, а не создавать копию');
 assert.match(html, /else if\(wallDrag\.type==='opening'\)\{[\s\S]*?refresh\(\);commit\(\);renderWallBar\(\);/, 'Завершённый drag проёма должен обновлять вид, панель и историю');
 assert.match(html, /else if\(wallDrag\.type==='wall'\)\{[\s\S]*?staticDirty=true;refresh\(\);commit\(\);/, 'Завершённый drag стены должен обновлять 2D/3D и историю');
+assert.match(html, /function wallHoverLabel\(/, 'Для hover нужна единая классификация стены и проёма');
+assert.match(html, /endDraw\(\);ghost=null;hoverErase=null;hoverLabel=null;/, 'При смене инструмента старая hover-подпись не должна зависать');
+assert.match(html, /const hoverOpening=nodeHit\?null:openingAt\(p\)/, 'Hover должен сначала проверять проём');
+assert.match(html, /const hoverWall=hoverOpening\?null:wallAt\(p\)/, 'Линия стены не должна перекрывать подпись проёма');
+assert.match(html, /const hoverText=wallHoverLabel\(hoverOpening,hoverWall\)/, 'Hover должен вызывать классификацию элемента');
+assert.match(html, /if\(wallsMode&&hoverLabel&&!opts\.plain\)\{[\s\S]*?drawTag\(g,X\(hoverLabel\.x\)/, 'Подпись hover должна рисоваться через canvas drawTag');
+assert.match(html, /pointerleave',\(\)=>\{[^}]*hoverLabel=null/, 'Подпись hover должна очищаться при уходе с canvas');
 assert.match(html, /слева[\s\S]{0,160}ширина[\s\S]{0,160}справа/i, 'Выбранный проём должен показывать отступы и ширину');
 assert.match(html, /от начала[\s\S]{0,120}ширина/i, 'При переносе проёма нужно показывать положение и ширину');
 
@@ -248,10 +255,16 @@ const engine = {
   toast() {},
   fmtM: String,
 };
-vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode,translateWall,moveOpeningTo,deleteWall};`, engine);
+vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode,translateWall,moveOpeningTo,deleteWall,wallHoverLabel};`, engine);
 engine.TOOL_DEF = { door: {}, window: {}, evac: {} };
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', { id: 'o1' }), true, 'При клике по двери нужно начать её перенос');
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', null), false, 'Без проёма нужно оставить возможность его добавить');
+assert.equal(engine.api.wallHoverLabel(null, { kind: 'outer' }), 'Наружная стена');
+assert.equal(engine.api.wallHoverLabel(null, { kind: 'inner' }), 'Перегородка');
+assert.equal(engine.api.wallHoverLabel({ kind: 'door' }, { kind: 'outer' }), 'Дверь', 'Проём должен иметь приоритет над стеной в hover');
+assert.equal(engine.api.wallHoverLabel({ kind: 'window' }, { kind: 'inner' }), 'Окно');
+assert.equal(engine.api.wallHoverLabel({ kind: 'evac' }, { kind: 'outer' }), 'Эвакуационный проём');
+assert.equal(engine.api.wallHoverLabel(null, null), '');
 const angle90 = engine.api.angleDeviation({ x: 1, z: 0 }, { x: 0, z: 1 });
 assert.equal(angle90.angle, 90, '90° должны давать нулевое отклонение');
 assert.equal(angle90.deviation, 0);

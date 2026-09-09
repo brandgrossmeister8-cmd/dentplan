@@ -32,6 +32,9 @@ assert.match(html, /aria-label=/, 'Интерактивные элементы �
 assert.match(html, /function openingMetrics\(/, 'Геометрия проёма должна иметь единый расчёт размеров');
 assert.match(html, /function angleDeviation\(/, 'Для углов нужна единая чистая функция');
 assert.match(html, /angleHintForNode\(drawState\.lastNodeId/, 'Подсказка угла должна вызываться в preview цепочного рисования');
+assert.match(html, /if\(angleHint\)drawTag\(g,X\(m\.x\),Y\(m\.z\)\+18,angleHintText\(angleHint\)/, 'Preview должен рисовать live-подсказку угла рядом с курсором');
+assert.match(html, /drawState\.last=\{x:B\.x,z:B\.z\};drawState\.lastNodeId=B\.id/, 'После фиксации сегмента цепочка должна сохранить узел для следующего preview');
+assert.match(html, /function angleCorrectionText\(/, 'Коррекция угла должна быть отдельной чистой функцией');
 assert.match(html, /angleHintForNode\(n\.id,\{x:n\.x,z:n\.z\},w\.id\)/, 'Подсказка угла должна вызываться при изменении конца стены');
 assert.match(html, /function translateWall\(/, 'Перенос стены должен быть переиспользуемой операцией модели');
 assert.match(html, /function moveOpeningTo\(/, 'Перенос проёма должен быть переиспользуемой операцией модели');
@@ -254,8 +257,9 @@ const engine = {
   D2R: Math.PI / 180,
   toast() {},
   fmtM: String,
+  fmt2: value => Number(value).toFixed(2).replace('.', ','),
 };
-vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode,translateWall,moveOpeningTo,deleteWall,wallHoverLabel};`, engine);
+vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode,angleCorrectionText,angleHintText,translateWall,moveOpeningTo,deleteWall,wallHoverLabel};`, engine);
 engine.TOOL_DEF = { door: {}, window: {}, evac: {} };
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', { id: 'o1' }), true, 'При клике по двери нужно начать её перенос');
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', null), false, 'Без проёма нужно оставить возможность его добавить');
@@ -265,6 +269,19 @@ assert.equal(engine.api.wallHoverLabel({ kind: 'door' }, { kind: 'outer' }), 'Д
 assert.equal(engine.api.wallHoverLabel({ kind: 'window' }, { kind: 'inner' }), 'Окно');
 assert.equal(engine.api.wallHoverLabel({ kind: 'evac' }, { kind: 'outer' }), 'Эвакуационный проём');
 assert.equal(engine.api.wallHoverLabel(null, null), '');
+assert.equal(engine.api.angleCorrectionText(90, 0), 'перпендикулярно');
+assert.equal(engine.api.angleCorrectionText(0, 90), 'увеличьте угол на 90,00° до 90°');
+assert.equal(engine.api.angleCorrectionText(180, 90), 'уменьшите угол на 90,00° до 90°');
+const previewA = engine.api.addNode(0, 0);
+const previewB = engine.api.addNode(4, 0);
+engine.api.addWall(previewA, previewB, 'inner');
+const preview88 = engine.api.angleHintForNode(previewB.id, {
+  x: 4 - Math.cos(88 * Math.PI / 180),
+  z: Math.sin(88 * Math.PI / 180),
+}, null);
+assert.match(engine.api.angleHintText(preview88), /угол 88,00° · отклонение 2,00° · увеличьте угол на 2,00° до 90°/, 'Preview должен объяснять, как исправить угол 88°');
+const preview90 = engine.api.angleHintForNode(previewB.id, { x: 4, z: 1 }, null);
+assert.match(engine.api.angleHintText(preview90), /отклонение 0,00° · перпендикулярно/, 'Точный прямой угол должен быть явно отмечен');
 const angle90 = engine.api.angleDeviation({ x: 1, z: 0 }, { x: 0, z: 1 });
 assert.equal(angle90.angle, 90, '90° должны давать нулевое отклонение');
 assert.equal(angle90.deviation, 0);

@@ -587,6 +587,12 @@ function angleDeviation(v1,v2){
   const angle=Math.max(0,Math.min(180,Math.acos(dot)/D2R));
   return{angle,deviation:Math.abs(90-angle)};
 }
+function angleCorrectionText(angle,deviation){
+  const d=Math.abs(Number(deviation));
+  if(!Number.isFinite(d))return '';
+  if(d<.005)return 'перпендикулярно';
+  return (Number(angle)<90?'увеличьте':'уменьшите')+' угол на '+fmt2(d)+'° до 90°';
+}
 function angleHintForNode(nodeId,point,mainWallId){
   const node=nById(nodeId);if(!node||!point)return null;
   const neighbors=state.walls.filter(w=>w.a===nodeId||w.b===nodeId);
@@ -601,7 +607,7 @@ function angleHintForNode(nodeId,point,mainWallId){
   const vRef={x:refOther.x-vertex.x,z:refOther.z-vertex.z};
   return angleDeviation(vMain,vRef);
 }
-function angleHintText(hint){return hint?'угол '+fmt2(hint.angle)+'° · отклонение '+fmt2(hint.deviation)+'°':'';}
+function angleHintText(hint){return hint?'угол '+fmt2(hint.angle)+'° · отклонение '+fmt2(hint.deviation)+'° · '+angleCorrectionText(hint.angle,hint.deviation):'';}
 function buildRectWalls(w,d,withEvac){
   state.nodes=[];state.walls=[];state.openings=[];
   const a=addNode(-w/2,-d/2),b=addNode(w/2,-d/2),c=addNode(w/2,d/2),e=addNode(-w/2,d/2);

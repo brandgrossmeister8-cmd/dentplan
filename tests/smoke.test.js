@@ -48,6 +48,11 @@ assert.match(html, /КАМЕР[^\n]*String\(s\.cameras\)/, 'Число каме�
 assert.match(html, /BUILDERS=\{[\s\S]*camera\(\)/, 'Для камеры нужна 3D-модель');
 assert.match(html, /function addItem\([^]*?clampItem\(item\)/, 'Новый предмет должен сразу ограничиваться контуром');
 assert.match(html, /function nudgeSelectedItem\([^]*?moveItem\(it\)/, 'Сдвиг клавишами должен сохранять предмет в контуре');
+assert.doesNotMatch(html, /\bprice\s*:/i, 'CATALOG не должен содержать ценовые поля');
+assert.doesNotMatch(html, /\b(?:budget|estimate|updateEstimate|estimateTotal)\b/i, 'Бюджетные функции должны быть удалены');
+assert.doesNotMatch(html, /btnEstimate|estPanel|estBody|estTotal|estSum|cat-price|Смета|Монтаж и пусконаладка|₽|руб\.?/i, 'В UI и экспорте не должно быть сметы');
+assert.match(html, /СПЕЦИФИКАЦИЯ ОСНАЩЕНИЯ/, 'В PDF должна остаться спецификация');
+assert.match(html, /state\.items\.forEach\(i=>map\[i\.type\]=\(map\[i\.type\]\|\|0\)\+1\)/, 'Экспорт должен сохранять количество единиц');
 for (const type of ['instrument', 'compressor', 'camera', 'desk', 'officechair']) {
   assert.match(html, new RegExp(`case '${type}'`), `Для ${type} нужно 2D-представление`);
   assert.match(html, new RegExp(`\\n\\s{2}${type}\\(\\)`), `Для ${type} нужно 3D-представление`);

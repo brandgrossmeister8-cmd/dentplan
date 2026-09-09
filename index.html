@@ -40,7 +40,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .btn:hover{border-color:var(--coal2);color:var(--coal)}
 .btn svg{width:15px;height:15px}
 .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;transition:background .2s}
-.btn .sum{font-family:var(--mono);font-size:12px}
 .seg{display:flex;background:var(--oat);border-radius:9px;padding:3px;gap:2px}
 .seg button{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--coal2);transition:all .15s}
 .seg button svg{width:14px;height:14px}
@@ -143,7 +142,6 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 .cat-item:hover .cat-ic{background:rgba(var(--brand-rgb),.16);color:var(--brand)}
 .cat-ic svg{width:16px;height:16px}
 .cat-name{font-size:12.5px;font-weight:500;line-height:1.25}
-.cat-price{font-family:var(--mono);font-size:10.5px;color:var(--mut)}
 
 #statusbar{display:flex;align-items:center;gap:16px;padding:0 16px;background:var(--paper2);border-top:1px solid var(--line);font-size:12px;position:relative;z-index:30}
 .st{display:flex;align-items:center;gap:7px;color:var(--coal2);white-space:nowrap}
@@ -160,25 +158,6 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 .st-hint{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--mut)}
 .bump{animation:bump .35s ease}
 @keyframes bump{40%{transform:scale(1.35)}}
-
-#estPanel{position:fixed;top:57px;right:0;bottom:47px;width:346px;background:var(--paper2);z-index:40;border-left:1px solid var(--line);transform:translateX(105%);transition:transform .38s cubic-bezier(.25,.9,.3,1);display:flex;flex-direction:column;box-shadow:-18px 0 40px rgba(38,36,31,.08)}
-#estPanel.open{transform:none}
-.est-head{display:flex;align-items:center;gap:10px;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
-.est-head h3{font-family:var(--head);font-weight:600;font-size:17px}
-.est-head p{font-size:11px;color:var(--mut)}
-#estClose{margin-left:auto;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--mut)}
-#estClose:hover{background:var(--oat);color:var(--coal)}
-#estBody{flex:1;overflow-y:auto;padding:10px 18px}
-.est-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
-.est-row .n{color:var(--coal2)}
-.est-row .n em{font-style:normal;font-family:var(--mono);color:var(--mut);margin-right:6px}
-.est-row .s{font-family:var(--mono);font-size:12px}
-.est-row.sub .n,.est-row.sub .s{color:var(--mut)}
-#estFoot{padding:14px 18px 18px;border-top:1px solid var(--line)}
-.est-total{display:flex;justify-content:space-between;align-items:baseline}
-.est-total .l{font-family:var(--head);font-weight:600;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
-.est-total .v{font-family:var(--mono);font-size:19px;font-weight:500;color:var(--brand)}
-.est-note{font-size:10.5px;color:var(--mut);margin-top:7px}
 
 #itemBar,#wallBar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%) translateY(76px);z-index:20;display:flex;align-items:center;gap:4px;background:var(--coal);color:var(--paper2);padding:6px 8px 6px 14px;border-radius:12px;box-shadow:0 10px 30px rgba(38,36,31,.28);transition:transform .3s cubic-bezier(.25,.9,.3,1);white-space:nowrap}
 #itemBar.show,#wallBar.show{transform:translateX(-50%) translateY(0)}
@@ -289,7 +268,6 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
     <label class="sw-custom" title="Свой цвет"><i data-lucide="pipette"></i><input type="color" id="brandInput" value="#0E7C7B" aria-label="Выбрать свой цвет"></label>
   </div>
   <div class="tb-sep"></div>
-  <button class="btn" id="btnEstimate"><i data-lucide="receipt"></i>Смета <span class="sum" id="estSum">0 ₽</span></button>
   <button class="btn primary" id="btnExport"><i data-lucide="download"></i>Экспорт</button>
 </header>
 
@@ -394,7 +372,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
     <div class="pane" id="threePane">
       <span class="pane-tag">3D-ПЕРСПЕКТИВА</span>
       <button id="btnCamReset" title="Вернуть камеру" aria-label="Вернуть камеру"><i data-lucide="crosshair"></i></button>
-      <div id="glMsg">Загружаю 3D-движок…<br>План и смета уже работают.</div>
+      <div id="glMsg">Загружаю 3D-движок…<br>План и геометрия уже работают.</div>
       <canvas id="gl"></canvas>
     </div>
   </section>
@@ -427,18 +405,6 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
   <span class="pill" id="stPill"><i data-lucide="check-circle-2"></i><span id="stPillTx">—</span></span>
   <span class="st-hint">колесо / ← → — двигать дверь или окно по стене (Shift — 1 см) · Ctrl+Z — отменить</span>
 </footer>
-
-<aside id="estPanel">
-  <div class="est-head">
-    <div><h3>Смета оснащения</h3><p>обновляется при каждой расстановке</p></div>
-    <button id="estClose" aria-label="Закрыть смету"><i data-lucide="x"></i></button>
-  </div>
-  <div id="estBody"></div>
-  <div id="estFoot">
-    <div class="est-total"><span class="l">Итого</span><span class="v" id="estTotal">0 ₽</span></div>
-    <p class="est-note">Ориентировочные цены на мебель и оборудование, монтаж 8%.</p>
-  </div>
-</aside>
 
 <div class="overlay" id="tplModal">
   <div id="tplCard">
@@ -538,22 +504,22 @@ window.addEventListener('error',e=>showErrOnce(String(e.message||'ошибка')
 window.addEventListener('unhandledrejection',e=>showErrOnce(String(e.reason&&e.reason.message||e.reason).slice(0,90)));
 
 const CATALOG={
-  chair:    {name:'Стоматологическая установка',price:385000, w:1.4, d:1.9,  icon:'armchair',     group:'Клинический кабинет'},
-  doctor:   {name:'Табурет врача',          price:24000,  w:0.62,d:0.62, icon:'circle-user',  group:'Клинический кабинет'},
-  cabinet:  {name:'Тумба врача',            price:52000,  w:1.2, d:0.6,  icon:'archive',      group:'Клинический кабинет'},
-  instrument:{name:'Стол инструментальный',price:38000,w:0.75,d:0.48,icon:'table-2',       group:'Клинический кабинет'},
-  xray:     {name:'Рентген-аппарат',        price:490000, w:0.85,d:0.7,  icon:'radiation',    group:'Диагностика'},
-  autoclave:{name:'Автоклав',               price:148000, w:0.72,d:0.62, icon:'shield-check', group:'Стерилизация'},
-  sink:     {name:'Стерилизационная мойка', price:96000,  w:1.0, d:0.6,  icon:'droplets',     group:'Стерилизация'},
-  tall:     {name:'Шкаф медицинский',       price:64000,  w:1.0, d:0.5,  icon:'layers',       group:'Стерилизация'},
-  compressor:{name:'Компрессор',              price:125000, w:0.75,d:0.65, icon:'gauge',        group:'Техническая зона'},
-  camera:   {name:'Камера видеонаблюдения',price:18000,  w:0.35,d:0.35, icon:'cctv',         group:'Безопасность'},
-  reception:{name:'Стойка ресепшн',         price:215000, w:2.4, d:0.85, icon:'store',        group:'Зона пациентов'},
-  sofa:     {name:'Диван ожидания',         price:94000,  w:1.9, d:0.85, icon:'sofa',         group:'Зона пациентов'},
-  table:    {name:'Журнальный столик',      price:16000,  w:0.9, d:0.5,  icon:'square',       group:'Зона пациентов'},
-  desk:     {name:'Рабочий стол',          price:45000,  w:1.4, d:0.7,  icon:'table',        group:'Мебель'},
-  officechair:{name:'Офисное кресло',        price:22000,  w:0.65,d:0.65, icon:'chair',        group:'Мебель'},
-  plant:    {name:'Растение в кадке',       price:7500,   w:0.5, d:0.5,  icon:'leaf',         group:'Зона пациентов'},
+  chair:    {name:'Стоматологическая установка', w:1.4, d:1.9,  icon:'armchair',     group:'Клинический кабинет'},
+  doctor:   {name:'Табурет врача',          w:0.62,d:0.62, icon:'circle-user',  group:'Клинический кабинет'},
+  cabinet:  {name:'Тумба врача',            w:1.2, d:0.6,  icon:'archive',      group:'Клинический кабинет'},
+  instrument:{name:'Стол инструментальный',w:0.75,d:0.48,icon:'table-2',       group:'Клинический кабинет'},
+  xray:     {name:'Рентген-аппарат',        w:0.85,d:0.7,  icon:'radiation',    group:'Диагностика'},
+  autoclave:{name:'Автоклав',               w:0.72,d:0.62, icon:'shield-check', group:'Стерилизация'},
+  sink:     {name:'Стерилизационная мойка', w:1.0, d:0.6,  icon:'droplets',     group:'Стерилизация'},
+  tall:     {name:'Шкаф медицинский',       w:1.0, d:0.5,  icon:'layers',       group:'Стерилизация'},
+  compressor:{name:'Компрессор',              w:0.75,d:0.65, icon:'gauge',        group:'Техническая зона'},
+  camera:   {name:'Камера видеонаблюдения', w:0.35,d:0.35, icon:'cctv',         group:'Безопасность'},
+  reception:{name:'Стойка ресепшн',         w:2.4, d:0.85, icon:'store',        group:'Зона пациентов'},
+  sofa:     {name:'Диван ожидания',         w:1.9, d:0.85, icon:'sofa',         group:'Зона пациентов'},
+  table:    {name:'Журнальный столик',      w:0.9, d:0.5,  icon:'square',       group:'Зона пациентов'},
+  desk:     {name:'Рабочий стол',          w:1.4, d:0.7,  icon:'table',        group:'Мебель'},
+  officechair:{name:'Офисное кресло',        w:0.65,d:0.65, icon:'chair',        group:'Мебель'},
+  plant:    {name:'Растение в кадке',       w:0.5, d:0.5,  icon:'leaf',         group:'Зона пациентов'},
 };
 const GROUP_ORDER=['Клинический кабинет','Диагностика','Стерилизация','Техническая зона','Безопасность','Мебель','Зона пациентов'];
 const TEMPLATES=[
@@ -1733,25 +1699,10 @@ function updateCapacity(){
   else{pill.classList.add('ok');tx.textContent='Макет заполнен · параметры должен проверить специалист';}
 }
 
-/* ═══════════════ СМЕТА ═══════════════ */
-function estimateTotal(){let t=0;state.items.forEach(i=>t+=CATALOG[i.type].price);return t;}
-function updateEstimate(){
-  const map={};
-  state.items.forEach(i=>map[i.type]=(map[i.type]||0)+1);
-  const rows=Object.entries(map).map(p=>({t:p[0],n:p[1],sum:p[1]*CATALOG[p[0]].price})).sort((a,b)=>b.sum-a.sum);
-  const sub=rows.reduce((s,r)=>s+r.sum,0),inst=Math.round(sub*.08),total=sub+inst;
-  $('#estBody').innerHTML=rows.map(r=>
-    '<div class="est-row"><span class="n"><em>'+r.n+' ×</em>'+CATALOG[r.t].name+'</span><span class="s">'+fmt(r.sum)+' ₽</span></div>'
-  ).join('')||'<p style="font-size:12px;color:var(--mut);padding:10px 0">Добавьте оборудование из каталога — смета соберётся автоматически.</p>';
-  $('#estBody').insertAdjacentHTML('beforeend',
-    '<div class="est-row sub"><span class="n">Монтаж и пусконаладка (8%)</span><span class="s">'+fmt(inst)+' ₽</span></div>');
-  $('#estTotal').textContent=fmt(total)+' ₽';
-  $('#estSum').textContent=fmt(total)+' ₽';
-}
 function refresh(){
   updateCapacity();updateRoomInfo();
   staticDirty=true;
-  updateEstimate();planRedraw();updateEvac();
+  planRedraw();updateEvac();
 }
 
 /* ═══════════════ THREE.JS ═══════════════ */
@@ -2712,7 +2663,7 @@ function buildCatalog(){
       const c=CATALOG[k];
       html+='<button class="cat-item" data-type="'+k+'">'+
         '<span class="cat-ic"><i data-lucide="'+c.icon+'"></i></span>'+
-        '<span><span class="cat-name">'+c.name+'</span><br><span class="cat-price">'+fmt(c.price)+' ₽</span></span></button>';
+        '<span class="cat-name">'+c.name+'</span></button>';
     });
     html+='</div>';
   });
@@ -2948,7 +2899,7 @@ function sceneSVG(id){
 const TPL_META={
   start:'Реальный формат: кабинет на 1 установку ≈ 14 м² + мини-ресепшн — типовой проект «клиника у дома».',
   family:'Реальный формат: сетевая клиника на 3 кабинета; стерилизационная — отдельным узлом.',
-  flag:'Реальный формат: флагманский центр — 5 установок, два зала ожидания, собственный рентген-кабинет.',
+  flag:'Реальный формат: флагманский объект — 5 установок, два зала ожидания, отдельный рентген-кабинет.',
   empty:'Свой объект: загрузите чертёж помещения (фото/скан), откалибруйте масштаб — и обведите стены поверх.',
 };
 function templatesForProfile(templates,profile){return profile==='general'?templates.filter(t=>t.id==='empty'):templates;}
@@ -2959,13 +2910,12 @@ function buildTplGrid(){
   $('#tplGrid').innerHTML=templatesForProfile(TEMPLATES,state.profile).map(t=>{
     const a=(t.room.w*t.room.d).toFixed(0);
     const ch=t.items.filter(i=>i.type==='chair').length;
-    const bud=t.items.reduce((s,i)=>s+CATALOG[i.type].price,0);
     const meta=TPL_META[t.id]?'<span class="m">'+TPL_META[t.id]+'</span>':'';
     return '<button class="tpl" data-id="'+t.id+'">'
       +'<span class="tpl-img">'+sceneSVG(t.id)
       +'<img class="tpl-photo" src="photos/'+t.id+'.jpg" alt="" loading="lazy" onerror="this.remove()">'
       +'</span>'
-      +'<span class="in"><h3>'+t.name+'</h3><p>'+a+' м² · '+ch+' кресел'+(bud?' · ≈ '+fmtM(bud/1e6)+' млн ₽':'')+'</p>'
+      +'<span class="in"><h3>'+t.name+'</h3><p>'+a+' м² · '+ch+' кресел</p>'
       +'<span class="d">'+t.desc+'</span>'+meta+'</span></button>';
   }).join('');
   $$('#tplGrid .tpl').forEach(b=>b.addEventListener('click',()=>{
@@ -3077,7 +3027,7 @@ function buildSheet(){
     g.fillStyle='#8B8371';g.font='13px "IBM Plex Mono",monospace';
     g.fillText('DentPlan · сгенерировано '+new Date().toLocaleDateString('ru-RU'),143,122);
     const area=data.layout.floorAreaM2;
-    const kpi=[['ПЛОЩАДЬ',area===null?'—':fmtM(area)+' м²'],['УСТАНОВОК',String(s.chairs)],['КАМЕР',String(s.cameras)],['СМЕТА',fmt(estimateTotal()*1.08)+' ₽']];
+    const kpi=[['ПЛОЩАДЬ',area===null?'—':fmtM(area)+' м²'],['ЕДИНИЦ',String(state.items.length)],['УСТАНОВОК',String(s.chairs)],['КАМЕР',String(s.cameras)]];
     let kx=W-64;g.textAlign='right';
     kpi.slice().reverse().forEach(p=>{
       g.fillStyle='#26241F';g.font='500 24px "IBM Plex Mono",monospace';g.fillText(p[1],kx,92);
@@ -3118,7 +3068,7 @@ function buildSheet(){
     };
     const finish=()=>{
       const map={};state.items.forEach(i=>map[i.type]=(map[i.type]||0)+1);
-      const rows=Object.keys(map).map(t=>({t,n:map[t],sum:map[t]*CATALOG[t].price})).sort((a,b)=>b.sum-a.sum).slice(0,9);
+      const rows=Object.keys(map).map(t=>({t,n:map[t]}));
       let sy=178;
       g.font='600 14px Jost,sans-serif';g.fillStyle='#26241F';
       g.fillText('СПЕЦИФИКАЦИЯ ОСНАЩЕНИЯ',1106,sy);sy+=16;
@@ -3126,17 +3076,14 @@ function buildSheet(){
       rows.forEach(r=>{
         g.fillStyle='#4C473D';g.font='12px "IBM Plex Sans",sans-serif';
         g.fillText(r.n+' × '+CATALOG[r.t].name,1106,sy);
-        g.font='12px "IBM Plex Mono",monospace';g.textAlign='right';
-        g.fillText(fmt(r.sum)+' ₽',1690,sy);g.textAlign='left';sy+=24;
+        sy+=24;
       });
-      sy+=8;const inst=Math.round(estimateTotal()*.08);
-      g.fillStyle='#8B8371';g.font='12px "IBM Plex Sans",sans-serif';
-      g.fillText('Монтаж и пусконаладка (8%)',1106,sy);
-      g.textAlign='right';g.fillText(fmt(inst)+' ₽',1690,sy);g.textAlign='left';sy+=20;
+      sy+=8;
       g.fillStyle=state.brand;g.fillRect(1106,sy-18,584,34);
-      g.fillStyle='#fff';g.font='600 15px Jost,sans-serif';g.fillText('ИТОГО',1120,sy+4);
+      g.fillStyle='#fff';g.font='600 15px Jost,sans-serif';
+      g.fillText('ВСЕГО ПРЕДМЕТОВ',1120,sy+4);
       g.font='500 16px "IBM Plex Mono",monospace';g.textAlign='right';
-      g.fillText(fmt(estimateTotal()+inst)+' ₽',1676,sy+4);g.textAlign='left';
+      g.fillText(String(state.items.length)+' · КАМЕР: '+s.cameras,1676,sy+4);g.textAlign='left';
       const dims=data.layout.dimensions,wa=data.layout.wallArea,cnt=data.counts;
       g.fillStyle='#26241F';g.font='600 13px Jost,sans-serif';
       g.fillText('ДАННЫЕ ПРОЕКТА',66,1032);
@@ -3199,7 +3146,7 @@ function setStatus3d(s){
   el.classList.remove('ok','err');
   if(s==='ok'){el.classList.add('ok');tx.textContent='3D: готово';$('#glMsg').style.display='none';}
   else if(s==='err'){el.classList.add('err');tx.textContent='3D недоступна';
-    $('#glMsg').innerHTML='3D-движок не загрузился — проверьте интернет и обновите страницу.<br>План, стены, смета и экспорт продолжают работать.';}
+    $('#glMsg').innerHTML='3D-движок не загрузился — проверьте интернет и обновите страницу.<br>План, стены и экспорт продолжают работать.';}
 }
 function initView(){
   $$('#viewSeg button').forEach(b=>b.addEventListener('click',()=>{
@@ -3245,8 +3192,6 @@ function initRest(){
   $('#btnTemplates').addEventListener('click',()=>$('#tplModal').classList.add('open'));
   $('#tplClose').addEventListener('click',()=>$('#tplModal').classList.remove('open'));
   $('#tplModal').addEventListener('click',e=>{if(e.target.id==='tplModal')e.target.classList.remove('open');});
-  $('#btnEstimate').addEventListener('click',()=>$('#estPanel').classList.toggle('open'));
-  $('#estClose').addEventListener('click',()=>$('#estPanel').classList.remove('open'));
   $('#fireToggle').addEventListener('click',()=>{
     state.fire=!state.fire;
     $('#fireToggle').classList.toggle('on',state.fire);

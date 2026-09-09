@@ -33,10 +33,21 @@ assert.match(html, /function openingMetrics\(/, 'Геометрия проёма
 assert.match(html, /function angleDeviation\(/, 'Для углов нужна единая чистая функция');
 assert.match(html, /angleHintForNode\(drawState\.lastNodeId/, 'Подсказка угла должна вызываться в preview цепочного рисования');
 assert.match(html, /angleHintForNode\(n\.id,\{x:n\.x,z:n\.z\},w\.id\)/, 'Подсказка угла должна вызываться при изменении конца стены');
+assert.match(html, /function translateWall\(/, 'Перенос стены должен быть переиспользуемой операцией модели');
+assert.match(html, /function moveOpeningTo\(/, 'Перенос проёма должен быть переиспользуемой операцией модели');
 assert.match(html, /function shouldPrioritizeOpeningHit\(/, 'Существующий проём должен иметь приоритет над добавлением нового');
+assert.match(html, /else\{setTool\('select'\);select\(null\);\}/, 'При входе в режим стен должен включаться выбор существующих объектов');
 const openingToolBranch = script[1].slice(script[1].indexOf('if(TOOL_DEF[t])'), script[1].indexOf("if(t==='erase')", script[1].indexOf('if(TOOL_DEF[t])')));
 assert.ok(openingToolBranch.indexOf('const existingOpening=openingAt(p)') < openingToolBranch.indexOf('const wh=wallAt(p)'), 'Hit-test существующего проёма должен идти раньше поиска стены');
 assert.match(openingToolBranch, /if\(op\)\{setTool\('select'\);selectWallObj/, 'После установки нового проёма инструмент должен перейти в выбор');
+assert.match(html, /wallDrag=\{type:'wall',id:wh\.id/, 'Клик по стене должен начинать её drag');
+assert.match(html, /wallDrag=\{type:'opening',id:oh\.id/, 'Клик по проёму должен начинать его drag');
+assert.match(html, /startM:toMeters\(p\),oa:\{\.\.\.g\.A\},ob:\{\.\.\.g\.B\}/, 'Drag стены должен сохранить исходную точку и оба конца');
+assert.match(html, /const dx=m\.x-wallDrag\.startM\.x,dz=m\.z-wallDrag\.startM\.z/, 'Перенос стены должен считаться от начала drag, а не от уже изменённой геометрии');
+assert.match(html, /translateWall\(w,dx,dz,wallDrag\.oa,wallDrag\.ob\)/, 'Drag стены должен переносить оба конца');
+assert.match(html, /moveOpeningTo\(op,proj\)/, 'Drag проёма должен менять его положение, а не создавать копию');
+assert.match(html, /else if\(wallDrag\.type==='opening'\)\{[\s\S]*?refresh\(\);commit\(\);renderWallBar\(\);/, 'Завершённый drag проёма должен обновлять вид, панель и историю');
+assert.match(html, /else if\(wallDrag\.type==='wall'\)\{[\s\S]*?staticDirty=true;refresh\(\);commit\(\);/, 'Завершённый drag стены должен обновлять 2D/3D и историю');
 assert.match(html, /слева[\s\S]{0,160}ширина[\s\S]{0,160}справа/i, 'Выбранный проём должен показывать отступы и ширину');
 assert.match(html, /от начала[\s\S]{0,120}ширина/i, 'При переносе проёма нужно показывать положение и ширину');
 
@@ -237,7 +248,7 @@ const engine = {
   toast() {},
   fmtM: String,
 };
-vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode};`, engine);
+vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode,translateWall,moveOpeningTo,deleteWall};`, engine);
 engine.TOOL_DEF = { door: {}, window: {}, evac: {} };
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', { id: 'o1' }), true, 'При клике по двери нужно начать её перенос');
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', null), false, 'Без проёма нужно оставить возможность его добавить');
@@ -267,5 +278,55 @@ const nodeHint = engine.api.angleHintForNode(a.id, { x: 0, z: 1 }, null);
 assert.equal(nodeHint.angle, 90, 'Узел с соседней стеной должен давать подсказку');
 const isolated = engine.api.addNode(8, 8);
 assert.equal(engine.api.angleHintForNode(isolated.id, { x: 9, z: 8 }, null), null, 'Без соседней стены нельзя показывать ложную перпендикулярность');
+
+engine.api.state.nodes.length = 0;
+engine.api.state.walls.length = 0;
+engine.api.state.openings.length = 0;
+engine.staticDirty = false;
+const wallA = engine.api.addNode(0, 0);
+const wallB = engine.api.addNode(10, 0);
+const movableWall = engine.api.addWall(wallA, wallB, 'inner');
+const movableDoor = engine.api.addOpening(movableWall, 0.3, 1, 'door');
+const movableWindow = engine.api.addOpening(movableWall, 0.7, 1, 'window');
+const movableEvac = engine.api.addOpening(movableWall, 0.9, 1, 'evac');
+const baseA = { ...wallA }, baseB = { ...wallB };
+const doorT = movableDoor.t, doorW = movableDoor.w, windowT = movableWindow.t, windowW = movableWindow.w;
+const evacT = movableEvac.t, evacW = movableEvac.w;
+assert.equal(engine.api.translateWall(movableWall, 2, 3, baseA, baseB), true, 'Перенос стены должен менять оба её конца');
+assert.deepEqual({ x: wallA.x, z: wallA.z }, { x: 2, z: 3 });
+assert.deepEqual({ x: wallB.x, z: wallB.z }, { x: 12, z: 3 });
+const movedDoorMetrics = engine.api.openingMetrics(movableDoor);
+assert.deepEqual(
+  { x: movedDoorMetrics.g.A.x + movedDoorMetrics.g.ux * movedDoorMetrics.center, z: movedDoorMetrics.g.A.z + movedDoorMetrics.g.uz * movedDoorMetrics.center },
+  { x: 5, z: 3 },
+  'Связанная дверь должна физически следовать за перенесённой стеной',
+);
+assert.equal(movableDoor.wallId, movableWall.id, 'Дверь должна оставаться связанной с стеной');
+assert.equal(movableWindow.wallId, movableWall.id, 'Окно должно оставаться связанным с стеной');
+assert.equal(movableEvac.wallId, movableWall.id, 'Эвакуационный проём должен оставаться связанным с стеной');
+assert.equal(movableDoor.t, doorT, 'При переносе стены относительная позиция двери сохраняется');
+assert.equal(movableDoor.w, doorW);
+assert.equal(movableWindow.t, windowT, 'При переносе стены относительная позиция окна сохраняется');
+assert.equal(movableWindow.w, windowW);
+assert.equal(movableEvac.t, evacT, 'При переносе стены относительная позиция эвакуационного проёма сохраняется');
+assert.equal(movableEvac.w, evacW);
+assert.equal(engine.api.state.openings.length, 3, 'При переносе стены количество проёмов не меняется');
+assert.equal(engine.api.moveOpeningTo(movableDoor, 4.5), true, 'Проём должен перемещаться по своей стене');
+assert.equal(engine.api.state.openings.length, 3, 'Перенос проёма не должен создавать копию');
+assert.equal(engine.api.moveOpeningTo(movableWindow, 6), true, 'Окно должно перемещаться по своей стене');
+assert.equal(engine.api.moveOpeningTo(movableDoor, 7), false, 'Проём нельзя перемещать через связанный проём');
+engine.api.deleteWall(movableWall);
+assert.equal(engine.api.state.openings.length, 0, 'Удаление стены должно удалить её проёмы');
+
+const roundTripProject = JSON.parse(JSON.stringify({
+  app: 'dentplan',
+  layout: {
+    nodes: [{ id: 'n1', x: 2, z: 3 }, { id: 'n2', x: 12, z: 3 }],
+    walls: [{ id: 'w1', a: 'n1', b: 'n2', kind: 'inner' }],
+    openings: [{ id: 'o1', wallId: 'w1', t: 0.45, w: 1, kind: 'door', flip: false }],
+  },
+  items: [],
+}));
+assert.equal(sandbox.validateProjectData(roundTripProject), null, 'Сохранённая после переноса геометрия должна загружаться');
 
 console.log('DentPlan smoke checks passed');

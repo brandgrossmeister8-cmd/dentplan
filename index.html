@@ -638,6 +638,20 @@ function openingFits(wallId,center,width,ignoreId){
   return !state.openings.some(o=>o.wallId===wallId&&o.id!==ignoreId&&
     Math.abs(center-o.t*g.len)<(width+o.w)/2+.06);
 }
+function translateWall(w,dx,dz,baseA,baseB){
+  const A=nById(w.a),B=nById(w.b);if(!A||!B)return false;
+  const fromA=baseA||A,fromB=baseB||B;
+  A.x=fromA.x+dx;A.z=fromA.z+dz;
+  B.x=fromB.x+dx;B.z=fromB.z+dz;
+  return true;
+}
+function moveOpeningTo(op,center){
+  const wall=wById(op.wallId);if(!wall)return false;
+  const g=wallGeom(wall);
+  const c=clamp(center,op.w/2+.03,g.len-op.w/2-.03);
+  if(!openingFits(op.wallId,c,op.w,op.id))return false;
+  op.t=+(c/g.len).toFixed(4);return true;
+}
 function shouldPrioritizeOpeningHit(tool,opening){return !!opening&&!!TOOL_DEF[tool];}
 function deleteWall(w){
   state.openings=state.openings.filter(o=>o.wallId!==w.id);
@@ -2128,7 +2142,7 @@ function setMode(m){
   $('#wallTools').hidden=m!=='walls';
   $('#toolHint').hidden=m!=='walls';
   if(m!=='walls'){endDraw();selectWallObj(null);}
-  else select(null);
+  else{setTool('select');select(null);}
   updateUlUI();planRedraw();
 }
 function selectWallObj(obj){
@@ -2182,10 +2196,7 @@ function nudgeOpening(id,d){
   const op=state.openings.find(o=>o.id===id);if(!op)return;
   const w=wById(op.wallId);if(!w)return;
   const g=wallGeom(w);
-  const c=clamp(op.t*g.len+d,op.w/2+.03,g.len-op.w/2-.03);
-  if(!openingFits(op.wallId,c,op.w,op.id))return;
-  op.t=+(c/g.len).toFixed(4);
-  planRedraw();
+  if(moveOpeningTo(op,op.t*g.len+d))planRedraw();
 }
 function renderWallBar(){
   const bar=$('#wallBar');
@@ -2529,8 +2540,7 @@ function initPlan(){
           const m=toMeters(p);
           const dx=m.x-wallDrag.startM.x,dz=m.z-wallDrag.startM.z;
           const A=nById(w.a),B=nById(w.b);if(!A||!B)return;
-          A.x=wallDrag.oa.x+dx;A.z=wallDrag.oa.z+dz;
-          B.x=wallDrag.ob.x+dx;B.z=wallDrag.ob.z+dz;
+          translateWall(w,dx,dz,wallDrag.oa,wallDrag.ob);
           wallDrag.moved=true;staticDirty=true;
           liveLabel={x:m.x,z:m.z,text:fmt2(wallGeom(w).len)+' м'};
           planRedraw();
@@ -2541,8 +2551,8 @@ function initPlan(){
           const m=toMeters(p);
           const proj=clamp((m.x-g.A.x)*g.ux+(m.z-g.A.z)*g.uz,op.w/2+.03,g.len-op.w/2-.03);
           const nt=+(proj/g.len).toFixed(4);
-          if(nt!==op.t&&openingFits(op.wallId,nt*g.len,op.w,op.id)){
-            op.t=nt;wallDrag.moved=true;
+          if(nt!==op.t&&moveOpeningTo(op,proj)){
+            wallDrag.moved=true;
             liveLabel={x:m.x,z:m.z,text:'от начала '+fmt2(nt*g.len)+' м · ширина '+fmt2(op.w)+' м'};
             planRedraw();
           }

@@ -89,11 +89,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 #wallTools{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:3px;background:var(--coal);padding:5px 7px;border-radius:11px;z-index:7;box-shadow:0 8px 24px rgba(38,36,31,.25);white-space:nowrap}
 #wallTools .wt-lbl{font-size:10px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:rgba(252,250,244,.55);padding:0 6px 0 3px}
+#wallTools button.wt-wall{width:auto;min-width:30px;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+#wallTools .wt-wall-label{font-size:10px;line-height:1;white-space:nowrap}
 #wallTools button{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:rgba(252,250,244,.75);transition:all .13s}
 #wallTools button:hover{background:rgba(252,250,244,.14);color:#fff}
 #wallTools button.on{background:var(--brand);color:#fff}
 #wallTools button svg{width:15px;height:15px}
 #wallTools .wt-div{width:1px;height:18px;background:rgba(252,250,244,.2);margin:0 3px}
+#wallLegend{display:block;margin-top:8px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font-size:10.5px;line-height:1.45;color:var(--coal2)}
+#wallLegend strong{display:block;margin-bottom:3px;font-family:var(--mono);font-size:10px;white-space:nowrap;color:var(--coal)}
+#wallLegend span{white-space:normal}
+@media(max-width:900px){
+  #wallTools button.wt-wall{width:30px;padding:0}
+  #wallTools .wt-wall-label{display:none}
+}
 
 .sec-title{font-family:var(--head);font-weight:600;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin:6px 0 10px}
 .sec{margin-bottom:20px}
@@ -123,6 +132,8 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 .mini-tgl.on .switch{background:var(--brand)}
 .mini-tgl.on .switch::after{transform:translateX(13px)}
 .ul-btns{display:flex;gap:6px;margin-top:8px}
+.project-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.project-actions #btnProjOpen{grid-column:1/-1}
 .mini{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;height:31px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:500;color:var(--coal2);transition:all .15s;white-space:nowrap}
 .mini:hover{border-color:var(--coal2);color:var(--coal)}
 .mini svg{width:12px;height:12px}
@@ -135,7 +146,14 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 .mode-seg button svg{width:13px;height:13px}
 .mode-seg button.on{background:var(--coal);color:var(--paper2)}
 .cat-group{margin-bottom:13px}
-.cat-group h4{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--coal2);margin-bottom:6px;text-transform:uppercase;font-family:var(--head)}
+.catalog-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.catalog-toggle{flex:none;height:24px;padding:0 8px;border:1px solid var(--line);border-radius:7px;font-size:10px;color:var(--coal2);white-space:nowrap}
+.catalog-toggle:hover{border-color:var(--coal2);color:var(--coal)}
+.cat-group-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 2px 6px;font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--coal2);text-align:left;text-transform:uppercase;font-family:var(--head)}
+.cat-group-toggle:hover{color:var(--coal)}
+.cat-group-toggle svg{width:14px;height:14px;transition:transform .18s}
+.cat-group-toggle[aria-expanded="false"] svg{transform:rotate(-90deg)}
+.cat-items{display:block}
 .cat-item{width:100%;display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:9px;text-align:left;border:1px solid transparent;transition:all .13s;margin-bottom:2px}
 .cat-item:hover{background:var(--paper);border-color:var(--line)}
 .cat-ic{width:32px;height:32px;border-radius:8px;background:var(--oat);display:grid;place-items:center;color:var(--coal2);flex:none;transition:background .15s}
@@ -172,6 +190,8 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 #wallBar button.on{background:var(--brand);color:#fff}
 #wallBar button.accent:hover{background:rgba(var(--brand-rgb),.5);color:#fff}
 #itemBar .div,#wallBar .div{width:1px;height:18px;background:rgba(252,250,244,.2);margin:0 4px}
+#wallBar .wb-angle{display:inline-flex;align-items:center;gap:3px;color:rgba(252,250,244,.75);font:500 11.5px "IBM Plex Mono",monospace;padding:0 3px}
+#wallBar .wb-angle input{width:48px;height:26px;border:1px solid rgba(252,250,244,.25);border-radius:6px;background:rgba(252,250,244,.1);color:#fff;text-align:center;font:500 11px "IBM Plex Mono",monospace;padding:0 3px}
 
 #calPop{position:absolute;left:50%;bottom:16px;transform:translateX(-50%) translateY(76px);z-index:22;display:flex;align-items:center;gap:9px;background:var(--coal);color:var(--paper2);padding:9px 10px 9px 14px;border-radius:12px;box-shadow:0 10px 30px rgba(38,36,31,.28);transition:transform .3s cubic-bezier(.25,.9,.3,1);white-space:nowrap}
 #calPop.show{transform:translateX(-50%) translateY(0)}
@@ -280,6 +300,10 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
         <button data-mode="walls"><i data-lucide="pencil-ruler"></i>Стены</button>
       </div>
       <p class="ul-hint" id="toolHint" hidden></p>
+      <div id="wallLegend" hidden role="note" aria-label="Как выбрать элемент стены">
+        <strong>1 · Выбор и перенос</strong>
+        <span>Обе кнопки рисуют прямой сегмент, но тип стены различается: внутренняя перегородка или наружная стена. Линия стены — стена · дуга или значок двери/эвакуационного проёма — проём · линия окна — окно. Выбранное подсвечивается красным, карточка с типом появляется снизу. Между проёмами выбирается стена.</span>
+      </div>
     </div>
 
     <div class="sec">
@@ -304,10 +328,19 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
     </div>
 
     <div class="sec">
+      <div class="sec-title">Параметры расчёта</div>
+      <div class="room-row"><span class="ul-lbl">Высота помещения / стен</span><input type="number" id="calcWallHeight" min="2" max="6" step="0.1" value="3" aria-label="Высота помещения и стен, метры"><span class="val"> м</span></div>
+      <div class="room-row"><span class="ul-lbl">Высота двери</span><input type="number" id="calcDoorHeight" min="0.5" max="4" step="0.1" value="2.1" aria-label="Высота двери, метры"><span class="val"> м</span></div>
+      <div class="room-row"><span class="ul-lbl">Высота эвак.</span><input type="number" id="calcEvacHeight" min="0.5" max="4" step="0.1" value="2.1" aria-label="Высота эвакуационного проёма, метры"><span class="val"> м</span></div>
+      <div class="room-row"><span class="ul-lbl">Высота окна</span><input type="number" id="calcWindowHeight" min="0.5" max="4" step="0.1" value="1.5" aria-label="Высота окна, метры"><span class="val"> м</span></div>
+      <p class="ul-hint">Допустимые диапазоны: стены 2–6 м, проёмы 0,5–4 м. Это геометрический расчёт, а не нормативное заключение.</p>
+    </div>
+
+    <div class="sec">
       <div class="sec-title">Чертёж-подложка</div>
       <div id="ulEmpty">
         <button class="ul-btn" id="btnUlUpload"><i data-lucide="upload"></i>Загрузить чертёж</button>
-        <p class="ul-hint">PNG или JPG со сканом плана — ляжет под планировку. Можно перетащить файл прямо на план.</p>
+        <p class="ul-hint">PNG, JPG или PDF — первая страница ляжет под планировку. Можно перетащить файл прямо на план.</p>
       </div>
       <div id="ulCtrl" hidden>
         <div class="ul-file"><i data-lucide="image"></i><span id="ulName">чертёж.png</span><button id="btnUlRemove" title="Удалить чертёж" aria-label="Удалить чертёж"><i data-lucide="trash-2"></i></button></div>
@@ -331,15 +364,19 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
         <button class="mini" id="btnUndo" title="Ctrl+Z"><i data-lucide="undo-2"></i>Отменить</button>
         <button class="mini" id="btnRedo" title="Ctrl+Y"><i data-lucide="redo-2"></i>Повторить</button>
       </div>
-      <div class="ul-btns">
+      <div class="ul-btns project-actions">
+        <button class="mini" id="btnProjNew" title="Начать новый проект" aria-label="Начать новый проект"><i data-lucide="file-plus-2"></i>Новый проект</button>
         <button class="mini" id="btnProjSave"><i data-lucide="save"></i>Сохранить проект</button>
         <button class="mini" id="btnProjOpen"><i data-lucide="folder-open"></i>Открыть проект</button>
       </div>
-      <p class="ul-hint">История — последние 60 действий (Ctrl+Z / Ctrl+Y). Файл .json хранит стены, проёмы, мебель, цвет и подложку.</p>
+      <p class="ul-hint">История — последние 60 действий (Ctrl+Z / Ctrl+Y). Файл .json хранит стены, проёмы, мебель, цвет и подложку. Сохранённый файл не удаляется при создании нового проекта и доступен через «Открыть проект».</p>
     </div>
 
     <div class="sec">
-      <div class="sec-title">Каталог</div>
+      <div class="sec-title catalog-title-row">
+        <span>Каталог</span>
+        <button type="button" class="catalog-toggle" id="btnCatalogAll" aria-expanded="true" aria-controls="catList" aria-label="Свернуть все группы каталога">Свернуть всё</button>
+      </div>
       <div id="catList"></div>
     </div>
   </aside>
@@ -350,8 +387,8 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       <div id="wallTools" hidden>
         <span class="wt-lbl">Стены</span>
         <button data-tool="select" class="on" title="Выбор и перенос — 1" aria-label="Выбор и перенос"><i data-lucide="mouse-pointer-2"></i></button>
-        <button data-tool="wall" title="Перегородка цепочкой — 2" aria-label="Нарисовать перегородку"><i data-lucide="pen-line"></i></button>
-        <button data-tool="outer" title="Наружная стена цепочкой — 3" aria-label="Нарисовать наружную стену"><i data-lucide="box-select"></i></button>
+        <button data-tool="wall" class="wt-wall" title="Внутренняя перегородка: рисование прямым сегментом цепочкой — 2" aria-label="Нарисовать внутреннюю перегородку"><i data-lucide="pen-line"></i><span class="wt-wall-label">Внутренняя перегородка</span></button>
+        <button data-tool="outer" class="wt-wall" title="Наружная стена: рисование прямым сегментом цепочкой — 3" aria-label="Нарисовать наружную стену"><i data-lucide="box-select"></i><span class="wt-wall-label">Наружная стена</span></button>
         <span class="wt-div"></span>
         <button data-tool="door" title="Дверь: клик по стене — 4" aria-label="Добавить дверь"><i data-lucide="door-open"></i></button>
         <button data-tool="window" title="Окно: клик по стене — 5" aria-label="Добавить окно"><i data-lucide="blinds"></i></button>
@@ -445,7 +482,15 @@ const CDNS={
           'https://unpkg.com/lucide@0.294.0/dist/umd/lucide.min.js'],
   jspdf:['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
          'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',
-         'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js']
+         'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js'],
+  pdf:[
+    {src:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.3.289/pdf.min.mjs',
+     worker:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.3.289/pdf.worker.min.mjs'},
+    {src:'https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs',
+     worker:'https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs'},
+    {src:'https://unpkg.com/pdfjs-dist@6.3.289/build/pdf.min.mjs',
+     worker:'https://unpkg.com/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs'}
+  ]
 };
 function loadScript(urls){
   if(typeof urls==='string')urls=[urls];
@@ -563,12 +608,28 @@ const TEMPLATES=[
 const state={
   profile:'dental',
   room:{w:12,d:9},
+  calculation:{wallHeightM:3,openingHeightsM:{door:2.1,evac:2.1,window:1.5}},
   nodes:[],walls:[],openings:[],
   items:[],seq:1,sel:null,
   mode:'items',tool:'select',selObj:null,
   brand:'#0E7C7B',fire:false,view:'both',
 };
+const SELECT_COLOR='#BE4128';
 let nid=1,wid=1,oid=1;
+function shouldFinishDrawingOnDoubleClick(e,previous,current,now){
+  if(!e||Number(e.detail)<2||!previous||!current)return false;
+  return now-previous.at<450&&Math.hypot(current.x-previous.x,current.y-previous.y)<12;
+}
+function openingArcAngle(a){const full=Math.PI*2;return((a%full)+full)%full;}
+function pointNearOpeningArc(point,center,radius,start,end,anticlockwise,tolerance){
+  if(!point||!center||!(radius>0))return false;
+  const distance=Math.hypot(point.x-center.x,point.y-center.y);
+  if(Math.abs(distance-radius)>(tolerance==null?10:tolerance))return false;
+  const theta=Math.atan2(point.y-center.y,point.x-center.x);
+  const span=anticlockwise?openingArcAngle(start-end):openingArcAngle(end-start);
+  const progress=anticlockwise?openingArcAngle(start-theta):openingArcAngle(theta-start);
+  return progress<=span+1e-6;
+}
 
 /* ═══════════════ ДВИЖОК СТЕН ═══════════════ */
 function addNode(x,z){const n={id:'n'+(nid++),x,z};state.nodes.push(n);return n;}
@@ -629,13 +690,24 @@ function addOpening(wall,t,w,kind){
   c=clamp(c,w/2+.03,g.len-w/2-.03);
   const blocked=others.some(o=>{const oc=o.t*g.len;return Math.abs(c-oc)<(w+o.w)/2+.06;});
   if(blocked){toast('На стене нет свободного места для проёма',true);return null;}
-  const o={id:'o'+(oid++),wallId:wall.id,t:c/g.len,w,kind,flip:false};
+  const o={id:'o'+(oid++),wallId:wall.id,t:c/g.len,w,kind,flip:false,rot:0,hingeSide:'left',openingDirection:'inside'};
   state.openings.push(o);return o;
 }
 function openingMetrics(op){
   const wall=wById(op.wallId);if(!wall)return null;
   const g=wallGeom(wall),center=op.t*g.len;
-  return{wall,g,center,left:center-op.w/2,right:g.len-center-op.w/2,width:op.w};
+  return{wall,g,center,left:center-op.w/2,right:g.len-center-op.w/2,width:op.w,rot:normalizeOpeningRot(op.rot)};
+}
+function openingHitDistance(op,point){
+  const wall=wById(op&&op.wallId);if(!wall||!point)return Infinity;
+  const g=wallGeom(wall),center=op.t*g.len;
+  const dx=point.x-g.A.x,dz=point.z-g.A.z;
+  const along=dx*g.ux+dz*g.uz;
+  const lateral=Math.abs(dx*(-g.uz)+dz*g.ux);
+  const span=Math.max(0,Math.abs(along-center)-op.w/2);
+  const visualDepth=op.kind==='window'?.12:op.w+.08;
+  const depth=Math.max(0,lateral-visualDepth);
+  return Math.hypot(span,depth);
 }
 function openingFits(wallId,center,width,ignoreId){
   const wall=wById(wallId);if(!wall)return false;
@@ -658,12 +730,273 @@ function moveOpeningTo(op,center){
   if(!openingFits(op.wallId,c,op.w,op.id))return false;
   op.t=+(c/g.len).toFixed(4);return true;
 }
+function normalizeOpeningRot(rot){
+  const full=Math.PI*2,a=Number(rot);
+  if(!Number.isFinite(a))return 0;
+  return((a+Math.PI)%full+full)%full-Math.PI;
+}
+function rotateOpening(op,delta){
+  if(!op||!Number.isFinite(Number(delta)))return false;
+  op.rot=normalizeOpeningRot((Number(op.rot)||0)+Number(delta));
+  return true;
+}
+function normalizeHingeSide(side){
+  if(side===true||side===1)return'right';
+  const value=String(side==null?'':side).trim().toLowerCase();
+  return value==='right'||value==='end'||value==='r'||value==='справа'?'right':'left';
+}
+function normalizeOpeningDirection(direction,legacyFlip){
+  const value=String(direction==null?'':direction).trim().toLowerCase();
+  if(value==='outside'||value==='out'||value==='наружу')return'outside';
+  if(value==='inside'||value==='in'||value==='внутрь')return'inside';
+  return legacyFlip?'outside':'inside';
+}
+function doorState(op){
+  const hingeSide=normalizeHingeSide(op&&op.hingeSide);
+  const openingDirection=normalizeOpeningDirection(op&&op.openingDirection,op&&op.flip);
+  return{hingeSide,openingDirection,hingeSign:hingeSide==='right'?-1:1,directionSign:openingDirection==='outside'?-1:1};
+}
+/* Поддерживает старый геометрический вызов для совместимости с сохранёнными
+   проектами и smoke-тестами; новый рендер использует openingDoorGeometry. */
+function doorPose(wall,t,width,rot,g2){
+  if(arguments.length===1&&wall&&typeof wall==='object'&&!('a' in wall)&&!('b' in wall))return doorState(wall);
+  const geo=g2||wallGeom(wall),r=normalizeOpeningRot(rot),center=t*geo.len;
+  /* При развороте за 90° выбираем второй косяк, чтобы полотно не выходило из проёма. */
+  const endHinge=Math.cos(r)<-1e-9;
+  const hingeOffset=(endHinge?1:-1)*width/2;
+  const hinge={x:geo.A.x+geo.ux*(center+hingeOffset),z:geo.A.z+geo.uz*(center+hingeOffset)};
+  const closedAngle=Math.atan2(geo.uz,geo.ux)+r;
+  const leafEnd={x:hinge.x+Math.cos(closedAngle)*width,z:hinge.z+Math.sin(closedAngle)*width};
+  return{g:geo,rot:r,center,hinge,endHinge,closedAngle,leafEnd};
+}
+function toggleDoorHingeSide(op){
+  if(!op||op.kind==='window')return false;
+  op.hingeSide=doorState(op).hingeSide==='right'?'left':'right';
+  return true;
+}
+function toggleDoorOpeningDirection(op){
+  if(!op||op.kind==='window')return false;
+  op.openingDirection=doorState(op).openingDirection==='outside'?'inside':'outside';
+  op.flip=op.openingDirection==='outside';
+  return true;
+}
+function openingWallNormal(wall,g2){
+  const g=g2||wallGeom(wall);
+  return wall.kind==='outer'?interiorNormal(wall):{x:g.uz,z:-g.ux};
+}
+function doorSwingSign(wall,g2,op){
+  const g=g2||wallGeom(wall),pose=doorState(op);
+  const n=openingWallNormal(wall,g),desired={x:n.x*pose.directionSign,z:n.z*pose.directionSign};
+  const cross=g.ux*desired.z-g.uz*desired.x,base=cross<0?1:-1;
+  return pose.hingeSide==='right'?-base:base;
+}
+function openingDoorGeometry(wall,g2,op){
+  if(!wall||!op)return null;
+  const g=g2||wallGeom(wall),pose=doorState(op),width=Number(op.w??op.width)||0;
+  const center=Number(op.t||0)*g.len,s=center-width/2,e=center+width/2;
+  const hingeOffset=pose.hingeSide==='right'?e:s;
+  const hinge={x:g.A.x+g.ux*hingeOffset,z:g.A.z+g.uz*hingeOffset};
+  const n=openingWallNormal(wall,g);
+  const rot=normalizeOpeningRot(op.rot),tangentAngle=Math.atan2(g.uz,g.ux)+rot;
+  const a1=tangentAngle+(pose.hingeSide==='right'?Math.PI:0);
+  const a2=Math.atan2(n.z,n.x)+rot+(pose.openingDirection==='outside'?Math.PI:0);
+  let cross=g.ux*n.z-g.uz*n.x;
+  if(pose.hingeSide==='right')cross=-cross;
+  if(pose.openingDirection==='outside')cross=-cross;
+  return{pose,g,width,center,s,e,hinge,a1,a2,cross,leafEnd:{x:hinge.x+Math.cos(a2)*width,z:hinge.z+Math.sin(a2)*width}};
+}
+function openingMarkerPoint(wall,g2,op){
+  if(!wall||!op)return null;
+  const g=g2||wallGeom(wall),cc={x:g.A.x+g.ux*op.t*g.len,z:g.A.z+g.uz*op.t*g.len},n=openingWallNormal(wall,g);
+  return{x:cc.x+n.x*.55,z:cc.z+n.z*.55};
+}
+function rotateOpeningHalfTurn(op){
+  const changed=rotateOpening(op,Math.PI);
+  if(changed&&op&&op.kind!=='window')toggleDoorHingeSide(op);
+  return changed;
+}
+function selectOpening(op){
+  if(!op||!state.openings.some(x=>x.id===op.id))return false;
+  state.selObj={type:'opening',id:op.id};
+  return true;
+}
+function deleteOpening(op){
+  if(!op)return false;
+  const before=state.openings.length;
+  state.openings=state.openings.filter(x=>x.id!==op.id);
+  if(state.selObj&&state.selObj.type==='opening'&&state.selObj.id===op.id)state.selObj=null;
+  staticDirty=true;
+  return state.openings.length<before;
+}
+function deleteSelectedOpening(){
+  const sel=state.selObj;
+  if(!sel||sel.type!=='opening')return false;
+  const op=state.openings.find(o=>o.id===sel.id);
+  return op?deleteOpening(op):false;
+}
+function pointSegmentDistance(p,a,b){
+  const dx=b.x-a.x,dz=b.z-a.z,L2=dx*dx+dz*dz||1;
+  const t=clamp(((p.x-a.x)*dx+(p.z-a.z)*dz)/L2,0,1);
+  return Math.hypot(p.x-(a.x+dx*t),p.z-(a.z+dz*t));
+}
+function segmentsIntersect(a,b,c,d){
+  const cross=(p,q,r)=>(q.x-p.x)*(r.z-p.z)-(q.z-p.z)*(r.x-p.x);
+  const on=(p,q,r)=>Math.abs(cross(p,q,r))<1e-9&&r.x>=Math.min(p.x,q.x)-1e-9&&r.x<=Math.max(p.x,q.x)+1e-9&&r.z>=Math.min(p.z,q.z)-1e-9&&r.z<=Math.max(p.z,q.z)+1e-9;
+  const c1=cross(a,b,c),c2=cross(a,b,d),c3=cross(c,d,a),c4=cross(c,d,b);
+  return((c1>0&&c2<0||c1<0&&c2>0)&&(c3>0&&c4<0||c3<0&&c4>0))||on(a,b,c)||on(a,b,d)||on(c,d,a)||on(c,d,b);
+}
+function segmentDistance(a,b,c,d){
+  if(segmentsIntersect(a,b,c,d))return 0;
+  return Math.min(pointSegmentDistance(a,c,d),pointSegmentDistance(b,c,d),pointSegmentDistance(c,a,b),pointSegmentDistance(d,a,b));
+}
+function wallNeighborDistances(w){
+  if(!w||!nById(w.a)||!nById(w.b))return{left:{value:null,ambiguous:false},right:{value:null,ambiguous:false}};
+  const g=wallGeom(w),left=[],right=[];
+  state.walls.filter(other=>other.id!==w.id).forEach(other=>{
+    const og=wallGeom(other);
+    const alongA=(og.A.x-g.A.x)*g.ux+(og.A.z-g.A.z)*g.uz;
+    const alongB=(og.B.x-g.A.x)*g.ux+(og.B.z-g.A.z)*g.uz;
+    const lo=Math.min(alongA,alongB),hi=Math.max(alongA,alongB),mid=g.len/2;
+    const gap=segmentDistance(g.A,g.B,og.A,og.B);
+    if(lo<mid&&hi>mid){left.push({value:gap,ambiguous:true});right.push({value:gap,ambiguous:true});}
+    else if(hi<=mid)left.push({value:gap,ambiguous:false});
+    else right.push({value:gap,ambiguous:false});
+  });
+  const nearest=values=>{
+    if(!values.length)return{value:null,ambiguous:false};
+    const value=Math.min(...values.map(v=>v.value));
+    return{value,ambiguous:values.some(v=>v.ambiguous)||values.filter(v=>Math.abs(v.value-value)<.05).length>1};
+  };
+  return{left:nearest(left),right:nearest(right)};
+}
+function wallNeighborDistanceText(w){
+  const d=wallNeighborDistances(w);
+  const format=side=>side.ambiguous?'неоднозначно':side.value==null?'нет данных':fmt2(side.value)+' м';
+  /* Если сегмент не имеет однозначных соседей (например, свободная
+     перегородка внутри прямоугольного контура), показываем фактические
+     отступы до внешних стен вместо бесполезного «неоднозначно». */
+  const needsBoundary=side=>side.value==null||side.ambiguous;
+  if(needsBoundary(d.left)&&needsBoundary(d.right)){
+    const boundary=wallClearance(w);
+    if(boundary.displayAxis==='horizontal'&&boundary.left.value!=null&&boundary.right.value!=null)
+      return'слева '+fmt2(boundary.left.value)+' м · справа '+fmt2(boundary.right.value)+' м';
+    if(boundary.displayAxis==='vertical'&&boundary.top.value!=null&&boundary.bottom.value!=null)
+      return'сверху '+fmt2(boundary.top.value)+' м · снизу '+fmt2(boundary.bottom.value)+' м';
+  }
+  return'слева '+format(d.left)+' · справа '+format(d.right);
+}
+function wallBoundarySegments(){
+  const loop=outerLoop();
+  if(loop&&loop.closed&&loop.pts.length>=3){
+    return loop.pts.map((a,i)=>({a,b:loop.pts[(i+1)%loop.pts.length]}));
+  }
+  return state.walls.filter(w=>w.kind==='outer').map(w=>{
+    const g=wallGeom(w);return{a:g.A,b:g.B};
+  });
+}
+function rayBoundaryDistance(origin,dir,segments){
+  let best=null;
+  segments.forEach(seg=>{
+    const vx=seg.b.x-seg.a.x,vz=seg.b.z-seg.a.z;
+    const cross=dir.x*vz-dir.z*vx;
+    if(Math.abs(cross)<1e-9)return;
+    const qx=seg.a.x-origin.x,qz=seg.a.z-origin.z;
+    const along=(qx*vz-qz*vx)/cross;
+    const across=(qx*dir.z-qz*dir.x)/cross;
+    if(along>=-1e-7&&across>=-1e-7&&across<=1+1e-7&&(best==null||along<best))best=Math.max(0,along);
+  });
+  return best;
+}
+function wallMotionAxis(motion){
+  if(typeof motion==='string')return motion==='horizontal'||motion==='x'?'horizontal':motion==='vertical'||motion==='z'?'vertical':null;
+  if(!motion)return null;
+  if(motion.axis==='horizontal'||motion.axis==='x')return'horizontal';
+  if(motion.axis==='vertical'||motion.axis==='z')return'vertical';
+  const dx=Number.isFinite(motion.dx)?motion.dx:Number.isFinite(motion.x)?motion.x:0;
+  const dz=Number.isFinite(motion.dz)?motion.dz:Number.isFinite(motion.z)?motion.z:0;
+  const ax=Math.abs(dx),az=Math.abs(dz);
+  if(Math.max(ax,az)<1e-6)return null;
+  /* Резко диагональное движение не угадываем: ниже сработает fallback по стене. */
+  if(ax>az*1.25)return'horizontal';
+  if(az>ax*1.25)return'vertical';
+  return null;
+}
+function emptyWallClearance(){
+  return{axis:'unknown',displayAxis:'unknown',source:'none',left:{value:null},right:{value:null},top:{value:null},bottom:{value:null},normalA:{value:null},normalB:{value:null}};
+}
+function wallClearance(segment,motion){
+  let g=segment;
+  if(segment&&segment.a&&segment.b&&typeof segment.a==='string'){
+    const A=nById(segment.a),B=nById(segment.b);
+    if(!A||!B)return emptyWallClearance();
+    g={A,B};
+  }
+  if(!g||!g.A||!g.B)return emptyWallClearance();
+  const dx=g.B.x-g.A.x,dz=g.B.z-g.A.z,len=Math.hypot(dx,dz);
+  if(len<1e-9)return emptyWallClearance();
+  const mid={x:(g.A.x+g.B.x)/2,z:(g.A.z+g.B.z)/2};
+  const tol=Math.max(.08,len*.12);
+  let orientation='normal',orientationDirs,orientationNames;
+  if(Math.abs(dz)<=tol){orientation='horizontal';orientationDirs=[{x:0,z:-1},{x:0,z:1}];orientationNames=['top','bottom'];}
+  else if(Math.abs(dx)<=tol){orientation='vertical';orientationDirs=[{x:-1,z:0},{x:1,z:0}];orientationNames=['left','right'];}
+  else{
+    const ux=dx/len,uz=dz/len;
+    orientationDirs=[{x:-uz,z:ux},{x:uz,z:-ux}];orientationNames=['normalA','normalB'];
+  }
+  const motionAxis=wallMotionAxis(motion);
+  /* При явном движении выбираем пару по вектору перемещения; без него — по ориентации сегмента. */
+  const displayAxis=motionAxis||(orientation==='horizontal'?'vertical':orientation==='vertical'?'horizontal':'normal');
+  let dirs=orientationDirs,names=orientationNames;
+  if(displayAxis==='horizontal'){dirs=[{x:-1,z:0},{x:1,z:0}];names=['left','right'];}
+  else if(displayAxis==='vertical'){dirs=[{x:0,z:-1},{x:0,z:1}];names=['top','bottom'];}
+  const bounds=wallBoundarySegments();
+  const result={axis:orientation,displayAxis,source:motionAxis?'motion':'orientation',mid,left:{value:null},right:{value:null},top:{value:null},bottom:{value:null},normalA:{value:null},normalB:{value:null}};
+  names.forEach((name,i)=>{result[name]={value:rayBoundaryDistance(mid,dirs[i],bounds)};});
+  return result;
+}
+function wallClearanceText(clearance){
+  if(!clearance)return'';
+  const format=side=>side&&side.value!=null?fmt2(side.value)+' м':'нет данных';
+  const axis=clearance.displayAxis||(clearance.axis==='horizontal'?'vertical':clearance.axis==='vertical'?'horizontal':clearance.axis);
+  if(axis==='horizontal')return'слева '+format(clearance.left)+' · справа '+format(clearance.right);
+  if(axis==='vertical')return'сверху '+format(clearance.top)+' · снизу '+format(clearance.bottom);
+  if(axis==='normal')return'по нормали '+format(clearance.normalA)+' · против нормали '+format(clearance.normalB);
+  return'нет данных';
+}
+function alignWallToPerpendicular(w){
+  if(!w||!nById(w.a)||!nById(w.b))return false;
+  const wall=wallGeom(w),candidates=[];
+  [[w.a,w.b],[w.b,w.a]].forEach(pair=>{
+    const anchor=nById(pair[0]),moving=nById(pair[1]);
+    state.walls.filter(other=>other.id!==w.id&&(other.a===anchor.id||other.b===anchor.id)).forEach(ref=>{
+      const refOther=nById(ref.a===anchor.id?ref.b:ref.a);if(!refOther)return;
+      const dx=refOther.x-anchor.x,dz=refOther.z-anchor.z,len=Math.hypot(dx,dz)||.0001;
+      let px=-dz/len,pz=dx/len;
+      const curx=moving.x-anchor.x,curz=moving.z-anchor.z;
+      if(px*curx+pz*curz<0){px=-px;pz=-pz;}
+      const x=anchor.x+px*wall.len,z=anchor.z+pz*wall.len;
+      candidates.push({moving,x,z,cost:Math.hypot(x-moving.x,z-moving.z)});
+    });
+  });
+  if(!candidates.length)return false;
+  candidates.sort((a,b)=>a.cost-b.cost);
+  const best=candidates[0];best.moving.x=best.x;best.moving.z=best.z;
+  return true;
+}
 const WALL_HOVER_LABELS={outer:'Наружная стена',inner:'Перегородка'};
 const OPENING_HOVER_LABELS={door:'Дверь',window:'Окно',evac:'Эвакуационный проём'};
 function wallHoverLabel(opening,wall){
   if(opening)return OPENING_HOVER_LABELS[opening.kind]||'Проём';
   if(wall)return WALL_HOVER_LABELS[wall.kind]||'Стена';
   return '';
+}
+function openingVisualColor(kind,selected,hovered){
+  if(selected)return SELECT_COLOR;
+  if(hovered)return '#D97706';
+  return kind==='evac'?'#1F9D55':(kind==='window'?'#5B7A8C':'#26241F');
+}
+function openingHoverActive(wallsMode,opening,hovered){
+  return !!(wallsMode&&opening&&hovered&&opening.id===hovered.id);
 }
 function shouldPrioritizeOpeningHit(tool,opening){return !!opening&&!!TOOL_DEF[tool];}
 function deleteWall(w){
@@ -756,7 +1089,7 @@ function roomBounds(){
   const consider=p=>{minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minZ=Math.min(minZ,p.z);maxZ=Math.max(maxZ,p.z);};
   if(loop&&loop.closed&&loop.pts.length>=3)loop.pts.forEach(consider);
   else{src='nodes';state.nodes.forEach(consider);}
-  if(minX>maxX){minX=-6;maxX=6;minZ=-4.5;maxZ=4.5;src='none';}
+  if(minX>maxX){const w=clamp(Number(state.room&&state.room.w)||12,6,20),d=clamp(Number(state.room&&state.room.d)||9,4,16);minX=-w/2;maxX=w/2;minZ=-d/2;maxZ=d/2;src='none';}
   const area=src==='loop'?Math.abs(shoelace(loop.pts)):(maxX-minX)*(maxZ-minZ);
   return{minX,maxX,minZ,maxZ,area,closed:src==='loop',loop};
 }
@@ -795,7 +1128,7 @@ window.addEventListener('beforeunload',e=>{
   if(projectDirty){e.preventDefault();e.returnValue='';}
 });
 function snapAll(){
-  return JSON.stringify({p:state.profile,n:state.nodes,w:state.walls,o:state.openings,i:state.items,seq:state.seq,nid,wid,oid});
+  return JSON.stringify({p:state.profile,n:state.nodes,w:state.walls,o:state.openings,i:state.items,calculation:state.calculation,seq:state.seq,nid,wid,oid});
 }
 function syncMeshes(){
   if(!itemsRoot)return;
@@ -810,6 +1143,8 @@ function syncMeshes(){
 function restore(s){
   const d=JSON.parse(s);
   state.nodes=d.n;state.walls=d.w;state.openings=d.o;state.items=d.i;state.seq=d.seq;
+  state.calculation=normalizeCalculationSettings(d.calculation);
+  updateCalculationUI();
   setProjectProfile(d.p||'dental',false);
   nid=d.nid;wid=d.wid;oid=d.oid;
   state.sel=null;select(null);
@@ -872,24 +1207,21 @@ function openTag(g,x,y,text,col,bg){
   g.fillStyle=col;g.textAlign='center';g.fillText(tx,x,y+3);g.textAlign='left';
 }
 
-function glyphOpening(g,X,Y,fit,wall,g2,t,width,kind,flip){
+function glyphOpening(g,X,Y,fit,wall,g2,t,width,kind,flip,selected,rot,hovered,hingeSide,openingDirection){
   const isEvac=kind==='evac',isWin=kind==='window';
-  const col=isEvac?'#1F9D55':(isWin?'#5B7A8C':'#26241F');
+  const col=openingVisualColor(kind,selected,hovered);
   const s=t*g2.len;
   if(!isWin){
-    const n=wall.kind==='outer'?interiorNormal(wall):{x:g2.uz,z:-g2.ux};
-    const hinge={x:g2.A.x+g2.ux*(s-width/2),z:g2.A.z+g2.uz*(s-width/2)};
-    const a1=Math.atan2(g2.uz,g2.ux);
-    let a2=Math.atan2(n.z,n.x);
-    let cross=g2.ux*n.z-g2.uz*n.x;
-    if(flip){a2+=Math.PI;cross=-cross;}
+    const door=openingDoorGeometry(wall,g2,{t,width,w:width,kind,flip,rot,hingeSide,openingDirection});
+    const hinge=door.hinge,a1=door.a1,a2=door.a2,cross=door.cross;
     g.strokeStyle=col;g.lineWidth=1.3;
     g.beginPath();g.arc(X(hinge.x),Y(hinge.z),width*fit,a1,a2,cross<0);g.stroke();
     g.beginPath();g.moveTo(X(hinge.x),Y(hinge.z));
     g.lineTo(X(hinge.x+Math.cos(a2)*width),Y(hinge.z+Math.sin(a2)*width));g.stroke();
   }else{
-    const h1={x:g2.A.x+g2.ux*(s-width/2),z:g2.A.z+g2.uz*(s-width/2)};
-    const h2={x:g2.A.x+g2.ux*(s+width/2),z:g2.A.z+g2.uz*(s+width/2)};
+    const openRot=normalizeOpeningRot(rot),ux=Math.cos(Math.atan2(g2.uz,g2.ux)+openRot),uz=Math.sin(Math.atan2(g2.uz,g2.ux)+openRot);
+    const h1={x:g2.A.x+g2.ux*s-ux*width/2,z:g2.A.z+g2.uz*s-uz*width/2};
+    const h2={x:g2.A.x+g2.ux*s+ux*width/2,z:g2.A.z+g2.uz*s+uz*width/2};
     g.strokeStyle=col;g.lineWidth=1.2;
     g.beginPath();g.moveTo(X(h1.x),Y(h1.z));g.lineTo(X(h2.x),Y(h2.z));g.stroke();
   }
@@ -962,11 +1294,11 @@ function drawPlan(g,W,H,opts={}){
     const selW=wallsMode&&state.selObj&&state.selObj.type==='wall'&&state.selObj.id===w.id;
     const actW=wallsMode&&activeWalls.has(w.id);
     const eraseW=wallsMode&&state.tool==='erase'&&hoverErase&&hoverErase.type==='wall'&&hoverErase.id===w.id;
-    if(selW||actW){g.strokeStyle='rgba('+hexRgb(state.brand)+',.35)';g.lineWidth=th+7;g.lineCap='round';
+    if(selW||actW){g.strokeStyle='rgba('+hexRgb(selW?SELECT_COLOR:state.brand)+',.35)';g.lineWidth=th+7;g.lineCap='round';
       g.beginPath();g.moveTo(X(geo.A.x),Y(geo.A.z));g.lineTo(X(geo.B.x),Y(geo.B.z));g.stroke();}
     if(eraseW){g.strokeStyle='rgba(190,65,40,.4)';g.lineWidth=th+7;g.lineCap='round';
       g.beginPath();g.moveTo(X(geo.A.x),Y(geo.A.z));g.lineTo(X(geo.B.x),Y(geo.B.z));g.stroke();}
-    g.strokeStyle=eraseW?'rgba(190,65,40,.8)':(selW||actW?state.brand:(w.kind==='outer'?'#26241F':'#4C473D'));
+    g.strokeStyle=eraseW?'rgba(190,65,40,.8)':(selW?SELECT_COLOR:(actW?state.brand:(w.kind==='outer'?'#26241F':'#4C473D')));
     g.lineWidth=th;g.lineCap='butt';
     spans.forEach(sp=>{
       g.beginPath();
@@ -979,14 +1311,16 @@ function drawPlan(g,W,H,opts={}){
   state.openings.forEach(o=>{
     const w=wById(o.wallId);if(!w)return;
     const g2=wallGeom(w);
-    glyphOpening(g,X,Y,fit,w,g2,o.t,o.w,o.kind,o.flip);
+    const selected=wallsMode&&state.selObj&&state.selObj.type==='opening'&&state.selObj.id===o.id;
+    const hovering=!opts.plain&&openingHoverActive(wallsMode,o,hoverOpening);
+    glyphOpening(g,X,Y,fit,w,g2,o.t,o.w,o.kind,o.flip,selected,o.rot,hovering,o.hingeSide,o.openingDirection);
     const cc={x:g2.A.x+g2.ux*o.t*g2.len,z:g2.A.z+g2.uz*o.t*g2.len};
     if(wallsMode){
-      const sel=state.selObj&&state.selObj.type==='opening'&&state.selObj.id===o.id;
+      const sel=selected;
       const erase=state.tool==='erase'&&hoverErase&&hoverErase.type==='opening'&&hoverErase.id===o.id;
-      const sz=sel?6:5;
-      const col=erase?'#BE4128':(o.kind==='evac'?'#1F9D55':(o.kind==='window'?'#5B7A8C':'#26241F'));
-      g.fillStyle=erase?'#F6D2C8':(o.kind==='evac'?'#1F9D55':'#fff');
+      const sz=sel||hovering?6:5;
+      const col=erase?SELECT_COLOR:openingVisualColor(o.kind,sel,hovering);
+      g.fillStyle=erase?'#F6D2C8':(sel?'rgba(190,65,40,.18)':(hovering?'#FCE7B2':(o.kind==='evac'?'#1F9D55':'#fff')));
       g.strokeStyle=col;g.lineWidth=1.5;
       g.beginPath();g.rect(X(cc.x)-sz,Y(cc.z)-sz,sz*2,sz*2);g.fill();g.stroke();
     }
@@ -1007,7 +1341,7 @@ function drawPlan(g,W,H,opts={}){
       const gw=toolW[state.tool];
       const sPos=ghost.t*g2.len-gw/2, ePos=ghost.t*g2.len+gw/2;
       g.globalAlpha=.6;
-      glyphOpening(g,X,Y,fit,w,g2,ghost.t,gw,TOOL_DEF[state.tool].kind,false);
+      glyphOpening(g,X,Y,fit,w,g2,ghost.t,gw,TOOL_DEF[state.tool].kind,false,false,0,false,'left','inside');
       g.globalAlpha=1;
       const n=w.kind==='outer'?interiorNormal(w):{x:g2.uz,z:-g2.ux};
       [[sPos],[ePos]].forEach(pt=>{
@@ -1060,7 +1394,7 @@ function drawPlan(g,W,H,opts={}){
           const s={x:g2.A.x+g2.ux*(op.t*g2.len-op.w/2),z:g2.A.z+g2.uz*(op.t*g2.len-op.w/2)};
           const e={x:g2.A.x+g2.ux*(op.t*g2.len+op.w/2),z:g2.A.z+g2.uz*(op.t*g2.len+op.w/2)};
           [s,e].forEach(pt=>{
-            g.fillStyle='#fff';g.strokeStyle=state.brand;g.lineWidth=1.6;
+            g.fillStyle='#fff';g.strokeStyle=SELECT_COLOR;g.lineWidth=1.6;
             g.beginPath();g.rect(X(pt.x)-5,Y(pt.z)-5,10,10);g.fill();g.stroke();
           });
           if(resizeDrag&&resizeDrag.kind==='opening'){
@@ -1074,7 +1408,7 @@ function drawPlan(g,W,H,opts={}){
       if(w){
         const g2=wallGeom(w);
         [g2.A,g2.B].forEach(pt=>{
-          g.fillStyle='#fff';g.strokeStyle=state.brand;g.lineWidth=1.6;
+          g.fillStyle='#fff';g.strokeStyle=SELECT_COLOR;g.lineWidth=1.6;
           g.beginPath();g.rect(X(pt.x)-5,Y(pt.z)-5,10,10);g.fill();g.stroke();
         });
       }
@@ -1103,10 +1437,11 @@ function drawPlan(g,W,H,opts={}){
   state.items.forEach(it=>{
     const c=CATALOG[it.type];
     const brandy=it.type==='chair'||it.type==='sofa'||it.type==='doctor'||it.type==='officechair'||it.type==='reception';
+    const selectedItem=!opts.plain&&it.id===state.sel;
     g.save();
     g.translate(X(it.x),Y(it.z));g.rotate(it.rot);g.scale(fit,fit);
-    g.lineWidth=1.5/fit;g.strokeStyle='#3A362E';
-    g.fillStyle=brandy?('rgba('+hexRgb(state.brand)+',.16)'):'#FFFFFF';
+    g.lineWidth=1.5/fit;g.strokeStyle=selectedItem?SELECT_COLOR:'#3A362E';
+    g.fillStyle=selectedItem?'rgba(190,65,40,.18)':(brandy?('rgba('+hexRgb(state.brand)+',.16)'):'#FFFFFF');
     switch(it.type){
       case 'chair':
         rr(g,-.33,-.45,.66,.62,.07);g.fill();g.stroke();
@@ -1173,14 +1508,14 @@ function drawPlan(g,W,H,opts={}){
       const hx=(Math.abs(Math.cos(r))*c.w+Math.abs(Math.sin(r))*c.d)/2*fit+8;
       const hz=(Math.abs(Math.sin(r))*c.w+Math.abs(Math.cos(r))*c.d)/2*fit+8;
       const sx=X(it.x),sy=Y(it.z);
-      g.strokeStyle=state.brand;g.lineWidth=1.6;g.setLineDash([5,4]);
+      g.strokeStyle=SELECT_COLOR;g.lineWidth=1.6;g.setLineDash([5,4]);
       g.strokeRect(sx-hx,sy-hz,hx*2,hz*2);g.setLineDash([]);
-      g.fillStyle=state.brand;
+      g.fillStyle=SELECT_COLOR;
       [[-hx,-hz],[hx,-hz],[-hx,hz],[hx,hz]].forEach(p=>g.fillRect(sx+p[0]-2.5,sy+p[1]-2.5,5,5));
       g.font='600 10px "IBM Plex Mono",monospace';
       const nm=c.name.toUpperCase();
       const wtx=g.measureText(nm).width;
-      g.fillStyle=state.brand;rr(g,sx-wtx/2-6,sy-hz-22,wtx+12,16,4);g.fill();
+      g.fillStyle=SELECT_COLOR;rr(g,sx-wtx/2-6,sy-hz-22,wtx+12,16,4);g.fill();
       g.fillStyle='#fff';g.textAlign='center';g.fillText(nm,sx,sy-hz-10.5);
       g.textAlign='left';
     }
@@ -1194,7 +1529,9 @@ function drawPlan(g,W,H,opts={}){
       const cc={x:g2.A.x+g2.ux*o.t*g2.len,z:g2.A.z+g2.uz*o.t*g2.len};
       const n=w.kind==='outer'?interiorNormal(w):{x:g2.uz,z:-g2.ux};
       const off2=15/fit;
-      const col=o.kind==='evac'?'#1F9D55':(o.kind==='window'?'#5B7A8C':'#26241F');
+      const selected=wallsMode&&state.selObj&&state.selObj.type==='opening'&&state.selObj.id===o.id;
+      const hovering=!opts.plain&&openingHoverActive(wallsMode,o,hoverOpening);
+      const col=openingVisualColor(o.kind,selected,hovering);
       openTag(g,X(cc.x+n.x*off2),Y(cc.z+n.z*off2),fmt2(o.w),col,'#FFFFFF');
       if(wallsMode&&state.selObj&&state.selObj.type==='opening'&&state.selObj.id===o.id){
         const sPos=o.t*g2.len-o.w/2, ePos=o.t*g2.len+o.w/2;
@@ -1236,6 +1573,8 @@ function drawPlan(g,W,H,opts={}){
     drawTag(g,(X(drawState.last.x)+X(m.x))/2,(Y(drawState.last.z)+Y(m.z))/2-14,fmt2(L)+' м',state.brand,'#fff');
     const angleHint=drawState.lastNodeId&&angleHintForNode(drawState.lastNodeId,m,null);
     if(angleHint)drawTag(g,X(m.x),Y(m.z)+18,angleHintText(angleHint),state.brand,'#fff');
+    const clearanceText=wallClearanceText(wallClearance({A:drawState.last,B:m},{dx:m.x-drawState.last.x,dz:m.z-drawState.last.z}));
+    if(clearanceText)drawTag(g,X(m.x),Y(m.z)+36,clearanceText,state.brand,'#fff');
     g.fillStyle=state.brand;g.beginPath();g.arc(X(drawState.last.x),Y(drawState.last.z),5,0,7);g.fill();
     if(drawState.snapId){
       const sn=nById(drawState.snapId);
@@ -1296,8 +1635,9 @@ function updateEvacSvg(){
 }
 
 /* ═══════════════ ПОДЛОЖКА ═══════════════ */
-const underlay={img:null,name:'',visible:true,opacity:.55,ux:0,uz:0,uw:10,rot:0,mode:false,calibrating:false,calP1:null,calP2:null,calMouse:null,calibrated:false};
+const underlay={img:null,name:'',source:'image',page:null,visible:true,opacity:.55,ux:0,uz:0,uw:10,rot:0,mode:false,calibrating:false,calP1:null,calP2:null,calMouse:null,calibrated:false};
 let ulDrag=null;
+let pdfjsLib=null,pdfJsPromise=null;
 function toMeters(p){return{x:(p.x-plan.cx)/plan.fit,z:(p.y-plan.cy)/plan.fit};}
 function underlaySize(){
   const img=underlay.img;
@@ -1318,7 +1658,8 @@ function fitUnderlay(){
 function updateUlInfo(){
   if(!underlay.img){$('#ulInfo').textContent='—';return;}
   const s=underlaySize();
-  $('#ulInfo').textContent='Размер: '+fmtM(s.w)+' × '+fmtM(s.h)+' м'+
+  $('#ulInfo').textContent=(underlay.source==='pdf'?'PDF · первая страница · Размер: ':'Размер: ')+
+    fmtM(s.w)+' × '+fmtM(s.h)+' м'+
     (underlay.calibrated?' · масштаб откалиброван':' · масштаб примерный — откалибруйте');
 }
 function updateUlUI(){
@@ -1337,25 +1678,92 @@ function updateUlUI(){
   }
   if(plan.cv)plan.cv.style.cursor=planCursor();
 }
+function isPdfFile(f){
+  const name=String(f&&f.name||'');
+  const type=String(f&&f.type||'').toLowerCase();
+  return type==='application/pdf'||/\.pdf$/i.test(name);
+}
 function underlayFileError(f){
   const name=String(f&&f.name||'');
   const type=String(f&&f.type||'').toLowerCase();
-  if(type==='application/pdf'||/\.pdf$/i.test(name))
-    return 'PDF пока нельзя использовать как подложку. Сохраните нужную страницу в PNG или JPG';
+  if(isPdfFile(f))return null;
   if(!['image/png','image/jpeg'].includes(type)&&!(/\.(?:png|jpe?g)$/i.test(name)&&!type))
-    return 'Поддерживаются только PNG и JPG';
+    return 'Поддерживаются PNG, JPG и PDF';
   return null;
+}
+function pdfRenderScale(pageWidth,pageHeight,maxSide){
+  return Math.max(.25,Math.min(4,maxSide/Math.max(pageWidth,pageHeight)));
+}
+function pdfErrorMessage(e){
+  const msg=String(e&&e.message||'').toLowerCase();
+  if(/password|encrypted/.test(msg))return 'PDF защищён паролем. Снимите защиту и попробуйте снова';
+  if(/invalid|format|parse|missing|stream/.test(msg))return 'PDF повреждён или имеет неподдерживаемый формат. Сохраните файл заново и попробуйте снова';
+  return 'Не удалось открыть PDF. Проверьте файл и подключение к интернету';
+}
+function loadPdfJs(){
+  if(pdfjsLib)return Promise.resolve(pdfjsLib);
+  if(pdfJsPromise)return pdfJsPromise;
+  pdfJsPromise=(async()=>{
+    let lastError=null;
+    for(const source of CDNS.pdf){
+      try{
+        const lib=await import(source.src);
+        if(!lib||typeof lib.getDocument!=='function')throw new Error('PDF.js API недоступен');
+        lib.GlobalWorkerOptions.workerSrc=source.worker;
+        pdfjsLib=lib;
+        return lib;
+      }catch(e){lastError=e;}
+    }
+    throw lastError||new Error('PDF.js недоступен');
+  })().catch(e=>{pdfJsPromise=null;throw e;});
+  return pdfJsPromise;
+}
+function loadPdfFile(f){
+  const maxBytes=15*1024*1024;
+  if(f.size>maxBytes){toast('Файл слишком большой. Максимум — 15 МБ',true);return;}
+  const rd=new FileReader();
+  rd.onload=async()=>{
+    let pdf=null;
+    try{
+      toast('Загружаю первую страницу PDF…');
+      const lib=await loadPdfJs();
+      const task=lib.getDocument({data:new Uint8Array(rd.result)});
+      pdf=await task.promise;
+      const page=await pdf.getPage(1);
+      const base=page.getViewport({scale:1});
+      const viewport=page.getViewport({scale:pdfRenderScale(base.width,base.height,2200)});
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.max(1,Math.ceil(viewport.width));
+      canvas.height=Math.max(1,Math.ceil(viewport.height));
+      const ctx=canvas.getContext('2d',{alpha:false});
+      if(!ctx)throw new Error('Canvas 2D недоступен');
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+      await page.render({canvasContext:ctx,viewport}).promise;
+      underlay.img=canvas;underlay.name=f.name;underlay.source='pdf';underlay.page=1;underlay.visible=true;underlay.opacity=.55;underlay.calibrated=false;
+      $('#ulOpacity').value=55;$('#ulOpVal').textContent='55%';
+      fitUnderlay();updateUlUI();markDirty();
+      toast('PDF добавлен: первая страница'+(pdf.numPages>1?' из '+pdf.numPages:'')+'. Калибровка доступна');
+    }catch(e){toast(pdfErrorMessage(e),true);}
+    finally{
+      if(pdf&&typeof pdf.destroy==='function'){
+        try{await Promise.resolve(pdf.destroy());}catch(_e){}
+      }
+    }
+  };
+  rd.onerror=()=>toast('Не удалось прочитать PDF',true);
+  rd.readAsArrayBuffer(f);
 }
 function loadImageFile(f){
   const fileError=underlayFileError(f);
   if(fileError){toast(fileError,true);return;}
   const maxBytes=15*1024*1024;
   if(f.size>maxBytes){toast('Файл слишком большой. Максимум — 15 МБ',true);return;}
+  if(isPdfFile(f)){loadPdfFile(f);return;}
   const rd=new FileReader();
   rd.onload=()=>{
     const img=new Image();
     img.onload=()=>{
-      underlay.img=img;underlay.name=f.name;underlay.visible=true;underlay.opacity=.55;underlay.calibrated=false;
+      underlay.img=img;underlay.name=f.name;underlay.source='image';underlay.page=null;underlay.visible=true;underlay.opacity=.55;underlay.calibrated=false;
       $('#ulOpacity').value=55;$('#ulOpVal').textContent='55%';
       fitUnderlay();updateUlUI();markDirty();
       toast('Чертёж добавлен. Нажмите «Калибровка» и укажите две точки известного размера');
@@ -1368,7 +1776,7 @@ function loadImageFile(f){
 }
 function removeUnderlay(){
   const had=!!underlay.img;
-  underlay.img=null;underlay.name='';underlay.mode=false;underlay.calibrating=false;
+  underlay.img=null;underlay.name='';underlay.source='image';underlay.page=null;underlay.mode=false;underlay.calibrating=false;
   underlay.calP1=null;underlay.calP2=null;underlay.calibrated=false;
   hideCalPop();updateUlUI();planRedraw();if(had)markDirty();
 }
@@ -1416,6 +1824,7 @@ function initUnderlay(){
   $('#cpOk').addEventListener('click',applyCalib);
   $('#cpNo').addEventListener('click',cancelCalib);
   $('#cpInput').addEventListener('keydown',e=>{if(e.key==='Enter')applyCalib();});
+  $('#btnProjNew').addEventListener('click',newProject);
   $('#btnProjSave').addEventListener('click',saveProject);
   $('#btnProjOpen').addEventListener('click',()=>$('#fileProj').click());
   $('#fileProj').addEventListener('change',e=>{const f=e.target.files[0];if(f)loadProjectFile(f);e.target.value='';});
@@ -1425,19 +1834,44 @@ function initUnderlay(){
   pp.addEventListener('drop',e=>{
     e.preventDefault();pp.classList.remove('drop');
     const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(!f)return;
-    if((f.type&&f.type.startsWith('image/'))||/\.(?:png|jpe?g|pdf)$/i.test(f.name))loadImageFile(f);
+    if((f.type&&f.type.startsWith('image/'))||isPdfFile(f)||/\.(?:png|jpe?g)$/i.test(f.name))loadImageFile(f);
     else if(/\.json$/i.test(f.name))loadProjectFile(f);
-    else toast('Поддерживаются PNG, JPG и файлы проекта .json',true);
+    else toast('Поддерживаются PNG, JPG, PDF и файлы проекта .json',true);
   });
 }
 
 /* ═══════════════ ПРОЕКТ ═══════════════ */
+const CALCULATION_DEFAULTS={wallHeightM:3,openingHeightsM:{door:2.1,evac:2.1,window:1.5}};
+const CALCULATION_LIMITS={wallHeightM:[2,6],openingHeightM:[.5,4]};
 const PROJECT_LIMITS={nodes:500,walls:500,openings:1000,items:500,underlayBytes:25*1024*1024};
 const finiteNumber=v=>typeof v==='number'&&Number.isFinite(v);
 function normalizeProjectProfile(profile){return profile===undefined||profile===null||profile===''?'dental':profile;}
+function calculationError(c){
+  if(c===undefined||c===null)return null;
+  if(typeof c!=='object'||Array.isArray(c))return 'В файле повреждены параметры расчёта';
+  const wall=c.wallHeightM;
+  if(wall!==undefined&&(!finiteNumber(wall)||wall<CALCULATION_LIMITS.wallHeightM[0]||wall>CALCULATION_LIMITS.wallHeightM[1]))return 'Некорректная высота стен';
+  if(c.openingHeightsM!==undefined&&(typeof c.openingHeightsM!=='object'||Array.isArray(c.openingHeightsM)))return 'В файле повреждены высоты проёмов';
+  const heights=c.openingHeightsM||{};
+  for(const kind of ['door','evac','window']){
+    const v=heights[kind];
+    if(v!==undefined&&(!finiteNumber(v)||v<CALCULATION_LIMITS.openingHeightM[0]||v>CALCULATION_LIMITS.openingHeightM[1]))return 'Некорректная высота проёма';
+  }
+  return null;
+}
+function normalizeCalculationSettings(c){
+  const src=c&&typeof c==='object'?c:{};
+  const h=src.openingHeightsM&&typeof src.openingHeightsM==='object'?src.openingHeightsM:{};
+  return{wallHeightM:src.wallHeightM===undefined?CALCULATION_DEFAULTS.wallHeightM:+src.wallHeightM,
+    openingHeightsM:{door:h.door===undefined?CALCULATION_DEFAULTS.openingHeightsM.door:+h.door,
+      evac:h.evac===undefined?CALCULATION_DEFAULTS.openingHeightsM.evac:+h.evac,
+      window:h.window===undefined?CALCULATION_DEFAULTS.openingHeightsM.window:+h.window}};
+}
 function validateProjectData(p){
   if(!p||p.app!=='dentplan')return 'Это не файл проекта DentPlan';
   if(!['dental','general'].includes(normalizeProjectProfile(p.profile)))return 'В файле указан неизвестный профиль проекта';
+  const calculationValidation=calculationError(p.calculation);
+  if(calculationValidation)return calculationValidation;
   if(p.layout!==undefined){
     const l=p.layout;
     if(!l||!Array.isArray(l.nodes)||!Array.isArray(l.walls)||
@@ -1467,7 +1901,10 @@ function validateProjectData(p){
       const id=String(o&&o.id||'');
       if(!id||id.length>80||openingIds.has(id)||!wallIds.has(String(o.wallId))||
          !finiteNumber(o.t)||o.t<0||o.t>1||!finiteNumber(o.w)||o.w<.5||o.w>3||
-         !['door','evac','window'].includes(o.kind))return 'В файле повреждены проёмы';
+         !['door','evac','window'].includes(o.kind)||
+         (o.hingeSide!==undefined&&!['left','right'].includes(String(o.hingeSide)))||
+         (o.openingDirection!==undefined&&!['inside','outside'].includes(String(o.openingDirection)))||
+         (o.rot!==undefined&&(!finiteNumber(o.rot)||Math.abs(o.rot)>1000)))return 'В файле повреждены проёмы';
       const wallId=String(o.wallId),len=wallMap.get(wallId).len,center=o.t*len;
       if(center-o.w/2<.03||center+o.w/2>len-.03)return 'В файле повреждены проёмы';
       const siblings=openingsByWall.get(wallId)||[];
@@ -1487,21 +1924,40 @@ function validateProjectData(p){
   if(p.underlay!==undefined&&p.underlay!==null){
     if(typeof p.underlay!=='object'||typeof p.underlay.data!=='string'||
        !/^data:image\/(?:png|jpe?g|webp);base64,/i.test(p.underlay.data)||
-       p.underlay.data.length>PROJECT_LIMITS.underlayBytes)return 'В файле повреждена или слишком большая подложка';
+       p.underlay.data.length>PROJECT_LIMITS.underlayBytes||
+       (p.underlay.source!==undefined&&!['image','pdf'].includes(p.underlay.source))||
+       (p.underlay.page!==undefined&&(!Number.isInteger(p.underlay.page)||p.underlay.page<1||p.underlay.page>10000)))return 'В файле повреждена или слишком большая подложка';
   }
   return null;
 }
 function confirmReplaceProject(){
   return !projectDirty||window.confirm('Заменить текущий проект? Несохранённые изменения будут потеряны.');
 }
+function newProject(){
+  if(!confirmReplaceProject())return;
+  const room={...state.room},brand=state.brand;
+  clearItems();
+  state.nodes=[];state.walls=[];state.openings=[];
+  state.room=room;state.brand=brand;state.seq=1;nid=1;wid=1;oid=1;
+  $('#roomW').value=room.w;$('#roomD').value=room.d;
+  $('#roomWv').textContent=fmtM(room.w)+' м';$('#roomDv').textContent=fmtM(room.d)+' м';
+  state.sel=null;state.selObj=null;state.fire=false;
+  ulDrag=null;hoverNode=null;hoverErase=null;hoverLabel=null;hoverOpening=null;ghost=null;drawState=null;wallDrag=null;resizeDrag=null;liveLabel=null;rotDrag=null;justFinishedDrawing=false;
+  setMode('items');setTool('select');removeUnderlay();closeModals();
+  $('#fireToggle').classList.remove('on');$('#fireToggle').setAttribute('aria-pressed','false');
+  staticDirty=true;refresh();resetHistory();
+  if(state.view==='3d')camTo(perspPreset(),0);else camTo(topPreset(),0);
+  toast('Новый проект создан. Сохранённый файл не удалён');
+}
 function saveProject(){
   const proj={app:'dentplan',v:2,saved:new Date().toISOString(),
     profile:state.profile,
     brand:state.brand,
+    calculation:normalizeCalculationSettings(state.calculation),
     layout:{
       nodes:state.nodes.map(n=>({id:n.id,x:+n.x.toFixed(3),z:+n.z.toFixed(3)})),
       walls:state.walls.map(w=>({id:w.id,a:w.a,b:w.b,kind:w.kind})),
-      openings:state.openings.map(o=>({id:o.id,wallId:o.wallId,t:+o.t.toFixed(4),w:+o.w.toFixed(2),kind:o.kind,flip:!!o.flip})),
+      openings:state.openings.map(o=>({id:o.id,wallId:o.wallId,t:+o.t.toFixed(4),w:+o.w.toFixed(2),kind:o.kind,flip:doorState(o).openingDirection==='outside',hingeSide:normalizeHingeSide(o.hingeSide),openingDirection:normalizeOpeningDirection(o.openingDirection,o.flip),rot:+normalizeOpeningRot(o.rot).toFixed(4)})),
     },
     room:{...state.room},
     items:state.items.map(i=>({type:i.type,x:+i.x.toFixed(3),z:+i.z.toFixed(3),rot:+i.rot.toFixed(4)})),
@@ -1509,13 +1965,19 @@ function saveProject(){
   if(underlay.img){
     try{
       const c=document.createElement('canvas');
-      c.width=underlay.img.naturalWidth;c.height=underlay.img.naturalHeight;
+      const iw=underlay.img.naturalWidth||underlay.img.width;
+      const ih=underlay.img.naturalHeight||underlay.img.height;
+      if(!iw||!ih)throw new Error('Размер подложки недоступен');
+      c.width=iw;c.height=ih;
       const g=c.getContext('2d');
+      if(!g)throw new Error('Canvas 2D недоступен');
       g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);
       g.drawImage(underlay.img,0,0);
-      proj.underlay={data:c.toDataURL('image/jpeg',.82),name:underlay.name,
+      const exportType=underlay.source==='pdf'?'image/png':'image/jpeg';
+      proj.underlay={data:exportType==='image/png'?c.toDataURL(exportType):c.toDataURL(exportType,.82),name:underlay.name,
         visible:underlay.visible,opacity:underlay.opacity,
-        ux:underlay.ux,uz:underlay.uz,uw:underlay.uw,rot:underlay.rot,calibrated:underlay.calibrated};
+        ux:underlay.ux,uz:underlay.uz,uw:underlay.uw,rot:underlay.rot,calibrated:underlay.calibrated,
+        source:underlay.source,page:underlay.page};
     }catch(e){toast('Не удалось сохранить подложку. Проект не скачан',true);return;}
   }
   try{
@@ -1535,18 +1997,21 @@ function loadProjectFile(f){
     const validationError=validateProjectData(p);
     if(validationError){toast(validationError,true);return;}
     if(!confirmReplaceProject())return;
+    const loadedCalculation=normalizeCalculationSettings(p.calculation);
     const loadedW=clamp(Number(p.room&&p.room.w)||12,8,18);
     const loadedD=clamp(Number(p.room&&p.room.d)||9,6,14);
     setProjectProfile(normalizeProjectProfile(p.profile),false);
     clearItems();
     state.items=[];state.sel=null;state.selObj=null;
     state.room={w:loadedW,d:loadedD};
+    state.calculation=loadedCalculation;
+    updateCalculationUI();
     $('#roomW').value=loadedW;$('#roomD').value=loadedD;
     $('#roomWv').textContent=fmtM(loadedW)+' м';$('#roomDv').textContent=fmtM(loadedD)+' м';
     if(p.layout&&Array.isArray(p.layout.nodes)&&p.layout.walls){
       state.nodes=p.layout.nodes.map(n=>({id:String(n.id),x:+n.x||0,z:+n.z||0}));
       state.walls=p.layout.walls.map(w=>({id:String(w.id),a:String(w.a),b:String(w.b),kind:w.kind==='inner'?'inner':'outer'}));
-      state.openings=(p.layout.openings||[]).map(o=>({id:String(o.id),wallId:String(o.wallId),t:clamp(+o.t||.5,0,1),w:clamp(+o.w||.9,.5,3),kind:['door','evac','window'].includes(o.kind)?o.kind:'door',flip:!!o.flip}));
+      state.openings=(p.layout.openings||[]).map(o=>{const openingDirection=normalizeOpeningDirection(o.openingDirection,o.flip);return{id:String(o.id),wallId:String(o.wallId),t:clamp(+o.t||.5,0,1),w:clamp(+o.w||.9,.5,3),kind:['door','evac','window'].includes(o.kind)?o.kind:'door',flip:openingDirection==='outside',hingeSide:normalizeHingeSide(o.hingeSide),openingDirection,rot:normalizeOpeningRot(o.rot)};});
       let mx=1;state.nodes.forEach(n=>{const v=parseInt(n.id.slice(1));if(v>=mx)mx=v+1;});nid=mx;
       mx=1;state.walls.forEach(w=>{const v=parseInt(w.id.slice(1));if(v>=mx)mx=v+1;});wid=mx;
       mx=1;state.openings.forEach(o=>{const v=parseInt(o.id.slice(1));if(v>=mx)mx=v+1;});oid=mx;
@@ -1564,6 +2029,7 @@ function loadProjectFile(f){
       const img=new Image();
       img.onload=()=>{
         underlay.img=img;underlay.name=p.underlay.name||'чертёж.jpg';
+        underlay.source=p.underlay.source==='pdf'?'pdf':'image';underlay.page=Number.isInteger(p.underlay.page)?p.underlay.page:null;
         underlay.visible=p.underlay.visible!==false;
         underlay.opacity=clamp(+p.underlay.opacity||.55,.1,1);
         underlay.ux=+p.underlay.ux||0;underlay.uz=+p.underlay.uz||0;
@@ -1826,28 +2292,31 @@ function buildStatic(){
     });
     ops.forEach(op=>{
       const o=op.o;
+      const door=o.kind==='window'?null:openingDoorGeometry(w,geo,o);
+      const pose=door&&door.pose;
+      const openingYaw=geo.ang-normalizeOpeningRot(o.rot);
       const cM={x:geo.A.x+geo.ux*o.t*geo.len,z:geo.A.z+geo.uz*o.t*geo.len};
       const gp=[{x:geo.A.x+geo.ux*op.s,z:geo.A.z+geo.uz*op.s},{x:geo.A.x+geo.ux*op.e,z:geo.A.z+geo.uz*op.e}];
       if(o.kind==='window'){
-        staticRoot.add(bx(o.w,.06,th+.04,M.white,cM.x,.42,cM.z,geo.ang));
-        staticRoot.add(bx(o.w,.05,th+.04,M.white,cM.x,H-.04,cM.z,geo.ang));
-        const gl=bx(o.w-.08,H-.55,.05,M.glass,cM.x,(H-.55)/2+.42,cM.z,geo.ang);
+        staticRoot.add(bx(o.w,.06,th+.04,M.white,cM.x,.42,cM.z,openingYaw));
+        staticRoot.add(bx(o.w,.05,th+.04,M.white,cM.x,H-.04,cM.z,openingYaw));
+        const gl=bx(o.w-.08,H-.55,.05,M.glass,cM.x,(H-.55)/2+.42,cM.z,openingYaw);
         gl.castShadow=false;staticRoot.add(gl);
       }else{
         gp.forEach(p=>staticRoot.add(bx(.07,H,th+.03,M.dark,p.x,H/2,p.z,geo.ang)));
         const leafW=Math.max(.1,op.e-op.s-.07);
-        let side=(n.x*(-geo.uz)+n.z*(geo.ux))>0?1:-1;
-        if(o.flip)side=-side;
+        const side=doorSwingSign(w,geo,o);
         const grp=new THREE.Group();
-        grp.position.set(gp[0].x+.045,0,gp[0].z+.045);
-        grp.rotation.y=geo.ang;
+        const hinge=pose&&pose.hingeSide==='right'?gp[1]:gp[0];
+        grp.position.set(hinge.x+.045,0,hinge.z+.045);
+        grp.rotation.y=openingYaw+(pose&&pose.hingeSide==='right'?Math.PI:0);
         const swing=new THREE.Group();
         swing.rotation.y=side*1.05;
         const leaf=bx(leafW,H-.06,.045,M.door,leafW/2,H/2,0);
         swing.add(leaf);
         swing.add(cy(.018,.018,.11,M.metal,leafW-.09,.55,.05,10));
         grp.add(swing);staticRoot.add(grp);
-        const sg=bx(.42,.16,.05,M.sign,cM.x,.92,cM.z,geo.ang);
+        const sg=bx(.42,.16,.05,M.sign,cM.x,.92,cM.z,openingYaw);
         sg.position.x+=n.x*(th/2+.04);sg.position.z+=n.z*(th/2+.04);
         staticRoot.add(sg);
       }
@@ -1866,7 +2335,7 @@ function buildStatic(){
 
   if(selRing)scene.remove(selRing);
   selRing=new THREE.Mesh(new THREE.RingGeometry(1,1.07,48),
-    new THREE.MeshBasicMaterial({color:new THREE.Color(state.brand),transparent:true,opacity:.9,depthWrite:false}));
+    new THREE.MeshBasicMaterial({color:new THREE.Color(SELECT_COLOR),transparent:true,opacity:.9,depthWrite:false}));
   selRing.rotation.x=-Math.PI/2;selRing.position.y=.012;selRing.visible=false;scene.add(selRing);
 
   const ex=Math.max(state.room.w,state.room.d)*.72+2;
@@ -2123,7 +2592,7 @@ const TOOL_DEF={
   evac:{kind:'evac',label:'Эвакуационный выход'},
 };
 const toolW={door:.9,window:1.2,evac:1.0};
-let hoverNode=null,hoverErase=null,hoverLabel=null,ghost=null,drawState=null,wallDrag=null,resizeDrag=null,liveLabel=null,rotDrag=null;
+let hoverNode=null,hoverErase=null,hoverLabel=null,hoverOpening=null,ghost=null,drawState=null,wallDrag=null,resizeDrag=null,liveLabel=null,rotDrag=null,justFinishedDrawing=false;
 
 function planCursor(){
   if(underlay.calibrating)return 'crosshair';
@@ -2137,14 +2606,14 @@ function planCursor(){
 function setTool(t){
   state.tool=t;
   $$('#wallTools button').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
-  endDraw();ghost=null;hoverErase=null;hoverLabel=null;
+  endDraw();ghost=null;hoverErase=null;hoverLabel=null;hoverOpening=null;
   updateToolHint();updateUlUI();planRedraw();
 }
 function updateToolHint(){
   const HINTS={
-    select:'Тяните узлы ● и стены целиком; белые ручки на концах выбранной стены меняют её длину; при изменении угла показываются отклонение от 90°. У проёма ручки меняют его ширину. Стрелки ← / → двигают выбранный проём по стене, + / − — ширина. Двойной клик — разделить, правый клик — удалить.',
-    wall:'Кликайте точки — перегородка ляжет цепочкой, длина и угол от 90° показываются на лету у узла с соседней стеной. Привязка к узлам, осям и сетке 5 см. Esc, правый клик или двойной клик — завершить.',
-    outer:'Кликайте точки — сегмент наружной стены с живым размером и отклонением от 90° у узла с соседней стеной. Замкните контур, чтобы площадь считалась точно.',
+    select:'Выбор и перенос: клик по линии стены выбирает стену; по дуге или значку двери/эвакуационного проёма — проём; по линии окна — окно. Выбранное подсвечивается красным, карточка с типом появляется снизу. Между проёмами выбирается стена. Тяните узлы ● и стены целиком; белые ручки на концах выбранной стены меняют её длину; при изменении угла показываются отклонение от 90°. У проёма ручки меняют его ширину. Стрелки ← / → двигают выбранный проём по стене, + / − — ширина; ↺/↻ — поворот, ↻ 180° — разворот без зеркального отражения. Двойной клик — разделить, правый клик — удалить.',
+    wall:'Кликайте точки — перегородка ляжет цепочкой. На лету показываются длина, угол и расстояния до внешнего контура: при движении по горизонтали слева/справа, при движении по вертикали сверху/снизу; при переносе стены пара обновляется. Привязка к узлам, осям и сетке 5 см. Esc, правый клик или двойной клик — завершить.',
+    outer:'Кликайте точки — сегмент наружной стены с живым размером и отклонением от 90° у узла с соседней стеной. Замкните контур, чтобы площадь считалась точно. Esc, правый клик или двойной клик — завершить и вернуться к выбору.',
     door:'Наведите на стену — призрак показывает расстояния от обоих углов и ширину. Колесо мыши или ← / → двигают примерку по стене (Shift — по 1 см), + / − — ширина. Клик ставит дверь; дальше — тянуть, кнопки ‹ › и стрелки.',
     window:'Наведите на стену — призрак показывает расстояния от углов и ширину; колесо и ← / → двигают, + / − меняют ширину. Клик ставит окно (в 3D оно стеклянное).',
     evac:'Клик по внешней стене ставит эвакуационный выход. Колесо и ← / → двигают примерку, + / − — ширина; после установки — ручки и те же клавиши.',
@@ -2154,9 +2623,10 @@ function updateToolHint(){
 }
 function setMode(m){
   state.mode=m;
-  hoverLabel=null;
+  hoverLabel=null;hoverOpening=null;
   $$('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
   $('#wallTools').hidden=m!=='walls';
+  $('#wallLegend').hidden=m!=='walls';
   $('#toolHint').hidden=m!=='walls';
   if(m!=='walls'){endDraw();selectWallObj(null);}
   else{setTool('select');select(null);}
@@ -2167,7 +2637,11 @@ function selectWallObj(obj){
   renderWallBar();
   planRedraw();
 }
-function endDraw(){drawState=null;updateUlUI();planRedraw();}
+function endDraw(){drawState=null;ghost=null;hoverErase=null;hoverLabel=null;hoverOpening=null;liveLabel=null;updateUlUI();planRedraw();}
+function finishWallDrawing(){
+  endDraw();
+  if(state.mode==='walls'&&(state.tool==='wall'||state.tool==='outer'))setTool('select');
+}
 function chainClick(m){
   const sp=snapPoint(m,drawState.last);
   if(!drawState.last){
@@ -2224,12 +2698,13 @@ function renderWallBar(){
     if(!w){bar.classList.remove('show');return;}
     const g=wallGeom(w);
     const nm=w.kind==='outer'?'Стена наружная':'Перегородка';
-    bar.innerHTML='<span id="wbName">'+nm+'<em>'+fmt2(g.len)+' м</em></span>'+
+    bar.innerHTML='<span id="wbName">'+nm+'<em>'+fmt2(g.len)+' м · '+wallNeighborDistanceText(w)+'</em></span>'+
       '<button data-act="kind" class="'+(w.kind==='outer'?'on':'')+'"><i data-lucide="box-select"></i>'+(w.kind==='outer'?'Наружная':'Внутр.')+'</button>'+
       '<span class="div"></span>'+
       '<button data-act="lenminus" title="Короче на 10 см (клавиша −)"><i data-lucide="minus"></i></button>'+
       '<button data-act="lenplus" title="Длиннее на 10 см (клавиша +)"><i data-lucide="plus"></i></button>'+
       '<span class="div"></span>'+
+      '<button data-act="orthogonal" title="Выровнять выбранную стену перпендикулярно соседней">Выровнять до 90° <i data-lucide="corner-up-left"></i></button>'+
       '<button data-act="split" title="Разделить стену узлом (двойной клик)"><i data-lucide="scissors"></i>Разделить</button>'+
       '<button data-act="door" class="accent" title="Добавить дверь"><i data-lucide="door-open"></i>Дверь</button>'+
       '<button data-act="window" class="accent" title="Добавить окно"><i data-lucide="blinds"></i>Окно</button>'+
@@ -2240,18 +2715,24 @@ function renderWallBar(){
     if(!op){bar.classList.remove('show');return;}
     const names={door:'Дверь',evac:'Эвак. выход',window:'Окно'};
     const m=openingMetrics(op);
-    bar.innerHTML='<span id="wbName">Проём · '+names[op.kind]+'<em>слева '+fmt2(m.left)+' м · ширина '+fmt2(m.width)+' м · справа '+fmt2(m.right)+' м</em></span>'+
+    const pose=doorState(op);
+    bar.innerHTML='<span id="wbName">Проём · '+names[op.kind]+'<em>слева '+fmt2(m.left)+' м · ширина '+fmt2(m.width)+' м · справа '+fmt2(m.right)+' м · поворот '+fmt2(m.rot/D2R)+'°</em></span>'+
       '<button data-act="okind" data-k="door" class="'+(op.kind==='door'?'on':'')+'">Дверь</button>'+
       '<button data-act="okind" data-k="evac" class="'+(op.kind==='evac'?'on':'')+'">Эвак.</button>'+
       '<button data-act="okind" data-k="window" class="'+(op.kind==='window'?'on':'')+'">Окно</button>'+
-      (op.kind!=='window'?'<button data-act="flip" title="Отразить сторону открывания"><i data-lucide="flip-horizontal"></i>Отразить</button>':'')+
+      (op.kind!=='window'?'<button data-act="hinge" title="Перенести петли на противоположный конец проёма">Петли: '+(pose.hingeSide==='left'?'слева':'справа')+'</button>'+
+        '<button data-act="flip" title="Разворот 180°: сменить направление открывания"><i data-lucide="flip-horizontal"></i>Открывание: '+(pose.openingDirection==='inside'?'внутрь':'наружу')+'</button>':'')+
       '<span class="div"></span>'+
       '<button data-act="left" title="К началу стены: 5 см, Shift — 1 см (клавиша ←)"><i data-lucide="chevron-left"></i></button>'+
       '<button data-act="right" title="К концу стены: 5 см, Shift — 1 см (клавиша →)"><i data-lucide="chevron-right"></i></button>'+
       '<button data-act="wminus" title="Уже на 10 см (клавиша −)"><i data-lucide="minus"></i></button>'+
       '<button data-act="wplus" title="Шире на 10 см (клавиша +)"><i data-lucide="plus"></i></button>'+
+      '<button data-act="rotleft" title="Повернуть проём на −15°">↺ 15°</button>'+
+      '<button data-act="rotright" title="Повернуть проём на +15°">↻ 15°</button>'+
+      '<button data-act="rot180" title="Повернуть проём на 180°, не зеркалить" aria-label="Повернуть проём на 180 градусов">↻ 180°</button>'+
+      '<label class="wb-angle" title="Точный угол поворота проёма">∠ <input data-opening-angle type="number" min="-180" max="180" step="1" value="'+fmt2(m.rot/D2R).replace(',','.')+'" aria-label="Угол поворота проёма, градусы">°</label>'+
       '<span class="div"></span>'+
-      '<button data-act="del" title="Удалить проём (Del / правый клик)"><i data-lucide="trash-2"></i></button>';
+      '<button data-act="del" title="Удалить выбранный проём (Del / правый клик)" aria-label="Удалить выбранный проём"><i data-lucide="trash-2"></i></button>';
   }
   bar.classList.add('show');icons();
 }
@@ -2261,14 +2742,25 @@ function wallBarAct(act,k,fine){
     const w=wById(o.id);if(!w)return;
     if(act==='kind'){w.kind=w.kind==='outer'?'inner':'outer';staticDirty=true;refresh();commit();renderWallBar();}
     if(act==='split'){splitWall(w);refresh();commit();renderWallBar();toast('Стена разделена узлом — теперь можно тянуть угол');}
+    if(act==='orthogonal'){
+      if(!alignWallToPerpendicular(w)){toast('Не удалось выровнять: у стены нет однозначной соседней стены',true);return;}
+      state.walls.forEach(fixOpenings);staticDirty=true;refresh();commit();renderWallBar();toast('Стена выровнена до 90°');
+    }
     if(act==='lenplus'||act==='lenminus'){wallResize(w,act==='lenplus'?.1:-.1);}
-    if(act==='door'){const op=addOpening(w,.5,toolW.door,'door');if(op){selectWallObj({type:'opening',id:op.id});staticDirty=true;refresh();commit();toast('Дверь '+fmt2(toolW.door)+' м добавлена');}}
-    if(act==='window'){const op=addOpening(w,.5,toolW.window,'window');if(op){selectWallObj({type:'opening',id:op.id});staticDirty=true;refresh();commit();toast('Окно '+fmt2(toolW.window)+' м добавлено');}}
+    if(act==='door'){const op=addOpening(w,.5,toolW.door,'door');if(op){selectOpening(op);selectWallObj(state.selObj);staticDirty=true;refresh();commit();toast('Дверь '+fmt2(toolW.door)+' м добавлена');}}
+    if(act==='window'){const op=addOpening(w,.5,toolW.window,'window');if(op){selectOpening(op);selectWallObj(state.selObj);staticDirty=true;refresh();commit();toast('Окно '+fmt2(toolW.window)+' м добавлено');}}
     if(act==='del'){deleteWall(w);clampItemsToBounds();refresh();selectWallObj(null);commit();toast('Стена удалена');}
   }else{
     const op=state.openings.find(x=>x.id===o.id);if(!op)return;
     if(act==='okind'){op.kind=k;staticDirty=true;refresh();commit();renderWallBar();}
-    if(act==='flip'){op.flip=!op.flip;staticDirty=true;refresh();commit();renderWallBar();}
+    if(act==='hinge'){
+      if(!toggleDoorHingeSide(op))return;
+      staticDirty=true;refresh();commit();renderWallBar();
+    }
+    if(act==='flip'){
+      if(!toggleDoorOpeningDirection(op))return;
+      staticDirty=true;refresh();commit();renderWallBar();
+    }
     if(act==='left'||act==='right'){
       nudgeOpening(op.id,(act==='right'?1:-1)*(fine?.01:.05));
       staticDirty=true;refresh();commit();renderWallBar();
@@ -2282,9 +2774,18 @@ function wallBarAct(act,k,fine){
       op.w=nextW;op.t=center/g.len;
       staticDirty=true;refresh();commit();renderWallBar();
     }
+    if(act==='rotleft'||act==='rotright'){
+      rotateOpening(op,(act==='rotright'?1:-1)*15*D2R);
+      staticDirty=true;refresh();commit();renderWallBar();
+    }
+    if(act==='rot180'){
+      rotateOpeningHalfTurn(op);
+      staticDirty=true;refresh();commit();renderWallBar();
+      toast('Проём повернут на 180°');
+    }
     if(act==='del'){
-      state.openings=state.openings.filter(x=>x.id!==op.id);
-      state.selObj=null;refresh();renderWallBar();commit();toast('Проём удалён');
+      if(!deleteSelectedOpening())return;
+      refresh();renderWallBar();commit();toast('Проём удалён');
     }
   }
 }
@@ -2303,14 +2804,36 @@ function initPlan(){
     });
     return best;
   }
+  function openingScreenHitDistance(o,p){
+    const w=wById(o.wallId);if(!w)return Infinity;
+    const g=wallGeom(w);
+    const s={x:g.A.x+g.ux*(o.t*g.len-o.w/2),z:g.A.z+g.uz*(o.t*g.len-o.w/2)};
+    const e={x:g.A.x+g.ux*(o.t*g.len+o.w/2),z:g.A.z+g.uz*(o.t*g.len+o.w/2)};
+    let d=distSeg(p,s,e);
+    if(o.kind==='window'){
+      const openRot=normalizeOpeningRot(o.rot),baseAngle=Math.atan2(g.uz,g.ux),ux=Math.cos(baseAngle+openRot),uz=Math.sin(baseAngle+openRot);
+      const h1={x:g.A.x+g.ux*o.t*g.len-ux*o.w/2,z:g.A.z+g.uz*o.t*g.len-uz*o.w/2};
+      const h2={x:g.A.x+g.ux*o.t*g.len+ux*o.w/2,z:g.A.z+g.uz*o.t*g.len+uz*o.w/2};
+      d=Math.min(d,distSeg(p,h1,h2));
+    }else{
+      const door=openingDoorGeometry(w,g,o);
+      const hinge={x:px(door.hinge),y:py(door.hinge)},radius=o.w*plan.fit;
+      if(pointNearOpeningArc(p,hinge,radius,door.a1,door.a2,door.cross<0,10))
+        d=Math.min(d,Math.abs(Math.hypot(p.x-hinge.x,p.y-hinge.y)-radius));
+      const arcEnd=door.leafEnd;
+      d=Math.min(d,distSeg(p,door.hinge,arcEnd));
+      const markerM=openingMarkerPoint(w,g,o),marker={x:px(markerM),y:py(markerM)};
+      d=Math.min(d,Math.max(0,Math.hypot(p.x-marker.x,p.y-marker.y)-16));
+    }
+    return d;
+  }
   function openingAt(p){
+    if(!(plan.fit>0))return null;
     let best=null,bd=12;
+    const m=toMeters(p);
     state.openings.forEach(o=>{
-      const w=wById(o.wallId);if(!w)return;
-      const g=wallGeom(w);
-      const s={x:g.A.x+g.ux*(o.t*g.len-o.w/2),z:g.A.z+g.uz*(o.t*g.len-o.w/2)};
-      const e={x:g.A.x+g.ux*(o.t*g.len+o.w/2),z:g.A.z+g.uz*(o.t*g.len+o.w/2)};
-      const d=distSeg(p,s,e);
+      let d=openingHitDistance(o,m)*plan.fit;
+      d=Math.min(d,openingScreenHitDistance(o,p));
       if(d<bd){bd=d;best=o;}
     });
     return best;
@@ -2330,6 +2853,25 @@ function initPlan(){
       if(d<bd){bd=d;best=w;}
     });
     return best;
+  }
+  function beginWallDragAt(p){
+    const oh=openingAt(p);
+    if(oh){
+      setTool('select');
+      if(!selectOpening(oh))return false;
+      selectWallObj(state.selObj);
+      wallDrag={type:'opening',id:oh.id,moved:false};
+      plan.cv.style.cursor='grabbing';
+      return true;
+    }
+    const wh=wallAt(p);
+    if(!wh)return false;
+    setTool('select');
+    selectWallObj({type:'wall',id:wh.id});
+    const g=wallGeom(wh);
+    wallDrag={type:'wall',id:wh.id,startM:toMeters(p),oa:{...g.A},ob:{...g.B},moved:false};
+    plan.cv.style.cursor='grabbing';
+    return true;
   }
   function handleAt(p){
     if(!(state.mode==='walls'&&state.tool==='select'&&state.selObj))return null;
@@ -2352,16 +2894,17 @@ function initPlan(){
 
   plan.cv.addEventListener('contextmenu',e=>{
     e.preventDefault();
-    if(drawState){endDraw();toast('Рисование завершено');return;}
+    if(drawState){finishWallDrawing();toast('Рисование завершено');return;}
     if(state.mode!=='walls')return;
     const p=pos(e);
+    const oh=openingAt(p);
+    if(oh){if(deleteOpening(oh)){refresh();selectWallObj(null);commit();toast('Проём удалён');}return;}
     const wh=wallAt(p);
     if(wh){deleteWall(wh);clampItemsToBounds();refresh();selectWallObj(null);commit();toast('Стена удалена');return;}
-    const oh=openingAt(p);
-    if(oh){state.openings=state.openings.filter(x=>x.id!==oh.id);refresh();selectWallObj(null);commit();toast('Проём удалён');}
   });
   plan.cv.addEventListener('dblclick',e=>{
-    if(drawState){endDraw();toast('Рисование завершено');return;}
+    if(drawState){finishWallDrawing();toast('Рисование завершено');return;}
+    if(justFinishedDrawing){justFinishedDrawing=false;return;}
     if(state.mode==='walls'&&state.tool==='select'){
       const wh=wallAt(pos(e));
       if(wh){splitWall(wh);refresh();commit();selectWallObj({type:'wall',id:wh.id});toast('Стена разделена узлом');}
@@ -2386,12 +2929,12 @@ function initPlan(){
       staticDirty=true;refresh();commit();renderWallBar();
     }
   },{passive:false});
-  plan.cv.addEventListener('pointerleave',()=>{ghost=null;hoverErase=null;hoverNode=null;hoverLabel=null;liveLabel=null;planRedraw();});
+  plan.cv.addEventListener('pointerleave',()=>{ghost=null;hoverErase=null;hoverNode=null;hoverLabel=null;hoverOpening=null;liveLabel=null;planRedraw();});
 
   plan.cv.addEventListener('pointerdown',e=>{
     plan.cv.setPointerCapture(e.pointerId);
     const p=pos(e);
-    hoverLabel=null;
+    hoverLabel=null;hoverOpening=null;
     if(underlay.calibrating){
       const m=toMeters(p);
       if(!underlay.calP1||underlay.calP2){underlay.calP1=m;underlay.calP2=null;underlay.calMouse=m;}
@@ -2402,14 +2945,25 @@ function initPlan(){
     if(state.mode==='walls'){
       const t=state.tool;
       if(t==='wall'||t==='outer'){
-        if(!drawState){drawState={last:null,lastNodeId:null,mouse:null,snapId:null};updateUlUI();}
+        const now=performance.now(),prev=drawState&&drawState.lastClick;
+        const repeated=!!(prev&&now-prev.at<450&&Math.hypot(p.x-prev.x,p.y-prev.y)<12);
+        const doubleClick=shouldFinishDrawingOnDoubleClick(e,prev,p,now)||repeated;
+        if(drawState&&doubleClick){
+          justFinishedDrawing=true;
+          setTimeout(()=>{justFinishedDrawing=false;},700);
+          finishWallDrawing();toast('Рисование завершено');return;
+        }
+        if(drawState&&!nodeAt(p)&&beginWallDragAt(p))return;
+        if(!drawState){drawState={last:null,lastNodeId:null,mouse:null,snapId:null,lastClick:null};updateUlUI();}
+        drawState.lastClick={at:now,x:p.x,y:p.y};
         chainClick(toMeters(p));return;
       }
       if(TOOL_DEF[t]){
         const existingOpening=openingAt(p);
         if(shouldPrioritizeOpeningHit(t,existingOpening)){
           setTool('select');
-          selectWallObj({type:'opening',id:existingOpening.id});
+          if(!selectOpening(existingOpening))return;
+          selectWallObj(state.selObj);
           wallDrag={type:'opening',id:existingOpening.id,moved:false};
           plan.cv.style.cursor='grabbing';
           return;
@@ -2423,23 +2977,24 @@ function initPlan(){
           const m=toMeters(p);
           const proj=clamp((m.x-g.A.x)*g.ux+(m.z-g.A.z)*g.uz,w/2+.03,g.len-w/2-.03);
           const op=addOpening(wh,proj/g.len,w,def.kind);
-          if(op){setTool('select');selectWallObj({type:'opening',id:op.id});staticDirty=true;refresh();commit();
+          if(op){setTool('select');selectOpening(op);selectWallObj(state.selObj);staticDirty=true;refresh();commit();
             toast(def.label+' '+fmt2(w)+' м установлена');}
         }
         return;
       }
       if(t==='erase'){
+        const oh=openingAt(p);
+        if(oh){if(deleteOpening(oh)){refresh();selectWallObj(null);commit();toast('Проём удалён');}return;}
         const nh=nodeAt(p);
         if(nh){eraseNode(nh);return;}
-        const oh=openingAt(p);
-        if(oh){state.openings=state.openings.filter(x=>x.id!==oh.id);refresh();selectWallObj(null);commit();toast('Проём удалён');return;}
         const wh=wallAt(p);
         if(wh){deleteWall(wh);clampItemsToBounds();refresh();selectWallObj(null);commit();toast('Стена удалена');return;}
         return;
       }
       /* select */
+      const openingHit=openingAt(p);
       const hd=handleAt(p);
-      if(hd){
+      if(hd&&!(openingHit&&hd.type==='wall')){
         if(hd.type==='opening'){
           resizeDrag={kind:'opening',id:hd.op.id,wallId:hd.op.wallId,edge:hd.edge,t0:hd.op.t,w0:hd.op.w,moved:false};
         }else{
@@ -2447,10 +3002,9 @@ function initPlan(){
         }
         plan.cv.style.cursor='grabbing';return;
       }
+      if(openingHit){if(!selectOpening(openingHit))return;wallDrag={type:'opening',id:openingHit.id,moved:false};selectWallObj(state.selObj);plan.cv.style.cursor='grabbing';return;}
       const nh=nodeAt(p);
       if(nh){wallDrag={type:'node',id:nh.id,moved:false};selectWallObj(null);plan.cv.style.cursor='grabbing';return;}
-      const oh=openingAt(p);
-      if(oh){wallDrag={type:'opening',id:oh.id,moved:false};selectWallObj({type:'opening',id:oh.id});plan.cv.style.cursor='grabbing';return;}
       const wh=wallAt(p);
       if(wh){
         selectWallObj({type:'wall',id:wh.id});
@@ -2561,7 +3115,8 @@ function initPlan(){
           const A=nById(w.a),B=nById(w.b);if(!A||!B)return;
           translateWall(w,dx,dz,wallDrag.oa,wallDrag.ob);
           wallDrag.moved=true;staticDirty=true;
-          liveLabel={x:m.x,z:m.z,text:fmt2(wallGeom(w).len)+' м'};
+          const clearanceText=wallClearanceText(wallClearance(w,{dx,dz}));
+          liveLabel={x:m.x,z:m.z,text:fmt2(wallGeom(w).len)+' м · '+wallNeighborDistanceText(w)+(clearanceText?' · '+clearanceText:'')};
           planRedraw();
         }else if(wallDrag.type==='opening'){
           const op=state.openings.find(x=>x.id===wallDrag.id);if(!op)return;
@@ -2579,7 +3134,7 @@ function initPlan(){
         return;
       }
       /* ховеры */
-      ghost=null;hoverErase=null;hoverNode=null;liveLabel=null;
+      ghost=null;hoverErase=null;hoverNode=null;hoverOpening=null;liveLabel=null;
       if(TOOL_DEF[state.tool]){
         const wh=wallAt(p);
         if(wh){
@@ -2591,11 +3146,11 @@ function initPlan(){
           }
         }
       }else if(state.tool==='erase'){
-        const nh=nodeAt(p);
-        if(nh)hoverErase={type:'node',id:nh.id};
+        const oh=openingAt(p);
+        if(oh)hoverErase={type:'opening',id:oh.id};
         else{
-          const oh=openingAt(p);
-          if(oh)hoverErase={type:'opening',id:oh.id};
+          const nh=nodeAt(p);
+          if(nh)hoverErase={type:'node',id:nh.id};
           else{
             const wh=wallAt(p);
             if(wh)hoverErase={type:'wall',id:wh.id};
@@ -2604,12 +3159,15 @@ function initPlan(){
       }else if(state.tool==='select'){
         hoverNode=nodeAt(p);
       }
-      const nodeHit=(state.tool==='select'||state.tool==='erase')?nodeAt(p):null;
-      const hoverOpening=nodeHit?null:openingAt(p);
+      /* Существующий проём должен быть видимым и подсвечиваемым даже когда
+         активен инструмент добавления двери/окна: это помогает понять, что
+         клик по нему выберет объект, а не создаст копию. */
+      hoverOpening=openingAt(p);
+      const nodeHit=(state.tool==='select'||state.tool==='erase')&&!hoverOpening?nodeAt(p):null;
       const hoverWall=hoverOpening?null:wallAt(p);
       const hoverText=wallHoverLabel(hoverOpening,hoverWall);
       if(hoverText){const m=toMeters(p);hoverLabel={x:m.x,z:m.z,text:hoverText};}
-      plan.cv.style.cursor=state.tool==='select'?(hoverNode?'grab':((hoverOpening||hoverWall)?'pointer':'default')):'crosshair';
+      plan.cv.style.cursor=hoverOpening?'pointer':state.tool==='select'?(hoverNode?'grab':(hoverWall?'pointer':'default')):'crosshair';
       planRedraw();
       return;
     }
@@ -2689,25 +3247,62 @@ function initPlan(){
 }
 
 /* ═══════════════ КАТАЛОГ / КЛАВИШИ ═══════════════ */
+const catalogGroupOpen={};
+function refreshCatalogControls(){
+  const groups=$$('#catList .cat-group');
+  groups.forEach(group=>{
+    const gr=group.dataset.group,open=catalogGroupOpen[gr]!==false;
+    const toggle=group.querySelector('.cat-group-toggle');
+    const items=group.querySelector('.cat-items');
+    if(toggle){
+      toggle.setAttribute('aria-expanded',String(open));
+      toggle.setAttribute('aria-label',(open?'Свернуть':'Развернуть')+' группу '+gr);
+    }
+    if(items)items.hidden=!open;
+  });
+  const all=$('#btnCatalogAll');
+  if(!all)return;
+  const allOpen=groups.length>0&&groups.every(group=>catalogGroupOpen[group.dataset.group]!==false);
+  all.textContent=allOpen?'Свернуть всё':'Развернуть всё';
+  all.setAttribute('aria-expanded',String(allOpen));
+  all.setAttribute('aria-label',allOpen?'Свернуть все группы каталога':'Развернуть все группы каталога');
+}
+function setCatalogGroupOpen(gr,open){
+  catalogGroupOpen[gr]=!!open;
+  refreshCatalogControls();
+}
+function setAllCatalogGroups(open){
+  $$('#catList .cat-group').forEach(group=>{catalogGroupOpen[group.dataset.group]=!!open;});
+  refreshCatalogControls();
+}
 function buildCatalog(){
   let html='';
-  GROUP_ORDER.forEach(gr=>{
-    html+='<div class="cat-group"><h4>'+gr+'</h4>';
+  GROUP_ORDER.forEach((gr,index)=>{
+    const groupId='catalog-group-'+index,itemsId=groupId+'-items',open=catalogGroupOpen[gr]!==false;
+    html+='<section class="cat-group" data-group="'+gr+'" id="'+groupId+'">'+
+      '<button type="button" class="cat-group-toggle" data-group-toggle="'+gr+'" aria-expanded="'+open+'" aria-controls="'+itemsId+'" aria-label="'+(open?'Свернуть':'Развернуть')+' группу '+gr+'">'+
+      '<span>'+gr+'</span><i data-lucide="chevron-down" aria-hidden="true"></i></button>'+
+      '<div class="cat-items" id="'+itemsId+'"'+(open?'':' hidden')+'>';
     Object.keys(CATALOG).filter(k=>CATALOG[k].group===gr).forEach(k=>{
       const c=CATALOG[k];
       html+='<button class="cat-item" data-type="'+k+'">'+
         '<span class="cat-ic"><i data-lucide="'+c.icon+'"></i></span>'+
         '<span class="cat-name">'+c.name+'</span></button>';
     });
-    html+='</div>';
+    html+='</div></section>';
   });
   $('#catList').innerHTML=html;
+  $$('#catList .cat-group-toggle').forEach(b=>b.addEventListener('click',()=>{
+    const gr=b.dataset.groupToggle;
+    setCatalogGroupOpen(gr,catalogGroupOpen[gr]===false);
+  }));
   $$('#catList .cat-item').forEach(b=>b.addEventListener('click',()=>{
     if(state.mode!=='items')setMode('items');
     const t=b.dataset.type,n=state.items.length;
     const it={type:t,x:((n%4)-1.5)*.9,z:((Math.floor(n/4)%3)-1)*.8,rot:0};
     addItem(it,{animate:true});select(it.id);refresh();commit();
   }));
+  refreshCatalogControls();
   icons();
 }
 function dupSel(){
@@ -2727,7 +3322,7 @@ function initKeys(){
     if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'){e.preventDefault();undo();return;}
     if((e.ctrlKey||e.metaKey)&&(e.key.toLowerCase()==='y'||(e.shiftKey&&e.key.toLowerCase()==='z'))){e.preventDefault();redo();return;}
     if(e.key==='Escape'){
-      if(drawState){endDraw();return;}
+      if(drawState){finishWallDrawing();return;}
       if(underlay.calibrating){cancelCalib();return;}
       hideCalPop();select(null);selectWallObj(null);closeModals();return;
     }
@@ -2807,7 +3402,7 @@ function setBrand(c){
     M.brand.color.copy(col);
     M.brandD.color.copy(col).multiplyScalar(.72);
   }
-  if(selRing)selRing.material.color.set(c);
+  if(selRing)selRing.material.color.set(SELECT_COLOR);
   $$('.sw').forEach(b=>b.classList.toggle('on',b.dataset.c===c));
   planRedraw();
 }
@@ -2977,10 +3572,11 @@ function applyTemplate(t){
 
 const DATA_EXPORT_SCHEMA='dentplan-data-export';
 const DATA_EXPORT_VERSION=1;
-const WALL_HEIGHT_M=3;
-const OPENING_HEIGHT_M={door:2.1,evac:2.1,window:1.5};
 function roundExport(n,d=3){const p=10**d;return Math.round(n*p)/p;}
 function buildDataExport(source,catalog,generatedAt){
+  const calculation=normalizeCalculationSettings(source.calculation);
+  const wallHeightM=calculation.wallHeightM;
+  const openingHeightsM=calculation.openingHeightsM;
   const projectProfile=source.profile==='general'?'general':'dental';
   const nodes=(source.nodes||[]).map(n=>({id:String(n.id),x:roundExport(+n.x||0),z:roundExport(+n.z||0)}));
   const nodeMap=new Map(nodes.map(n=>[n.id,n]));
@@ -3016,7 +3612,9 @@ function buildDataExport(source,catalog,generatedAt){
     const wall=rawWalls.find(w=>String(w.id)===String(o.wallId));
     if(!wall)return null;
     const a=nodeMap.get(String(wall.a)),b=nodeMap.get(String(wall.b)),t=Math.max(0,Math.min(1,+o.t||0));
-    return{id:String(o.id),kind:o.kind,wallId:String(o.wallId),center:{x:roundExport(a.x+(b.x-a.x)*t),z:roundExport(a.z+(b.z-a.z)*t)},widthM:roundExport(+o.w||0),heightM:OPENING_HEIGHT_M[o.kind]||2.1,flip:!!o.flip};
+    const rotation=roundExport(normalizeOpeningRot(o.rot),6);
+    const openingDirection=normalizeOpeningDirection(o.openingDirection,o.flip);
+    return{id:String(o.id),kind:o.kind,wallId:String(o.wallId),center:{x:roundExport(a.x+(b.x-a.x)*t),z:roundExport(a.z+(b.z-a.z)*t)},widthM:roundExport(+o.w||0),heightM:openingHeightsM[o.kind]||openingHeightsM.door,flip:openingDirection==='outside',hingeSide:normalizeHingeSide(o.hingeSide),openingDirection,rot:rotation,rotationDeg:roundExport(rotation*180/Math.PI)};
   }).filter(Boolean);
   let gross=0,deductions=0;
   const walls=rawWalls.map(w=>{
@@ -3024,21 +3622,22 @@ function buildDataExport(source,catalog,generatedAt){
     const length=Math.hypot(b.x-a.x,b.z-a.z),angle=Math.atan2(b.z-a.z,b.x-a.x)*180/Math.PI;
     const wallOpenings=openings.filter(o=>o.wallId===String(w.id));
     const deduction=wallOpenings.reduce((sum,o)=>sum+Math.min(o.widthM,length)*o.heightM,0);
-    gross+=length*WALL_HEIGHT_M;deductions+=deduction;
-    return{id:String(w.id),kind:w.kind,startNodeId:String(w.a),endNodeId:String(w.b),start:{x:a.x,z:a.z},end:{x:b.x,z:b.z},lengthM:roundExport(length),angleDeg:roundExport(angle),heightM:WALL_HEIGHT_M,grossAreaM2:roundExport(length*WALL_HEIGHT_M),openingsAreaM2:roundExport(deduction),netAreaM2:roundExport(Math.max(0,length*WALL_HEIGHT_M-deduction))};
+    gross+=length*wallHeightM;deductions+=deduction;
+    return{id:String(w.id),kind:w.kind,startNodeId:String(w.a),endNodeId:String(w.b),start:{x:a.x,z:a.z},end:{x:b.x,z:b.z},lengthM:roundExport(length),angleDeg:roundExport(angle),heightM:wallHeightM,grossAreaM2:roundExport(length*wallHeightM),openingsAreaM2:roundExport(deduction),netAreaM2:roundExport(Math.max(0,length*wallHeightM-deduction))};
   });
   const items=(source.items||[]).map((it,i)=>{const c=catalog[it.type]||{},rot=roundExport(+it.rot||0,6);return{id:String(it.id||'item-'+(i+1)),type:String(it.type),name:c.name||String(it.type),x:roundExport(+it.x||0),z:roundExport(+it.z||0),rot,rotationDeg:roundExport(rot*180/Math.PI),sizeM:{width:roundExport(+c.w||0),depth:roundExport(+c.d||0)}};});
   const count=k=>openings.filter(o=>o.kind===k).length;
   const guidance=projectProfile==='dental'?{applicability:'preliminary',reviewedAt:'2026-09-09',recommendations:['Проверить функциональное зонирование и состав помещений по СП 158.13330.2014 с изменением № 5.','Проверить санитарную эксплуатацию по СП 2.1.3678-20 с изменением от 20.03.2024.','Проверить эвакуацию, доступность и все численные параметры у профильных специалистов.'],sources:[{title:'Каталог Минстроя: запись об изменении № 5 к СП 158.13330.2014',url:'https://minstroyrf.gov.ru/docs/?PAGEN_1=8',publishedAt:'2024-12-28',sourceType:'official-catalog-entry'},{title:'Официальное опубликование: изменение СП 2.1.3678-20 от 20.03.2024',url:'https://publication.pravo.gov.ru/document/0001202407120010',publishedAt:'2024-07-12',publicationId:'0001202407120010'}]}:{applicability:'not-applicable',recommendations:[]};
-  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),projectProfile,units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,guidance,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM:WALL_HEIGHT_M,openingHeightM:{...OPENING_HEIGHT_M}}},walls,openings},counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
+  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),projectProfile,units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,guidance,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM,openingHeightM:{...openingHeightsM}}},walls,openings},counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
 }
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function dataExportToCsv(data){
-  const rows=[['recordType','id','type','name','xM','zM','angleDeg','widthM','depthM','lengthM','heightM','wallId'],['meta','project-profile',data.projectProfile,'','','','','','','','','']];
+  const assumptions=data.layout.wallArea.assumptions;
+  const rows=[['# calculation','wallHeightM',assumptions.wallHeightM,'doorHeightM',assumptions.openingHeightM.door,'evacHeightM',assumptions.openingHeightM.evac,'windowHeightM',assumptions.openingHeightM.window],['recordType','id','type','name','xM','zM','angleDeg','widthM','depthM','lengthM','heightM','wallId','hingeSide','openingDirection'],['meta','project-profile',data.projectProfile,'','','','','','','','','','','']];
   if(data.projectProfile==='dental')data.guidance.recommendations.forEach((text,i)=>rows.push(['guidance','dental-'+(i+1),'preliminary',text,'','','','','','','','']));
-  data.layout.walls.forEach(w=>rows.push(['wall',w.id,w.kind,'',w.start.x,w.start.z,w.angleDeg,'','',w.lengthM,w.heightM,'']));
-  data.layout.openings.forEach(o=>rows.push(['opening',o.id,o.kind,'',o.center.x,o.center.z,'',o.widthM,'','',o.heightM,o.wallId]));
-  data.items.forEach(i=>rows.push(['item',i.id,i.type,i.name,i.x,i.z,i.rotationDeg,i.sizeM.width,i.sizeM.depth,'','','']));
+  data.layout.walls.forEach(w=>rows.push(['wall',w.id,w.kind,'',w.start.x,w.start.z,w.angleDeg,'','',w.lengthM,w.heightM,'','','']));
+  data.layout.openings.forEach(o=>rows.push(['opening',o.id,o.kind,'',o.center.x,o.center.z,o.rotationDeg,o.widthM,'','',o.heightM,o.wallId,o.hingeSide||'left',o.openingDirection||'inside']));
+  data.items.forEach(i=>rows.push(['item',i.id,i.type,i.name,i.x,i.z,i.rotationDeg,i.sizeM.width,i.sizeM.depth,'','','','','']));
   return '\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\n');
 }
 function currentDataExport(){return buildDataExport(state,CATALOG);}
@@ -3124,7 +3723,8 @@ function buildSheet(){
       g.fillStyle='#4C473D';g.font='12px "IBM Plex Mono",monospace';
       const contour=data.layout.contour.status==='closed'?'замкнут':'не замкнут';
       g.fillText('Габариты: '+(dims.widthM??'—')+' × '+(dims.depthM??'—')+' м · контур: '+contour,66,1058);
-      g.fillText('Площадь стен без проёмов: '+fmtM(wa.netM2)+' м² · высота стен: '+fmtM(wa.assumptions.wallHeightM)+' м',66,1082);
+      const ah=wa.assumptions.openingHeightM;
+      g.fillText('Площадь стен без проёмов: '+fmtM(wa.netM2)+' м² · стена: '+fmtM(wa.assumptions.wallHeightM)+' м · дверь: '+fmtM(ah.door)+' м · эвак.: '+fmtM(ah.evac)+' м · окно: '+fmtM(ah.window)+' м',66,1082);
       g.fillText('Двери: '+cnt.doors+' · окна: '+cnt.windows+' · эвак. проёмы: '+cnt.evacuationOpenings+' · оборудование: '+cnt.equipment+' · камеры: '+cnt.cameras,66,1106);
       g.fillStyle='#8B8371';g.font='11px "IBM Plex Sans",sans-serif';
       g.fillText(state.profile==='dental'?'Стоматологический профиль · предварительные ориентиры, нужна проверка специалистом.':'Общий профиль · стоматологические рекомендации не применяются.',66,1132);
@@ -3205,6 +3805,39 @@ function initModes(){
     const btn=e.target.closest('button[data-act]');
     if(btn)wallBarAct(btn.dataset.act,btn.dataset.k,e.shiftKey);
   });
+  $('#wallBar').addEventListener('change',e=>{
+    const input=e.target.closest('input[data-opening-angle]');
+    if(!input||!state.selObj||state.selObj.type!=='opening')return;
+    const op=state.openings.find(x=>x.id===state.selObj.id),deg=Number(input.value);
+    if(!op||!Number.isFinite(deg))return;
+    op.rot=normalizeOpeningRot(deg*D2R);
+    staticDirty=true;refresh();commit();renderWallBar();
+  });
+}
+function updateCalculationUI(){
+  const c=normalizeCalculationSettings(state.calculation);
+  const fields={calcWallHeight:c.wallHeightM,calcDoorHeight:c.openingHeightsM.door,calcEvacHeight:c.openingHeightsM.evac,calcWindowHeight:c.openingHeightsM.window};
+  Object.entries(fields).forEach(([id,v])=>{const el=$('#'+id);if(el)el.value=v;});
+}
+function setCalculationSetting(key,value){
+  const limits=key==='wallHeightM'?CALCULATION_LIMITS.wallHeightM:CALCULATION_LIMITS.openingHeightM;
+  if(!Number.isFinite(value)||value<limits[0]||value>limits[1]){
+    updateCalculationUI();
+    toast('Значение вне допустимого диапазона',true);
+    return;
+  }
+  const next=normalizeCalculationSettings(state.calculation);
+  if(key==='wallHeightM')next.wallHeightM=+value.toFixed(2);
+  else next.openingHeightsM[key]=+value.toFixed(2);
+  state.calculation=next;
+  markDirty();commit();refresh();
+}
+function initCalculation(){
+  updateCalculationUI();
+  $('#calcWallHeight').addEventListener('change',e=>setCalculationSetting('wallHeightM',Number(e.target.value)));
+  $('#calcDoorHeight').addEventListener('change',e=>setCalculationSetting('door',Number(e.target.value)));
+  $('#calcEvacHeight').addEventListener('change',e=>setCalculationSetting('evac',Number(e.target.value)));
+  $('#calcWindowHeight').addEventListener('change',e=>setCalculationSetting('window',Number(e.target.value)));
 }
 function initRoom(){
   $('#roomW').addEventListener('input',e=>{$('#roomWv').textContent=fmtM(+e.target.value)+' м';});
@@ -3222,6 +3855,11 @@ function initBrand(){
   $('#brandInput').addEventListener('input',e=>{setBrand(e.target.value);markDirty();});
 }
 function initRest(){
+  $('#btnCatalogAll').addEventListener('click',()=>{
+    const groups=$$('#catList .cat-group');
+    const allOpen=groups.length>0&&groups.every(group=>catalogGroupOpen[group.dataset.group]!==false);
+    setAllCatalogGroups(!allOpen);
+  });
   $('#projectProfile').addEventListener('change',e=>setProjectProfile(e.target.value,true));
   $('#btnTemplates').addEventListener('click',()=>$('#tplModal').classList.add('open'));
   $('#tplClose').addEventListener('click',()=>$('#tplModal').classList.remove('open'));
@@ -3307,7 +3945,7 @@ function loop(now){
 
 /* ═══════════════ ФАЗА 1 ═══════════════ */
 initPlan();buildCatalog();buildTplGrid();
-initView();initModes();initRoom();initBrand();initUnderlay();initRest();initKeys();
+initView();initModes();initCalculation();initRoom();initBrand();initUnderlay();initRest();initKeys();
 setProjectProfile(state.profile,false);
 icons();
 resizeAll();

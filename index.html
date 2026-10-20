@@ -40,6 +40,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .btn:hover{border-color:var(--coal2);color:var(--coal)}
 .btn svg{width:15px;height:15px}
 .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;transition:background .2s}
+.mobile-menu-btn{display:none}
 .seg{display:flex;background:var(--oat);border-radius:9px;padding:3px;gap:2px}
 .seg button{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--coal2);transition:all .15s}
 .seg button svg{width:14px;height:14px}
@@ -67,7 +68,111 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 #main{display:flex;min-height:0;position:relative}
 #catalog{width:272px;flex:none;background:var(--paper2);border-right:1px solid var(--line);overflow-y:auto;padding:14px 14px 24px}
+.menu-backdrop{display:none}
 #center{flex:1;display:flex;min-width:0;position:relative}
+.workspace-nav{display:flex;align-items:center;gap:2px;background:var(--oat);border-radius:10px;padding:3px;margin-left:2px}
+.workspace-nav button{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:7px;color:var(--coal2);font-size:12px;font-weight:500;white-space:nowrap;transition:all .15s}
+.workspace-nav button:hover{color:var(--coal);background:rgba(252,250,244,.55)}
+.workspace-nav button.on{background:var(--brand);color:#fff}
+.workspace-nav button svg{width:14px;height:14px}
+.workspace-nav button:focus-visible,.page-toolbar input:focus-visible,.page-toolbar select:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+body[data-page="calculations"] #catalog{width:min(430px,38vw)}
+body[data-page="catalog"] #catalog,body[data-page="catalog"] #center,
+body[data-page="statements"] #catalog,body[data-page="statements"] #center,
+body[data-page="projects"] #catalog,body[data-page="projects"] #center{display:none}
+body[data-page="catalog"] #statusbar,body[data-page="statements"] #statusbar,body[data-page="projects"] #statusbar{display:none}
+body[data-page="catalog"] #itemBar,body[data-page="catalog"] #wallBar,
+body[data-page="statements"] #itemBar,body[data-page="statements"] #wallBar,
+body[data-page="projects"] #itemBar,body[data-page="projects"] #wallBar{display:none!important}
+.workspace-page{min-width:0;flex:1;overflow:auto}
+#catalogPage,#statementsPage,#projectsPage{background:rgba(252,250,244,.72);padding:28px clamp(20px,4vw,64px) 44px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;max-width:1180px;margin:0 auto 22px}
+.page-kicker,.side-kicker{font:600 10px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--brand);margin-bottom:7px}
+.page-head h1{font:700 clamp(24px,3vw,36px) var(--head);line-height:1.05;color:var(--coal)}
+.page-head p{max-width:690px;margin-top:8px;color:var(--mut);font-size:13px;line-height:1.55}
+.page-head-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.page-head-actions .btn{height:36px}
+.page-toolbar{display:flex;align-items:center;gap:10px;max-width:1180px;margin:0 auto 18px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--paper2);box-shadow:0 8px 22px rgba(38,36,31,.05)}
+.search-field{display:flex;align-items:center;gap:8px;min-width:240px;flex:1;height:36px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--mut)}
+.search-field svg{width:16px;height:16px;flex:none}
+.search-field input{width:100%;height:30px;border:0;outline:0;background:transparent;color:var(--coal);font:12px var(--body)}
+.catalog-filter-toolbar{align-items:flex-end;flex-wrap:wrap}
+.catalog-filter-select{display:grid;gap:3px;min-width:150px;color:var(--mut);font:9px var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.catalog-filter-select select{height:36px;min-width:150px;border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:0 10px;color:var(--coal);font:12px var(--body);text-transform:none;letter-spacing:normal}
+.page-count{font:10px var(--mono);color:var(--mut);white-space:nowrap;margin-left:auto}
+.catalog-path{max-width:1180px;margin:-8px auto 18px;color:var(--brand);font:600 10px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.catalog-page-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:18px;max-width:1180px;margin:0 auto}
+.catalog-page-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));align-content:start;gap:10px}
+.catalog-page-card{position:relative;display:flex;flex-direction:column;gap:8px;min-height:190px;padding:15px;border:1px solid var(--line);border-radius:13px;background:var(--paper2);box-shadow:0 8px 22px rgba(38,36,31,.04);transition:border-color .15s,transform .15s,box-shadow .15s}
+.catalog-page-card:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 12px 28px rgba(38,36,31,.09)}
+.catalog-page-card.is-selected{border-color:var(--brand);box-shadow:0 0 0 2px rgba(var(--brand-rgb),.14)}
+.catalog-page-card .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.catalog-page-card h3{font:600 15px var(--head);line-height:1.2;color:var(--coal)}
+.catalog-page-card .card-group{font:10px var(--mono);color:var(--brand);text-transform:uppercase;letter-spacing:.06em}
+.catalog-page-card .card-brand{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:var(--mut);font-size:10px;line-height:1.35}
+.catalog-page-card .brand-pill{display:inline-flex;align-items:center;padding:3px 6px;border:1px solid rgba(14,124,123,.25);border-radius:999px;background:rgba(14,124,123,.06);color:var(--brand);font:600 9px var(--mono)}
+.catalog-page-card .brand-options{font-size:9.5px}
+.catalog-page-card .card-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:auto}
+.catalog-page-card .card-meta span{padding:7px 8px;border-radius:8px;background:var(--paper);font-size:10px;color:var(--mut);line-height:1.35}
+.catalog-page-card .card-meta b{display:block;font:600 12px var(--mono);color:var(--coal);margin-top:2px}
+.catalog-page-card .card-note{min-height:29px;font-size:10.5px;line-height:1.4;color:var(--coal2)}
+.catalog-page-card .card-source{font:9px var(--mono);line-height:1.35;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.catalog-page-card .card-source a{color:var(--brand);text-decoration:none}
+.catalog-page-card .card-source a:hover{text-decoration:underline}
+.catalog-page-card .card-actions{display:flex;align-items:center;gap:6px;margin-top:2px}
+.catalog-page-card .card-actions .mini{height:30px}
+.catalog-page-card .card-actions .mini.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.catalog-page-card .card-actions .mini.danger{flex:0 0 31px;padding:0;color:var(--mut)}
+.catalog-page-card .card-actions .mini.danger:hover{color:var(--bad);border-color:var(--bad)}
+.projects-page-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:18px;max-width:1180px;margin:0 auto}
+.projects-page-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));align-content:start;gap:10px}
+.project-page-card{display:flex;flex-direction:column;gap:10px;min-height:178px;padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--paper2);box-shadow:0 8px 22px rgba(38,36,31,.04);transition:border-color .15s,transform .15s,box-shadow .15s}
+.project-page-card:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 12px 28px rgba(38,36,31,.09)}
+.project-page-card .project-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.project-page-card h2{font:600 17px var(--head);line-height:1.2;color:var(--coal);overflow-wrap:anywhere}
+.project-page-card .project-date{font:9px var(--mono);color:var(--mut);white-space:nowrap}
+.project-page-card .project-description{min-height:35px;color:var(--coal2);font-size:11px;line-height:1.5}
+.project-page-card .project-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:auto}
+.project-page-card .project-meta span{padding:7px 8px;border-radius:8px;background:var(--paper);font-size:10px;color:var(--mut);line-height:1.35}
+.project-page-card .project-meta b{display:block;font:600 12px var(--mono);color:var(--coal);margin-top:2px}
+.project-page-card .project-actions{display:flex;gap:6px;margin-top:2px}
+.project-page-card .project-actions .mini.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.project-page-card .project-actions .mini.danger{flex:0 0 31px;padding:0;color:var(--mut)}
+.project-page-card .project-actions .mini.danger:hover{color:var(--bad);border-color:var(--bad)}
+.projects-empty{padding:36px 22px;border:1px dashed var(--line);border-radius:13px;background:rgba(246,242,233,.65);color:var(--mut);font-size:12px;line-height:1.55;text-align:center}
+.project-name-field{display:grid;gap:5px;margin:9px 0 8px;color:var(--mut);font:9px var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.project-name-field input{width:100%;height:34px;padding:0 9px;border:1px solid var(--line);border-radius:8px;background:var(--paper2);color:var(--coal);font:12px var(--body);text-transform:none;letter-spacing:normal;outline:0}
+.project-name-field input:focus{border-color:var(--brand);box-shadow:0 0 0 2px rgba(var(--brand-rgb),.12)}
+.page-aside{align-self:start;display:grid;gap:12px}
+.page-aside-card{padding:15px;border:1px solid var(--line);border-radius:13px;background:var(--paper2)}
+.page-aside-card h2{font:600 16px var(--head);margin-bottom:7px}
+.page-aside-card p,.page-aside-card li{font-size:11px;line-height:1.55;color:var(--coal2)}
+.page-aside-card ul{padding-left:17px;display:grid;gap:5px}
+.page-aside-card a{color:var(--brand)}
+#materialAddMount{margin-top:0}
+#materialAddMount .material-add{margin-top:0;border-top:0;padding-top:0}
+.statement-page-summary{display:flex;flex-wrap:wrap;gap:10px;max-width:1180px;margin:0 auto 18px}
+.statement-chip{display:flex;flex-direction:column;gap:4px;min-width:150px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--paper2)}
+.statement-chip span{font-size:10px;color:var(--mut)}
+.statement-chip strong{font:600 15px var(--mono);color:var(--coal)}
+.statement-page-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:1180px;margin:0 auto 18px}
+.statement-page-card{min-width:0;padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--paper2);box-shadow:0 8px 22px rgba(38,36,31,.04)}
+.statement-page-card.full{max-width:1180px;margin:0 auto}
+.statement-page-card h2{font:600 17px var(--head);margin-bottom:10px}
+.statement-page-card .statement-scroll{max-height:none}
+.statement-page-card .material-table{min-width:520px;font-size:11px}
+.statement-page-card .material-table th{font-size:9px}
+.statement-page-card .material-table td{padding:8px 7px}
+.side-context{padding:4px 2px 14px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.side-context h2{font:600 19px var(--head);line-height:1.1;margin-bottom:5px}
+.side-context p{font-size:11px;line-height:1.45;color:var(--mut)}
+.side-context-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.side-context-actions .mini{height:31px}
+.material-page-links{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 2px}
+.material-page-links .mini{height:31px}
+.catalog-search-inline{margin:0 0 8px}
+.catalog-search-inline .search-field{min-width:0;height:32px;padding:0 8px}
+.catalog-search-inline .search-field input{font-size:11px}
 .pane{position:relative;min-width:0;overflow:hidden}
 #planPane{flex:0 0 44%;border-right:1px solid var(--line)}
 #planPane.wide{flex:1;border-right:none}
@@ -160,6 +265,53 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 .cat-item:hover .cat-ic{background:rgba(var(--brand-rgb),.16);color:var(--brand)}
 .cat-ic svg{width:16px;height:16px}
 .cat-name{font-size:12.5px;font-weight:500;line-height:1.25}
+.material-panel{border-top:3px solid var(--brand);padding-top:10px}
+.material-panel .sec-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.material-badge{font:9px var(--mono);letter-spacing:.04em;text-transform:none;color:var(--brand);border:1px solid rgba(var(--brand-rgb),.35);border-radius:99px;padding:3px 6px;white-space:nowrap}
+.material-scope-seg{margin-bottom:8px}
+.material-scope-seg button{font-size:10.5px;padding:0 5px}
+.material-hint{font-size:10.5px;color:var(--coal2);line-height:1.45;padding:7px 9px;border-left:3px solid var(--brand);background:var(--paper);border-radius:0 8px 8px 0;margin-bottom:9px}
+.material-control{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.material-control label{font-size:10.5px;color:var(--mut);flex:1;min-width:0}
+.material-control select,.material-control input{width:100%;height:31px;border:1px solid var(--line);border-radius:7px;background:var(--paper2);padding:0 7px;color:var(--coal);font:11px var(--body);margin-top:4px}
+.material-control input{font-family:var(--mono)}
+.material-control .compact{flex:0 0 86px}
+.material-control .compact label{width:86px}
+.material-meta{font:9.5px var(--mono);color:var(--mut);line-height:1.45;border:1px dashed var(--line);border-radius:8px;padding:6px 8px;margin:5px 0 9px}
+.material-statement{margin-top:11px}
+.statement-title{font:600 10px var(--head);letter-spacing:.09em;text-transform:uppercase;color:var(--coal2);margin-bottom:5px}
+.statement-scroll{overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--paper2);max-height:218px}
+.material-table{width:100%;min-width:410px;border-collapse:collapse;font-size:9.5px}
+.material-table th{position:sticky;top:0;background:var(--oat);font:600 8.5px var(--mono);color:var(--coal2);text-align:left;white-space:nowrap;padding:6px 5px;border-bottom:1px solid var(--line);z-index:1}
+.material-table td{padding:6px 5px;border-bottom:1px solid rgba(220,207,180,.65);vertical-align:top;color:var(--coal2)}
+.material-table tr:last-child td{border-bottom:0}
+.material-table .num{text-align:right;font-family:var(--mono);white-space:nowrap;color:var(--coal)}
+.material-table .muted{color:var(--mut)}
+.material-total{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 9px;margin-top:7px;border-radius:8px;background:var(--brand);color:#fff;font:600 11px var(--mono)}
+.material-total small{font:10px var(--body);opacity:.82}
+.material-catalog{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}
+.material-inline-catalog{display:none!important}
+.material-catalog summary{cursor:pointer;font:600 10px var(--head);letter-spacing:.09em;text-transform:uppercase;color:var(--coal2);padding:3px 0 6px}
+.material-catalog-list{display:grid;gap:5px}
+.material-card{border:1px solid var(--line);border-radius:8px;padding:7px 8px;background:var(--paper)}
+.material-card strong{display:block;font-size:10.5px;line-height:1.25;color:var(--coal)}
+.material-card span{display:block;font:9.5px var(--mono);color:var(--mut);margin-top:3px;line-height:1.35}
+.material-card a{color:var(--brand);text-decoration:none}
+.material-card a:hover{text-decoration:underline}
+.material-card{position:relative;padding-right:30px}
+.material-card button{position:absolute;top:7px;right:7px;width:22px;height:22px;border-radius:6px;color:var(--mut);display:grid;place-items:center}
+.material-card button:hover{background:rgba(190,65,40,.12);color:var(--bad)}
+.material-card button svg{width:13px;height:13px}
+.material-empty{padding:9px;color:var(--mut);font-size:10px;line-height:1.4}
+.material-add{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}
+.material-add summary{cursor:pointer;font:600 10px var(--head);letter-spacing:.09em;text-transform:uppercase;color:var(--coal2);padding:3px 0 8px}
+.material-add-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.material-add-grid label{font-size:9.5px;color:var(--mut);line-height:1.25}
+.material-add-grid input{width:100%;height:29px;border:1px solid var(--line);border-radius:7px;background:var(--paper2);padding:0 7px;color:var(--coal);font:10.5px var(--body);margin-top:3px}
+.material-add-grid input:focus{outline:none;border-color:var(--brand)}
+.material-add-wide{grid-column:1 / -1}
+.material-add-submit{margin-top:8px;width:100%;justify-content:center;background:var(--brand);color:#fff;border-color:var(--brand)}
+.material-add-submit:hover{filter:brightness(.95)}
 
 #statusbar{display:flex;align-items:center;gap:16px;padding:0 16px;background:var(--paper2);border-top:1px solid var(--line);font-size:12px;position:relative;z-index:30}
 .st{display:flex;align-items:center;gap:7px;color:var(--coal2);white-space:nowrap}
@@ -249,13 +401,43 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 @media (max-width:940px){
   #catalog{width:228px}
   #topbar,#statusbar{overflow-x:auto}
+  .workspace-nav button{padding:0 7px}
+  .catalog-page-layout{grid-template-columns:1fr}
+  .page-aside{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body[data-page="calculations"] #catalog{width:300px}
 }
 @media (max-width:680px){
-  #catalog{width:190px}
-  #topbar{gap:6px;padding:0 8px}
+  #topbar{gap:2px;padding:0 8px;overflow:hidden}
   .brand-sub,.lib,.swatches,.tb-sep{display:none}
-  #planPane{flex-basis:50%}
-  #statusbar{gap:10px;padding:0 10px}
+  .mobile-menu-btn{display:inline-flex;flex:0 0 34px;width:34px;padding:0;justify-content:center;gap:0}
+  .mobile-menu-btn span{display:none}
+  #btnTemplates,#fireToggle,#btnExport{width:34px;flex:0 0 34px;padding:0;justify-content:center;gap:0;font-size:0}
+  .workspace-nav{flex:0 0 auto;gap:1px;padding:2px}
+  .workspace-nav button{height:29px;padding:0 6px;font-size:10px;gap:3px}
+  .workspace-nav button svg{width:13px;height:13px}
+  .workspace-nav button span{display:none}
+  #viewSeg{flex:0 0 auto;gap:1px}
+  #viewSeg button{padding:0 5px}
+  #viewSeg button[data-view="both"]{display:none}
+  #catalog{width:min(300px,calc(100vw - 20px));position:absolute;top:0;bottom:0;left:0;z-index:40;transform:translateX(calc(-100% - 16px));visibility:hidden;transition:transform .22s ease,visibility 0s linear .22s;box-shadow:18px 0 40px rgba(38,36,31,.22)}
+  #catalog.open{transform:translateX(0);visibility:visible;transition-delay:0s}
+  .menu-backdrop{position:absolute;inset:0;z-index:35;display:none;background:rgba(38,36,31,.32);cursor:pointer}
+  .menu-backdrop.open{display:block}
+  #center{width:100%;flex:1}
+  #planPane{flex-basis:100%}
+  #statusbar{gap:10px;padding:0 10px;overflow-x:auto;white-space:nowrap}
+  #itemBar,#wallBar{max-width:calc(100vw - 16px);overflow-x:auto}
+  #catalogPage,#statementsPage,#projectsPage{padding:20px 12px 30px}
+  .page-head{align-items:flex-start;flex-direction:column;gap:12px;margin-bottom:16px}
+  .page-head-actions{justify-content:flex-start}
+  .page-toolbar{align-items:stretch;flex-direction:column;padding:8px}
+  .search-field{min-width:0}
+  .page-toolbar select{width:100%}
+  .page-count{margin-left:0}
+  .catalog-page-list{grid-template-columns:1fr}
+  .projects-page-list{grid-template-columns:1fr}
+  .page-aside{grid-template-columns:1fr}
+  .statement-page-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -268,14 +450,22 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
     <div class="brand-name">DentPlan</div>
     <div class="brand-sub">планировщик клиник</div>
   </div>
+  <button class="btn mobile-menu-btn" id="btnCatalogToggle" type="button" aria-expanded="false" aria-controls="catalog" aria-label="Открыть меню"><i data-lucide="menu"></i><span>Меню</span></button>
   <div class="tb-sep"></div>
-  <button class="btn" id="btnTemplates"><i data-lucide="layout-template"></i>Шаблоны</button>
+  <button class="btn" id="btnTemplates" aria-label="Открыть шаблоны"><i data-lucide="layout-template"></i>Шаблоны</button>
+  <nav class="workspace-nav" id="workspaceNav" aria-label="Разделы проекта">
+    <button type="button" data-page="plan" class="on" aria-current="page"><i data-lucide="map"></i><span>План</span></button>
+    <button type="button" data-page="calculations"><i data-lucide="calculator"></i><span>Расчёты</span></button>
+    <button type="button" data-page="catalog"><i data-lucide="library"></i><span>Каталог</span></button>
+    <button type="button" data-page="statements"><i data-lucide="file-spreadsheet"></i><span>Сметы</span></button>
+    <button type="button" data-page="projects" aria-label="Проекты" title="Проекты"><i data-lucide="folder-kanban"></i><span>Проекты</span></button>
+  </nav>
   <div class="seg" id="viewSeg">
-    <button data-view="both" class="on"><i data-lucide="columns-2"></i>Рядом</button>
+    <button data-view="both" class="on"><i data-lucide="columns"></i>Рядом</button>
     <button data-view="plan"><i data-lucide="map"></i>План</button>
     <button data-view="3d"><i data-lucide="box"></i>3D</button>
   </div>
-  <button class="fire" id="fireToggle" aria-pressed="false" title="Показать ориентировочные направления к выходам"><i data-lucide="flame"></i>Направления эвакуации<span class="switch"></span></button>
+  <button class="fire" id="fireToggle" aria-pressed="false" aria-label="Направления эвакуации" title="Показать ориентировочные направления к выходам"><i data-lucide="flame"></i>Направления эвакуации<span class="switch"></span></button>
   <div class="spacer"></div>
   <span class="lib" id="libStatus"><span class="dot"></span><span id="libTx">3D: загрузка…</span></span>
   <div class="swatches" id="swatches" title="Фирменный цвет">
@@ -288,16 +478,17 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
     <label class="sw-custom" title="Свой цвет"><i data-lucide="pipette"></i><input type="color" id="brandInput" value="#0E7C7B" aria-label="Выбрать свой цвет"></label>
   </div>
   <div class="tb-sep"></div>
-  <button class="btn primary" id="btnExport"><i data-lucide="download"></i>Экспорт</button>
+  <button class="btn primary" id="btnExport" aria-label="Экспорт"><i data-lucide="download"></i>Экспорт</button>
 </header>
 
 <div id="main">
   <aside id="catalog">
-    <div class="sec">
+    <div class="sec" id="modeSection" data-page-context="plan">
       <div class="sec-title">Режим</div>
       <div class="mode-seg" id="modeSeg">
         <button data-mode="items" class="on"><i data-lucide="armchair"></i>Предметы</button>
         <button data-mode="walls"><i data-lucide="pencil-ruler"></i>Стены</button>
+        <button data-mode="materials"><i data-lucide="calculator"></i>Расчёт</button>
       </div>
       <p class="ul-hint" id="toolHint" hidden></p>
       <div id="wallLegend" hidden role="note" aria-label="Как выбрать элемент стены">
@@ -306,7 +497,17 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       </div>
     </div>
 
-    <div class="sec">
+    <div class="side-context" id="calculationIntro" data-page-context="calculations" hidden>
+      <div class="side-kicker">РАСЧЁТНЫЙ РАЗДЕЛ</div>
+      <h2>Площадь, расход и стоимость</h2>
+      <p>Выберите область на плане, затем материал. Здесь остаются только параметры расчёта и итоговая смета — без каталога предметов и проектных настроек.</p>
+      <div class="side-context-actions">
+        <button class="mini" id="btnCalcCatalog"><i data-lucide="library"></i>Каталог</button>
+        <button class="mini" id="btnCalcStatements"><i data-lucide="file-spreadsheet"></i>Сметы</button>
+      </div>
+    </div>
+
+    <div class="sec" data-page-context="plan">
       <div class="sec-title">Профиль проекта</div>
       <label class="sr-only" for="projectProfile">Тип помещения</label>
       <select id="projectProfile" class="profile-select">
@@ -317,7 +518,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       <div class="profile-guidance" data-profile="dental"><strong>Предварительные ориентиры</strong><br>Проверьте функциональное зонирование, состав помещений, санитарную эксплуатацию, эвакуацию и доступность. Конкретные размеры и решения должен подтвердить профильный специалист.<br><a href="https://minstroyrf.gov.ru/docs/?PAGEN_1=8" target="_blank" rel="noopener">Каталог Минстроя: запись об изменении № 5 к СП 158.13330.2014</a> · <a href="https://publication.pravo.gov.ru/document/0001202407120010" target="_blank" rel="noopener">Официальное опубликование: изменение СП 2.1.3678-20 от 20.03.2024</a><br>Ссылки ведут на официальные записи, а не на цитируемые пункты. Источники проверены 09.09.2026.</div>
     </div>
 
-    <div class="sec">
+    <div class="sec" data-page-context="plan">
       <div class="sec-title">Контур помещения</div>
       <div class="room-row"><i data-lucide="move-horizontal"></i><input type="range" id="roomW" min="8" max="18" step="0.5" value="12"><span class="val" id="roomWv">12,0 м</span></div>
       <div class="room-row"><i data-lucide="move-vertical"></i><input type="range" id="roomD" min="6" max="14" step="0.5" value="9"><span class="val" id="roomDv">9,0 м</span></div>
@@ -327,7 +528,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       <div id="roomInfo">—</div>
     </div>
 
-    <div class="sec">
+    <div class="sec" data-page-context="plan">
       <div class="sec-title">Параметры расчёта</div>
       <div class="room-row"><span class="ul-lbl">Высота помещения / стен</span><input type="number" id="calcWallHeight" min="2" max="6" step="0.1" value="3" aria-label="Высота помещения и стен, метры"><span class="val"> м</span></div>
       <div class="room-row"><span class="ul-lbl">Высота двери</span><input type="number" id="calcDoorHeight" min="0.5" max="4" step="0.1" value="2.1" aria-label="Высота двери, метры"><span class="val"> м</span></div>
@@ -336,7 +537,80 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       <p class="ul-hint">Допустимые диапазоны: стены 2–6 м, проёмы 0,5–4 м. Это геометрический расчёт, а не нормативное заключение.</p>
     </div>
 
-    <div class="sec">
+    <div class="sec material-panel" id="materialPanel" data-page-context="calculations" hidden>
+      <div class="sec-title"><span>Материалы и расчёт</span><span class="material-badge">ориентир</span></div>
+      <div class="mode-seg material-scope-seg" id="materialScopeSeg">
+        <button data-material-scope="room" class="on">Помещение</button>
+        <button data-material-scope="zone">Зона</button>
+        <button data-material-scope="walls">Стены</button>
+      </div>
+      <p class="material-hint" id="materialScopeHint">Выбрано всё замкнутое помещение. Для произвольной части перетащите прямоугольную зону на плане, для стен — кликайте по одной или нескольким стенам.</p>
+      <div class="ul-btns" style="margin-top:0">
+        <button class="mini" id="btnMaterialClear"><i data-lucide="x"></i>Очистить выделение</button>
+        <button class="mini" id="btnMaterialSelectMode"><i data-lucide="mouse-pointer-2"></i>Выделить на плане</button>
+      </div>
+      <div class="material-meta" id="materialSelectionInfo">—</div>
+
+      <div class="material-control">
+        <label for="materialSelect">Материал
+          <select id="materialSelect" aria-label="Материал для расчёта"></select>
+        </label>
+      </div>
+      <div class="material-control">
+        <label for="materialPrice">Цена за единицу, ₽
+          <input id="materialPrice" type="number" min="0" step="1" value="0" aria-label="Цена материала за единицу">
+        </label>
+        <span class="compact"><label for="materialWaste">Запас, %
+          <input id="materialWaste" type="number" min="0" max="100" step="1" value="10" aria-label="Запас материала в процентах">
+        </label></span>
+      </div>
+      <div class="material-meta" id="materialMeta">—</div>
+      <div class="material-page-links">
+        <button class="mini" id="btnMaterialCatalog"><i data-lucide="library"></i>Открыть каталог</button>
+        <button class="mini" id="btnMaterialStatements"><i data-lucide="file-spreadsheet"></i>Открыть смету</button>
+      </div>
+
+      <div class="material-statement">
+        <div class="statement-title">Расчёт выделения</div>
+        <div class="statement-scroll" id="materialSelectionStatement"></div>
+      </div>
+      <div class="material-statement">
+        <div class="statement-title">Смета материалов</div>
+        <div class="statement-scroll" id="materialEstimateStatement"></div>
+        <div class="material-total" id="materialTotal"><small>Итог</small><span>—</span></div>
+      </div>
+
+      <details class="material-catalog material-inline-catalog" open>
+        <summary>Каталог материалов</summary>
+        <div class="material-catalog-list" id="materialCatalogList"></div>
+      </details>
+      <details class="material-add">
+        <summary>Добавить свою позицию в каталог</summary>
+        <div class="material-add-grid">
+          <label>Название<input id="materialCustomName" type="text" maxlength="160" placeholder="Например, краска бренда" aria-label="Название нового материала"></label>
+          <label>Раздел<input id="materialCustomGroup" type="text" maxlength="80" value="Пользовательские материалы" aria-label="Раздел нового материала"></label>
+          <label>Подкатегория<input id="materialCustomSubgroup" type="text" maxlength="80" value="Пользовательские позиции" aria-label="Подкатегория нового материала"></label>
+          <label>Бренд<input id="materialCustomBrand" type="text" maxlength="80" value="Без бренда" placeholder="Например, Knauf" aria-label="Бренд нового материала"></label>
+          <label class="material-add-wide">Формат / назначение<input id="materialCustomFormat" type="text" maxlength="160" placeholder="Например, плитка 30×60 см для стен" aria-label="Формат и назначение нового материала"></label>
+          <label>Единица покупки<input id="materialCustomUnit" type="text" maxlength="60" value="ведро" placeholder="мешок 25 кг / м²" aria-label="Единица покупки нового материала"></label>
+          <label>Цена, ₽<input id="materialCustomPrice" type="number" min="0" step="0.01" placeholder="0" aria-label="Цена нового материала"></label>
+          <label>Цена за<input id="materialCustomPriceUnit" type="text" maxlength="40" value="единицу" placeholder="м² / мешок / упаковку" aria-label="Единица цены нового материала"></label>
+          <label>Тип расчёта<select id="materialCustomCalculationMode" aria-label="Тип расчёта нового материала"><option value="area">По площади, м²</option><option value="piece">Поштучно по проёмам</option></select></label>
+          <label>Тип проёма<select id="materialCustomPieceKind" aria-label="Тип проёма нового материала"><option value="door">Дверь</option><option value="window">Окно</option><option value="opening">Любой проём</option></select></label>
+          <label>Покрытие одной единицы, м²<input id="materialCustomCoverage" type="number" min="0.0001" step="0.01" placeholder="10" aria-label="Покрытие одной единицы нового материала"></label>
+          <label>Расход на 1 м²<input id="materialCustomConsumption" type="number" min="0" step="0.001" placeholder="0,25" aria-label="Расход нового материала на один квадратный метр"></label>
+          <label>Единица нормы<input id="materialCustomConsumptionUnit" type="text" maxlength="40" placeholder="кг/м² или л/м²" aria-label="Единица нормы расхода нового материала"></label>
+          <label>Норма расхода<input id="materialCustomNorm" type="text" maxlength="160" placeholder="1 кг на 5 м²" aria-label="Норма расхода нового материала"></label>
+          <label class="material-add-wide">Ссылка на источник цены<input id="materialCustomSourceUrl" type="url" maxlength="500" placeholder="https://..." aria-label="Ссылка на источник цены нового материала"></label>
+          <label class="material-add-wide">Название источника<input id="materialCustomSourceTitle" type="text" maxlength="160" placeholder="Магазин или производитель" aria-label="Название источника нового материала"></label>
+        </div>
+        <button class="mini material-add-submit" id="btnMaterialAdd" type="button"><i data-lucide="plus"></i>Добавить в каталог</button>
+        <p class="ul-hint">Новая позиция сохраняется в этом проекте и в браузере. Для точного расчёта указывайте покрытие одной упаковки по паспорту производителя.</p>
+      </details>
+      <p class="ul-hint">Цены ориентировочные: каталог хранит дату проверки и ссылку на открытый источник. Перед закупкой проверьте регион, наличие, фасовку и актуальный ценник.</p>
+    </div>
+
+    <div class="sec" data-page-context="plan">
       <div class="sec-title">Чертёж-подложка</div>
       <div id="ulEmpty">
         <button class="ul-btn" id="btnUlUpload"><i data-lucide="upload"></i>Загрузить чертёж</button>
@@ -358,8 +632,9 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       </div>
     </div>
 
-    <div class="sec">
+    <div class="sec" data-page-context="plan">
       <div class="sec-title">Проект</div>
+      <label class="project-name-field">Название проекта<input id="projectName" type="text" maxlength="120" value="Новый проект" placeholder="Например, Клиника на Ленина" aria-label="Название проекта"></label>
       <div class="ul-btns" style="margin-top:0">
         <button class="mini" id="btnUndo" title="Ctrl+Z"><i data-lucide="undo-2"></i>Отменить</button>
         <button class="mini" id="btnRedo" title="Ctrl+Y"><i data-lucide="redo-2"></i>Повторить</button>
@@ -372,14 +647,18 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       <p class="ul-hint">История — последние 60 действий (Ctrl+Z / Ctrl+Y). Файл .json хранит стены, проёмы, мебель, цвет и подложку. Сохранённый файл не удаляется при создании нового проекта и доступен через «Открыть проект».</p>
     </div>
 
-    <div class="sec">
+    <div class="sec" data-page-context="plan">
       <div class="sec-title catalog-title-row">
         <span>Каталог</span>
         <button type="button" class="catalog-toggle" id="btnCatalogAll" aria-expanded="true" aria-controls="catList" aria-label="Свернуть все группы каталога">Свернуть всё</button>
       </div>
+      <div class="catalog-search-inline">
+        <label class="search-field" for="objectCatalogSearch"><i data-lucide="search"></i><span class="sr-only">Поиск по каталогу предметов</span><input id="objectCatalogSearch" type="search" placeholder="Найти предмет…" autocomplete="off"></label>
+      </div>
       <div id="catList"></div>
     </div>
   </aside>
+  <button id="menuBackdrop" class="menu-backdrop" type="button" aria-label="Закрыть меню"></button>
 
   <section id="center">
     <div class="pane" id="planPane">
@@ -414,6 +693,114 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
     </div>
   </section>
 
+  <section id="catalogPage" class="workspace-page" hidden aria-labelledby="catalogPageTitle">
+    <div class="page-head">
+      <div>
+        <div class="page-kicker">БИБЛИОТЕКА МАТЕРИАЛОВ</div>
+        <h1 id="catalogPageTitle">Каталог</h1>
+        <p>Ищите материал по названию, сначала отфильтруйте категорию, а затем применяйте выбранную позицию к расчёту. Здесь собраны базовые позиции, источники цен и пользовательские добавления.</p>
+      </div>
+      <div class="page-head-actions">
+        <button class="btn" id="btnCatalogToCalc"><i data-lucide="calculator"></i>Перейти к расчётам</button>
+        <button class="btn primary" id="btnCatalogPageAdd"><i data-lucide="plus"></i>Добавить материал</button>
+      </div>
+    </div>
+    <div class="page-toolbar catalog-filter-toolbar">
+      <label class="search-field" for="materialCatalogSearch"><i data-lucide="search"></i><span class="sr-only">Поиск по каталогу материалов</span><input id="materialCatalogSearch" type="search" placeholder="Найти краску, плитку, утеплитель или бренд…" autocomplete="off"></label>
+      <label class="catalog-filter-select"><span>Раздел</span><select id="materialCatalogGroup" aria-label="Фильтр по разделу материалов"><option value="all">Все материалы</option></select></label>
+      <label class="catalog-filter-select"><span>Подкатегория</span><select id="materialCatalogSubgroup" aria-label="Фильтр по подкатегории материалов"><option value="all">Все подкатегории</option></select></label>
+      <label class="catalog-filter-select"><span>Бренд</span><select id="materialCatalogBrand" aria-label="Фильтр по бренду материалов"><option value="all">Все бренды</option></select></label>
+      <span class="page-count" id="materialCatalogCount">—</span>
+    </div>
+    <div class="catalog-path" id="materialCatalogPath">Все материалы</div>
+    <div class="catalog-page-layout">
+      <div>
+        <div class="catalog-page-list" id="catalogPageList"></div>
+        <div id="materialAddMount"></div>
+      </div>
+      <aside class="page-aside">
+        <div class="page-aside-card">
+          <h2>Как работать</h2>
+          <ul>
+            <li>Выберите категорию или введите название.</li>
+            <li>Нажмите «Применить к расчёту».</li>
+            <li>В разделе «Расчёты» выделите помещение, зону или стены.</li>
+            <li>Готовую смету откройте отдельной кнопкой.</li>
+          </ul>
+        </div>
+        <div class="page-aside-card">
+          <h2>Источники</h2>
+          <p>Цены ориентировочные и сохраняются с датой проверки. Для расширения каталога можно использовать <a href="https://lemanapro.ru/" target="_blank" rel="noopener">Лемана ПРО</a>, <a href="https://petrovich.ru/catalog/" target="_blank" rel="noopener">Петрович</a> и паспорт производителя.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="statementsPage" class="workspace-page" hidden aria-labelledby="statementsPageTitle">
+    <div class="page-head">
+      <div>
+        <div class="page-kicker">ИТОГИ РАСЧЁТА</div>
+        <h1 id="statementsPageTitle">Сметы</h1>
+        <p>Отдельный рабочий лист с площадью выбранной области, нормой расхода, количеством к покупке, ценой и итоговой стоимостью.</p>
+      </div>
+      <div class="page-head-actions">
+        <button class="btn" id="btnStatementsToCalc"><i data-lucide="calculator"></i>Изменить расчёт</button>
+        <button class="btn primary" id="btnStatementsExport"><i data-lucide="download"></i>Экспорт</button>
+      </div>
+    </div>
+    <div class="statement-page-summary" id="statementsSummary"></div>
+    <div class="statement-page-grid">
+      <article class="statement-page-card">
+        <h2>Расчёт выделения</h2>
+        <div id="statementsSelectionPage"></div>
+      </article>
+      <article class="statement-page-card">
+        <h2>Смета материалов</h2>
+        <div id="statementsEstimatePage"></div>
+      </article>
+    </div>
+    <article class="statement-page-card full">
+      <h2>Выбранный материал и источник цены</h2>
+      <div id="statementsMaterialPage"></div>
+    </article>
+  </section>
+
+  <section id="projectsPage" class="workspace-page" hidden aria-labelledby="projectsPageTitle">
+    <div class="page-head">
+      <div>
+        <div class="page-kicker">БИБЛИОТЕКА ПРОЕКТОВ</div>
+        <h1 id="projectsPageTitle">Проекты</h1>
+        <p>Сохраняйте проекты под понятными названиями, быстро находите их по части названия и открывайте нужную планировку одним нажатием.</p>
+      </div>
+      <div class="page-head-actions">
+        <button class="btn" id="btnProjectsNew"><i data-lucide="file-plus-2"></i>Новый проект</button>
+        <button class="btn primary" id="btnProjectsSave"><i data-lucide="save"></i>Сохранить текущий</button>
+      </div>
+    </div>
+    <div class="page-toolbar">
+      <label class="search-field" for="projectSearch"><i data-lucide="search"></i><span class="sr-only">Поиск проектов по названию</span><input id="projectSearch" type="search" placeholder="Найти проект по названию…" autocomplete="off"></label>
+      <span class="page-count" id="projectCount">—</span>
+    </div>
+    <div class="projects-page-layout">
+      <div class="projects-page-list" id="projectsList"></div>
+      <aside class="page-aside">
+        <div class="page-aside-card">
+          <h2>Как пользоваться</h2>
+          <ul>
+            <li>Введите название проекта слева в блоке «Проект».</li>
+            <li>Нажмите «Сохранить проект» — файл скачается и запись появится здесь.</li>
+            <li>Ищите по любому фрагменту названия.</li>
+            <li>Старые JSON-файлы по-прежнему открываются через «Открыть проект».</li>
+          </ul>
+        </div>
+        <div class="page-aside-card">
+          <h2>Где хранятся</h2>
+          <p>Список проектов хранится в браузере на этом устройстве. JSON-файл остаётся отдельной резервной копией, которую можно перенести на другой компьютер.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
   <div id="itemBar">
     <span id="ibName">—</span>
     <button data-nudge="up" title="Вверх (↑)" aria-label="Переместить предмет вверх"><i data-lucide="arrow-up"></i></button>
@@ -436,7 +823,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 <footer id="statusbar">
   <span class="st"><i data-lucide="ruler"></i><span class="lbl">Площадь</span><b id="stArea">108 м²</b></span>
   <span class="st"><i data-lucide="armchair"></i><span class="lbl">Пациентских мест</span><b id="stSeats">0</b></span>
-  <span class="st"><i data-lucide="cctv"></i><span class="lbl">Камер</span><b id="stCameras">0</b></span>
+  <span class="st"><i data-lucide="camera"></i><span class="lbl">Камер</span><b id="stCameras">0</b></span>
   <span class="st"><i data-lucide="users"></i><span class="lbl">Людей всего</span><b id="stTotal">0</b><span id="meter"><span id="meterFill"></span></span></span>
   <span class="st"><i data-lucide="door-open"></i><span class="lbl">Выходы · ориентир</span><b id="stExits">1 / 1</b></span>
   <span class="pill" id="stPill"><i data-lucide="check-circle-2"></i><span id="stPillTx">—</span></span>
@@ -558,14 +945,188 @@ const CATALOG={
   sink:     {name:'Стерилизационная мойка', w:1.0, d:0.6,  icon:'droplets',     group:'Стерилизация'},
   tall:     {name:'Шкаф медицинский',       w:1.0, d:0.5,  icon:'layers',       group:'Стерилизация'},
   compressor:{name:'Компрессор',              w:0.75,d:0.65, icon:'gauge',        group:'Техническая зона'},
-  camera:   {name:'Камера видеонаблюдения', w:0.35,d:0.35, icon:'cctv',         group:'Безопасность'},
+  camera:   {name:'Камера видеонаблюдения', w:0.35,d:0.35, icon:'camera',       group:'Безопасность'},
   reception:{name:'Стойка ресепшн',         w:2.4, d:0.85, icon:'store',        group:'Зона пациентов'},
   sofa:     {name:'Диван ожидания',         w:1.9, d:0.85, icon:'sofa',         group:'Зона пациентов'},
   table:    {name:'Журнальный столик',      w:0.9, d:0.5,  icon:'square',       group:'Зона пациентов'},
   desk:     {name:'Рабочий стол',          w:1.4, d:0.7,  icon:'table',        group:'Мебель'},
-  officechair:{name:'Офисное кресло',        w:0.65,d:0.65, icon:'chair',        group:'Мебель'},
+  officechair:{name:'Офисное кресло',        w:0.65,d:0.65, icon:'armchair',     group:'Мебель'},
   plant:    {name:'Растение в кадке',       w:0.5, d:0.5,  icon:'leaf',         group:'Зона пациентов'},
 };
+const MATERIAL_CATALOG=[
+  {id:'primer-deep',name:'Грунтовка глубокого проникновения',group:'Подготовка основания',unit:'канистра 10 л',price:1370,coverageM2PerUnit:100,norm:'1 л на 10 м²',wastePct:5,sourceTitle:'Лемана ПРО · Ceresit CT17 10 л',sourceUrl:'https://voronezh.lemanapro.ru/product/gruntovka-ceresit-ct17-transparent-glubokogo-proniknoveniya-dlya-lyubyh-osnovaniy-10-l-89398665/',priceCheckedAt:'2026-10-20'},
+  {id:'primer-contact',name:'Бетоноконтакт адгезионный',group:'Подготовка основания',unit:'ведро 10 кг',price:1085,coverageM2PerUnit:30,norm:'0,25–0,35 кг/м²',wastePct:5,sourceTitle:'Лемана ПРО · бетонконтакты 10 л',sourceUrl:'https://voronezh.lemanapro.ru/catalogue/gruntovki/10-litrov/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по каталогу'},
+  {id:'plaster-gypsum',name:'Штукатурка гипсовая',group:'Подготовка основания',unit:'мешок 30 кг',price:578,coverageM2PerUnit:3,norm:'около 10 кг/м² при слое 10 мм',wastePct:10,sourceTitle:'Лемана ПРО · гипсовые штукатурки',sourceUrl:'https://ivanovo.lemanapro.ru/catalogue/shtukaturki/gipsovaya/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по каталогу'},
+  {id:'plaster-cement',name:'Штукатурка цементная',group:'Подготовка основания',unit:'мешок 25 кг',price:420,coverageM2PerUnit:2.5,norm:'около 10 кг/м² при слое 10 мм',wastePct:10,sourceTitle:'Лемана ПРО · штукатурки для внутренней отделки',sourceUrl:'https://voronezh.lemanapro.ru/catalogue/shtukaturki/dlya-vnutrenney-otdelki/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по каталогу'},
+  {id:'putty-polymer',name:'Шпаклёвка полимерная готовая',group:'Подготовка основания',unit:'ведро 20 кг',price:531,coverageM2PerUnit:10,norm:'около 2 кг/м² при слое 1 мм',wastePct:10,sourceTitle:'Лемана ПРО · Axton 20 кг',sourceUrl:'https://orel.lemanapro.ru/product/shpaklevka-polimernaya-axton-20-kg-82486029/',priceCheckedAt:'2026-10-20'},
+  {id:'self-leveling-floor',name:'Самовыравнивающаяся смесь',group:'Подготовка основания',unit:'мешок 25 кг',price:830,coverageM2PerUnit:5,norm:'5 кг/м² при слое 1 мм',wastePct:10,sourceTitle:'CeresitShop · CN 175 Super 25 кг',sourceUrl:'https://ceresitshop-msk.ru/product/nalivnye-poly/rovniteli-dlya-pola/universalnyie-rovniteli/ceresit-cn-175',priceCheckedAt:'2026-10-20'},
+  {id:'screed-cement',name:'Пескобетон М300 для стяжки',group:'Подготовка основания',unit:'мешок 30 кг',price:295,coverageM2PerUnit:1.5,norm:'около 20 кг/м² при слое 10 мм',wastePct:10,sourceTitle:'Лемана ПРО · смеси для стяжки пола',sourceUrl:'https://lemanapro.ru/catalogue/montazhnye-i-kladochnye-smesi/cps-dlya-styazhki/',priceCheckedAt:'2026-10-20'},
+  {id:'sand-cement-m150',name:'Цементно-песчаная смесь М150',group:'Подготовка основания',unit:'мешок 25 кг',price:220,coverageM2PerUnit:1.25,norm:'около 20 кг/м² при слое 10 мм',wastePct:10,sourceTitle:'Лемана ПРО · ЦПС универсальная',sourceUrl:'https://lemanapro.ru/catalogue/montazhnye-i-kladochnye-smesi/cps-dlya-styazhki/',priceCheckedAt:'2026-10-20'},
+  {id:'thermo-adhesive',name:'Штукатурно-клеевая смесь для утепления',group:'Подготовка основания',unit:'мешок 25 кг',price:997,coverageM2PerUnit:5,norm:'около 5 кг/м²',wastePct:10,sourceTitle:'Лемана ПРО · Ceresit Thermo 25 кг',sourceUrl:'https://voronezh.lemanapro.ru/product/shtukaturno-kleevaya-smes-dlya-teploizolyacii-cerezit-termo-25-kg-15620034/',priceCheckedAt:'2026-10-20'},
+  {id:'paint-interior',name:'Краска интерьерная моющаяся',group:'Стены и потолок',unit:'ведро 10 л',price:2446,coverageM2PerUnit:33.33,norm:'0,15 л/м² × 2 слоя',wastePct:10,sourceTitle:'Лемана ПРО · краска интерьерная 10 л',sourceUrl:'https://tver.lemanapro.ru/product/kraska-interernaya-moyushchayasya-standart-obereg-matovaya-cvet-belyy-10-l-90619703/',priceCheckedAt:'2026-10-20'},
+  {id:'paint-washable',name:'Краска моющаяся для стен и потолка',group:'Стены и потолок',unit:'ведро 9 л',price:1950,coverageM2PerUnit:41.67,norm:'около 0,12 л/м² × 2 слоя',wastePct:10,sourceTitle:'Лемана ПРО · интерьерные краски',sourceUrl:'https://lemanapro.ru/catalogue/kraski-dlya-sten-i-potolkov/kolerovka/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по карточке 9 л'},
+  {id:'paint-facade',name:'Краска фасадная акриловая',group:'Стены и потолок',unit:'ведро 10 кг',price:2200,coverageM2PerUnit:28.57,norm:'около 0,35 кг/м², 2–3 слоя',wastePct:10,sourceTitle:'Лемана ПРО · фасадные материалы',sourceUrl:'https://lemanapro.ru/catalogue/fasadnye-materialy/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по категории'},
+  {id:'paint-ceiling',name:'Краска для потолка',group:'Стены и потолок',unit:'ведро 10 л',price:2218,coverageM2PerUnit:33.33,norm:'0,15 л/м² × 2 слоя',wastePct:10,sourceTitle:'Лемана ПРО · краски для стен и потолков',sourceUrl:'https://barnaul.lemanapro.ru/catalogue/kraski-dlya-sten-i-potolkov/luxens/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по каталогу'},
+  {id:'plaster-decorative',name:'Штукатурка декоративная',group:'Стены и потолок',unit:'ведро 25 кг',price:768,coverageM2PerUnit:8,norm:'около 3 кг/м² при слое 1,5 мм',wastePct:10,sourceTitle:'Лемана ПРО · декоративные штукатурки',sourceUrl:'https://lemanapro.ru/catalogue/shtukaturki/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по каталогу'},
+  {id:'wallpaper-paper',name:'Обои рулонные бумажные',group:'Стены и потолок',unit:'рулон 10 м²',price:750,coverageM2PerUnit:10,norm:'1 рулон ≈ 10 м²',wastePct:10,sourceTitle:'Лемана ПРО · сравнение обоев',sourceUrl:'https://lemanapro.ru/journal/zhidkie-ili-rulonnye-oboi/',priceCheckedAt:'2026-10-20',priceNote:'средний ориентир'},
+  {id:'wallpaper-liquid',name:'Обои жидкие',group:'Стены и потолок',unit:'упаковка 1 кг',price:1000,coverageM2PerUnit:4,norm:'1 кг на 3–5 м²',wastePct:10,sourceTitle:'Лемана ПРО · сравнение обоев',sourceUrl:'https://lemanapro.ru/journal/zhidkie-ili-rulonnye-oboi/',priceCheckedAt:'2026-10-20',priceNote:'средний ориентир'},
+  {id:'drywall-standard',name:'Гипсокартон 9,5 мм 2500×1200',group:'Листы и перегородки',unit:'лист 3 м²',price:400,coverageM2PerUnit:3,norm:'1 лист = 3 м²',wastePct:10,sourceTitle:'Лемана ПРО · гипсокартон 9,5 мм',sourceUrl:'https://lemanapro.ru/catalogue/gipsokarton/9-5/',priceCheckedAt:'2026-10-20'},
+  {id:'drywall-moisture',name:'Гипсокартон влагостойкий 9,5 мм',group:'Листы и перегородки',unit:'лист 3 м²',price:557,coverageM2PerUnit:3,norm:'1 лист = 3 м²',wastePct:10,sourceTitle:'Лемана ПРО · влагостойкий гипсокартон',sourceUrl:'https://lemanapro.ru/catalogue/gipsokarton/9-5/',priceCheckedAt:'2026-10-20'},
+  {id:'gvl-sheet',name:'Гипсоволокнистый лист',group:'Листы и перегородки',unit:'лист',price:1100,coverageM2PerUnit:2.88,norm:'площадь листа по выбранному формату',wastePct:10,sourceTitle:'Лемана ПРО · гипсоволокнистые листы',sourceUrl:'https://tula.lemanapro.ru/catalogue/gipsovoloknistye-listy/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по каталогу'},
+  {id:'osb3',name:'ОСП-3 11 мм 2500×1250',group:'Листы и перегородки',unit:'лист 3,125 м²',price:1090,coverageM2PerUnit:3.125,norm:'1 лист = 3,125 м²',wastePct:10,sourceTitle:'Лемана ПРО · ОСП-3 Ultralam',sourceUrl:'https://tula.lemanapro.ru/product/plita-osp-3-ultralam-11-mm-2500x1250-mm-3125-m-18693677/',priceCheckedAt:'2026-10-20'},
+  {id:'tile-wall',name:'Плитка настенная',group:'Плитка и затирка',unit:'м²',price:2220.37,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:10,sourceTitle:'Лемана ПРО · плитка 30×60',sourceUrl:'https://orel.lemanapro.ru/catalogue/plitka/',priceCheckedAt:'2026-10-20'},
+  {id:'tile-floor',name:'Керамогранит напольный 60×60',group:'Плитка и затирка',unit:'м²',price:1652,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:10,sourceTitle:'Лемана ПРО · керамогранит 60×60',sourceUrl:'https://orel.lemanapro.ru/catalogue/plitka/',priceCheckedAt:'2026-10-20'},
+  {id:'tile-mosaic',name:'Мозаика / декоративная плитка',group:'Плитка и затирка',unit:'м²',price:905,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:12,sourceTitle:'Лемана ПРО · плитка, керамогранит и мозаика',sourceUrl:'https://ufa.lemanapro.ru/catalogue/plitka-keramogranit-i-mozaika/',priceCheckedAt:'2026-10-20',priceNote:'ориентир от категории'},
+  {id:'tile-adhesive',name:'Клей для плитки',group:'Плитка и затирка',unit:'мешок 25 кг',price:613,coverageM2PerUnit:5,norm:'около 5 кг/м²',wastePct:10,sourceTitle:'Главснаб · плиточный клей 25 кг',sourceUrl:'https://glavsnab.net/plitochniy-kley-25-kg',priceCheckedAt:'2026-10-20'},
+  {id:'tile-grout',name:'Затирка для швов плитки',group:'Плитка и затирка',unit:'упаковка 2 кг',price:320,coverageM2PerUnit:8,norm:'ориентир 0,25 кг/м²',wastePct:10,sourceTitle:'Лемана ПРО · затирки для швов плитки',sourceUrl:'https://novorossiysk.lemanapro.ru/catalogue/zatirki-dlya-shvov-plitki/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по категории'},
+  {id:'laminate-33',name:'Ламинат 33 класса',group:'Напольные покрытия',unit:'м²',price:683,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:8,sourceTitle:'Лемана ПРО · напольные покрытия',sourceUrl:'https://chelyabinsk.lemanapro.ru/catalogue/napolnye-pokrytiya/',priceCheckedAt:'2026-10-20'},
+  {id:'laminate-32',name:'Ламинат 32 класса',group:'Напольные покрытия',unit:'м²',price:704,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:8,sourceTitle:'Лемана ПРО · напольные покрытия',sourceUrl:'https://novorossiysk.lemanapro.ru/catalogue/napolnye-pokrytiya/',priceCheckedAt:'2026-10-20'},
+  {id:'laminate-34',name:'Ламинат 34 класса',group:'Напольные покрытия',unit:'м²',price:1344.74,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:8,sourceTitle:'Лемана ПРО · напольные покрытия',sourceUrl:'https://novorossiysk.lemanapro.ru/catalogue/napolnye-pokrytiya/',priceCheckedAt:'2026-10-20'},
+  {id:'spc-floor',name:'SPC / кварцвиниловая плитка',group:'Напольные покрытия',unit:'м²',price:1267,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:8,sourceTitle:'Лемана ПРО · SPC-покрытия',sourceUrl:'https://novorossiysk.lemanapro.ru/catalogue/napolnye-pokrytiya/',priceCheckedAt:'2026-10-20'},
+  {id:'pvc-floor',name:'ПВХ / LVT-плитка',group:'Напольные покрытия',unit:'м²',price:1121.08,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:8,sourceTitle:'Лемана ПРО · ПВХ-плитка',sourceUrl:'https://novorossiysk.lemanapro.ru/catalogue/napolnye-pokrytiya/',priceCheckedAt:'2026-10-20'},
+  {id:'linoleum-semi',name:'Линолеум полукоммерческий 32 класса',group:'Напольные покрытия',unit:'м²',price:682,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:8,sourceTitle:'Лемана ПРО · полукоммерческий линолеум',sourceUrl:'https://novorossiysk.lemanapro.ru/catalogue/linoleum/polukommercheskiy/',priceCheckedAt:'2026-10-20'},
+  {id:'underlay-foam',name:'Подложка под напольное покрытие 3 мм',group:'Напольные покрытия',unit:'м²',price:106,coverageM2PerUnit:1,norm:'1 м² подложки',wastePct:5,sourceTitle:'Лемана ПРО · подложка MONLID 3 мм',sourceUrl:'https://novorossiysk.lemanapro.ru/catalogue/napolnye-pokrytiya/',priceCheckedAt:'2026-10-20'},
+  {id:'underlay-cork',name:'Подложка пробковая 2 мм',group:'Напольные покрытия',unit:'м²',price:449,coverageM2PerUnit:1,norm:'1 м² подложки',wastePct:5,sourceTitle:'Лемана ПРО · пробковая подложка',sourceUrl:'https://novorossiysk.lemanapro.ru/catalogue/napolnye-pokrytiya/',priceCheckedAt:'2026-10-20'},
+  {id:'parquet-board',name:'Паркетная доска дубовая',group:'Напольные покрытия',unit:'м²',price:5071.51,coverageM2PerUnit:1,norm:'1 м² покрытия',wastePct:8,sourceTitle:'Лемана ПРО · паркетная доска из дуба',sourceUrl:'https://lemanapro.ru/catalogue/parketnaya-doska/parketnaya-doska-iz-duba/',priceCheckedAt:'2026-10-20'},
+  {id:'mineral-wool',name:'Каменная вата 50 мм',group:'Утепление',unit:'упаковка 4,32 м²',price:968,coverageM2PerUnit:4.32,norm:'1 упаковка = 4,32 м²',wastePct:10,sourceTitle:'Лемана ПРО · ТехноФас Коттедж 50 мм',sourceUrl:'https://ulyanovsk.lemanapro.ru/product/kamennaya-vata-tehnofas-kottedzh-50-mm-18512995/',priceCheckedAt:'2026-10-20'},
+  {id:'xps-50',name:'Экструдированный пенополистирол XPS 50 мм',group:'Утепление',unit:'лист 0,69 м²',price:353,coverageM2PerUnit:.69,norm:'1 лист = 0,69 м²',wastePct:10,sourceTitle:'Лемана ПРО · XPS 50 мм',sourceUrl:'https://lemanapro.ru/catalogue/ekstrudirovannyy-penopolistirol-xps/50-mm/',priceCheckedAt:'2026-10-20'},
+  {id:'eps-50',name:'Пенополистирол ППС 50 мм',group:'Утепление',unit:'лист 1,2 м²',price:238,coverageM2PerUnit:1.2,norm:'1 лист = 1,2 м²',wastePct:10,sourceTitle:'Лемана ПРО · пенопласт 50 мм',sourceUrl:'https://irkutsk.lemanapro.ru/catalogue/teploizolyaciya/penoplast-50-mm/',priceCheckedAt:'2026-10-20'},
+  {id:'door-interior-solid',name:'Дверной блок межкомнатный глухой 800×2000 мм',group:'Двери и окна',unit:'шт.',price:5603,coverageM2PerUnit:1,norm:'1 шт. на дверной проём',wastePct:0,calculationMode:'piece',pieceKind:'door',quantityLabel:'дверных проёма',sourceTitle:'Петрович · дверь межкомнатная 800×2000 мм',sourceUrl:'https://petrovich.ru/product/858381/',priceCheckedAt:'2026-10-20',priceNote:'ориентир за дверное полотно; коробка, наличники и монтаж могут считаться отдельно'},
+  {id:'door-interior-glass',name:'Дверной блок межкомнатный со стеклом 800×2000 мм',group:'Двери и окна',unit:'шт.',price:8500,coverageM2PerUnit:1,norm:'1 шт. на дверной проём',wastePct:0,calculationMode:'piece',pieceKind:'door',quantityLabel:'дверных проёма',sourceTitle:'Петрович · межкомнатные двери со стеклом',sourceUrl:'https://petrovich.ru/catalog/10050/',priceCheckedAt:'2026-10-20',priceNote:'ориентир категории; цена зависит от покрытия, замка, петель и комплектации'},
+  {id:'door-entry-metal',name:'Дверь входная металлическая 860–960×2050 мм',group:'Двери и окна',unit:'шт.',price:10900,coverageM2PerUnit:1,norm:'1 шт. на дверной проём',wastePct:0,calculationMode:'piece',pieceKind:'door',quantityLabel:'дверных проёма',sourceTitle:'Петрович · входные двери',sourceUrl:'https://petrovich.ru/catalog/17003/',priceCheckedAt:'2026-10-20',priceNote:'ориентир от цены категории; замер, доборы и монтаж не включены'},
+  {id:'door-fire-ei60',name:'Дверь противопожарная EI60 однопольная 850–950×2050 мм',group:'Двери и окна',unit:'шт.',price:27339,coverageM2PerUnit:1,norm:'1 шт. на дверной проём',wastePct:0,calculationMode:'piece',pieceKind:'door',quantityLabel:'дверных проёма',sourceTitle:'Петрович · Промет ДП-EIS-60',sourceUrl:'https://petrovich.ru/catalog/285395950/',priceCheckedAt:'2026-10-20',priceNote:'карточка категории; цена зависит от ширины, стороны открывания и комплектации'},
+  {id:'door-technical',name:'Дверь техническая металлическая 850–950×2050 мм',group:'Двери и окна',unit:'шт.',price:25490,coverageM2PerUnit:1,norm:'1 шт. на дверной проём',wastePct:0,calculationMode:'piece',pieceKind:'door',quantityLabel:'дверных проёма',sourceTitle:'Петрович · Промет ДТ-1',sourceUrl:'https://petrovich.ru/catalog/285395950/',priceCheckedAt:'2026-10-20',priceNote:'ориентир по технической двери; замок, сторона открывания и утепление влияют на цену'},
+  {id:'window-pvc-blind',name:'Оконный блок ПВХ глухой 800×1160 мм',group:'Двери и окна',unit:'шт.',price:4342,coverageM2PerUnit:1,norm:'1 шт. на оконный проём',wastePct:0,calculationMode:'piece',pieceKind:'window',quantityLabel:'оконных проёма',sourceTitle:'Петрович · VEKA WHS Halo 60',sourceUrl:'https://petrovich.ru/catalog/15635/',priceCheckedAt:'2026-10-20',priceNote:'однокамерный стеклопакет; цена зависит от размера и комплектации'},
+  {id:'window-pvc-single',name:'Оконный блок ПВХ поворотно-откидной 800×1160 мм',group:'Двери и окна',unit:'шт.',price:11485,coverageM2PerUnit:1,norm:'1 шт. на оконный проём',wastePct:0,calculationMode:'piece',pieceKind:'window',quantityLabel:'оконных проёма',sourceTitle:'Петрович · VEKA WHS Halo 60',sourceUrl:'https://petrovich.ru/catalog/15635/',priceCheckedAt:'2026-10-20',priceNote:'однокамерный стеклопакет; ручка и тип створки влияют на цену'},
+  {id:'window-pvc-double',name:'Оконный блок ПВХ двухкамерный 1200×1160 мм',group:'Двери и окна',unit:'шт.',price:14908,coverageM2PerUnit:1,norm:'1 шт. на оконный проём',wastePct:0,calculationMode:'piece',pieceKind:'window',quantityLabel:'оконных проёма',sourceTitle:'Петрович · VEKA WHS Halo 60',sourceUrl:'https://petrovich.ru/catalog/15635/',priceCheckedAt:'2026-10-20',priceNote:'двухкамерный стеклопакет; размер, створки и монтаж влияют на цену'},
+  {id:'window-sill-pvc',name:'Подоконник ПВХ 200×2000×20 мм',group:'Двери и окна',unit:'шт.',price:620,coverageM2PerUnit:1,norm:'1 шт. по ширине оконного проёма',wastePct:0,catalogOnly:true,sourceTitle:'Петрович · подоконник ПВХ 200×2000×20 мм',sourceUrl:'https://petrovich.ru/product/667619/',priceCheckedAt:'2026-10-20',priceNote:'каталожная позиция; для сметы нужен фактический погонный размер'},
+  {id:'window-slope-pvc',name:'Откос оконный ПВХ утеплённый 250×2000×10 мм',group:'Двери и окна',unit:'шт.',price:870,coverageM2PerUnit:1,norm:'по фактической ширине и длине откоса',wastePct:0,catalogOnly:true,sourceTitle:'Петрович · утеплённые оконные откосы',sourceUrl:'https://petrovich.ru/catalog/10051/',priceCheckedAt:'2026-10-20',priceNote:'каталожная позиция; расход зависит от глубины и периметра откоса'},
+];
+const MATERIAL_METADATA={
+  'primer-deep':{subgroup:'Грунтовки',brand:'Ceresit',format:'CT 17 · глубокого проникновения · 10 л',priceUnit:'канистра',packSize:'10 л'},
+  'primer-contact':{subgroup:'Грунтовки',brand:'Разные бренды',brandOptions:['Axton','Ceresit','Knauf','Крепс','Plitonit','Vetonit'],format:'адгезионная грунтовка · 10 кг',priceUnit:'ведро',packSize:'10 кг'},
+  'plaster-gypsum':{subgroup:'Штукатурки',brand:'Разные бренды',brandOptions:['Knauf','Волма','Основит','Plitonit','Церезит'],format:'гипсовая · внутренние работы',priceUnit:'мешок',packSize:'30 кг'},
+  'plaster-cement':{subgroup:'Штукатурки',brand:'Разные бренды',brandOptions:['Knauf','Волма','Основит','Plitonit','Церезит'],format:'цементная · внутренние работы',priceUnit:'мешок',packSize:'25 кг'},
+  'putty-polymer':{subgroup:'Шпаклёвки',brand:'Axton',format:'готовая полимерная · для стен и потолка',priceUnit:'ведро',packSize:'20 кг'},
+  'self-leveling-floor':{subgroup:'Стяжки и наливные полы',brand:'Ceresit',format:'CN 175 Super · наливной пол',priceUnit:'мешок',packSize:'25 кг'},
+  'screed-cement':{subgroup:'Стяжки и наливные полы',brand:'Разные бренды',brandOptions:['Основит','Волма','КМ','Plitonit'],format:'пескобетон М300 · стяжка',priceUnit:'мешок',packSize:'30 кг'},
+  'sand-cement-m150':{subgroup:'Стяжки и наливные полы',brand:'Разные бренды',brandOptions:['Основит','Волма','КМ','Plitonit'],format:'ЦПС М150 · универсальная смесь',priceUnit:'мешок',packSize:'25 кг'},
+  'thermo-adhesive':{subgroup:'Клеевые смеси',brand:'Ceresit',format:'Thermo · штукатурно-клеевая смесь',priceUnit:'мешок',packSize:'25 кг'},
+  'paint-interior':{subgroup:'Краски',brand:'Obereg',format:'моющаяся матовая · белая · интерьерная',priceUnit:'ведро',packSize:'10 л'},
+  'paint-washable':{subgroup:'Краски',brand:'Разные бренды',brandOptions:['Dulux','Tikkurila','Лакра'],format:'моющаяся · стены и потолок',priceUnit:'ведро',packSize:'9 л'},
+  'paint-facade':{subgroup:'Краски',brand:'Разные бренды',brandOptions:['Текс','Dulux','V33'],format:'акриловая фасадная',priceUnit:'ведро',packSize:'10 кг'},
+  'paint-ceiling':{subgroup:'Краски',brand:'Luxens',format:'для потолка · матовая',priceUnit:'ведро',packSize:'10 л'},
+  'plaster-decorative':{subgroup:'Декоративные покрытия',brand:'Разные бренды',brandOptions:['Axton','Ceresit','Vetonit'],format:'декоративная · финишное покрытие',priceUnit:'ведро',packSize:'25 кг'},
+  'wallpaper-paper':{subgroup:'Обои',brand:'Разные бренды',brandOptions:['Rasch','Erismann','Артекс'],format:'бумажные · рулонные',priceUnit:'рулон',packSize:'10 м²'},
+  'wallpaper-liquid':{subgroup:'Обои',brand:'Разные бренды',brandOptions:['Silk Plaster','Bioplast','Арт-Дизайн'],format:'жидкие · декоративные',priceUnit:'упаковка',packSize:'1 кг'},
+  'drywall-standard':{subgroup:'Гипсокартон',brand:'Разные бренды',brandOptions:['Knauf','Магма','Gifas','Vetonit (Gyproc)','КМ'],format:'лист · 9,5 мм · 2500×1200 мм',priceUnit:'лист',packSize:'3 м²'},
+  'drywall-moisture':{subgroup:'Гипсокартон',brand:'Knauf',format:'влагостойкий лист · 9,5 мм · 2500×1200 мм',priceUnit:'лист',packSize:'3 м²'},
+  'gvl-sheet':{subgroup:'ГВЛ и гипсовые листы',brand:'Разные бренды',brandOptions:['Knauf','Волма','Vetonit (Gyproc)'],format:'гипсоволокнистый лист · внутренние работы',priceUnit:'лист',packSize:'2,88 м²'},
+  'osb3':{subgroup:'ОСП и древесные листы',brand:'Ultralam',format:'ОСП-3 · 11 мм · 2500×1250 мм',priceUnit:'лист',packSize:'3,125 м²'},
+  'tile-wall':{subgroup:'Настенная плитка',brand:'Разные бренды',brandOptions:['Axima','Unitile','Шахтинская плитка','Нефрит','Cersanit','Azori','Gracia Ceramica','Kerama Marazzi','Lavelly','Alma Ceramica'],format:'керамика · 30×60 см · для стен',priceUnit:'м²',packSize:'ориентир 1–1,8 м²/коробка'},
+  'tile-floor':{subgroup:'Напольная плитка и керамогранит',brand:'Разные бренды',brandOptions:['Cersanit','KREAFORTA','LB Ceramics','Kerama Marazzi','Azori','Axima','Шахтинская плитка','Gracia Ceramica','Alma Ceramica'],format:'керамогранит · 60×60 см · для пола',priceUnit:'м²',packSize:'ориентир 1–1,6 м²/коробка'},
+  'tile-mosaic':{subgroup:'Мозаика и декоративная плитка',brand:'Разные бренды',brandOptions:['Starmosaic','Cersanit','Azori','Kerama Marazzi'],format:'мозаика / декоративная плитка',priceUnit:'м²',packSize:'по коллекции'},
+  'tile-adhesive':{subgroup:'Плиточный клей',brand:'Ceresit',brandOptions:['Unis','Litokol','Vetonit','КМ','Plitonit','Основит'],format:'цементный клей · для плитки и керамогранита',priceUnit:'мешок',packSize:'25 кг'},
+  'tile-grout':{subgroup:'Затирка',brand:'Разные бренды',brandOptions:['Ceresit','Церезит','Unis','Litokol','Mapei','Plitonit','Основит','White Hills'],format:'цементная затирка · для швов',priceUnit:'упаковка',packSize:'2 кг'},
+  'laminate-33':{subgroup:'Ламинат',brand:'Разные бренды',brandOptions:['Classen','Kronospan','Tarkett','Egger','Ultradecor'],format:'33 класс · напольное покрытие',priceUnit:'м²',packSize:'по коллекции'},
+  'laminate-32':{subgroup:'Ламинат',brand:'Разные бренды',brandOptions:['Classen','Kronospan','Tarkett','Egger','Ultradecor'],format:'32 класс · напольное покрытие',priceUnit:'м²',packSize:'по коллекции'},
+  'laminate-34':{subgroup:'Ламинат',brand:'Разные бренды',brandOptions:['Classen','Kronospan','Tarkett','Egger','Ultradecor'],format:'34 класс · напольное покрытие',priceUnit:'м²',packSize:'по коллекции'},
+  'spc-floor':{subgroup:'SPC и кварцвинил',brand:'Alpine Floor',brandOptions:['Fine Floor','Tarkett','FirmFit','Corsa Deco'],format:'SPC / кварцвинил · замковый',priceUnit:'м²',packSize:'по коллекции'},
+  'pvc-floor':{subgroup:'ПВХ и LVT-плитка',brand:'Разные бренды',brandOptions:['Fine Floor','Tarkett','Fine Flex','Corsa Deco'],format:'ПВХ / LVT · напольная плитка',priceUnit:'м²',packSize:'по коллекции'},
+  'linoleum-semi':{subgroup:'Линолеум',brand:'Разные бренды',brandOptions:['Tarkett','Juteks','Комитекс','IVC','КМ2'],format:'полукоммерческий · 32 класс',priceUnit:'м²',packSize:'отрез / рулон'},
+  'underlay-foam':{subgroup:'Подложка',brand:'MONLID',format:'пенополиэтилен · 3 мм',priceUnit:'м²',packSize:'по рулону'},
+  'underlay-cork':{subgroup:'Подложка',brand:'Разные бренды',brandOptions:['Corkstyle','Amorim','Технониколь'],format:'пробковая · 2 мм',priceUnit:'м²',packSize:'по упаковке'},
+  'parquet-board':{subgroup:'Паркетная доска',brand:'Разные бренды',brandOptions:['Barlinek','Coswick','Tarkett'],format:'дубовая · натуральное дерево',priceUnit:'м²',packSize:'по коллекции'},
+  'mineral-wool':{subgroup:'Минеральная и каменная вата',brand:'ТехноНИКОЛЬ',brandOptions:['Knauf Insulation','Knauf','Тисма','Роквул','Rockwool'],format:'каменная вата · 50 мм',priceUnit:'упаковка',packSize:'4,32 м²'},
+  'xps-50':{subgroup:'XPS и экструдированный пенополистирол',brand:'Техноплекс',brandOptions:['Пеноплэкс','ТехноНИКОЛЬ'],format:'XPS · 50 мм',priceUnit:'лист',packSize:'0,69 м²'},
+  'eps-50':{subgroup:'Пенополистирол',brand:'Разные бренды',brandOptions:['Пеноплэкс','ТехноНИКОЛЬ','Тисма'],format:'ППС · 50 мм',priceUnit:'лист',packSize:'1,2 м²'},
+  'door-interior-solid':{subgroup:'Межкомнатные двери',brand:'Разные бренды',brandOptions:['ДПГ','VellDoris','VFD','Verda','HardFlex'],format:'глухая · МДФ / финишплёнка · 800×2000 мм',priceUnit:'шт.',packSize:'дверное полотно · 1 шт.'},
+  'door-interior-glass':{subgroup:'Межкомнатные двери',brand:'Разные бренды',brandOptions:['VellDoris','VFD','Verda','HardFlex'],format:'со стеклом · 800×2000 мм · замок и петли по комплектации',priceUnit:'шт.',packSize:'дверной блок · 1 шт.'},
+  'door-entry-metal':{subgroup:'Входные двери',brand:'Разные бренды',brandOptions:['Ferroni','Промет','Portika','Bravo'],format:'металлическая · 860–960×2050 мм · входная',priceUnit:'шт.',packSize:'дверной блок · 1 шт.'},
+  'door-fire-ei60':{subgroup:'Противопожарные двери',brand:'Промет',format:'ДП-EIS-60 · однопольная · глухая · 850–950×2050 мм',priceUnit:'шт.',packSize:'дверной блок · 1 шт.'},
+  'door-technical':{subgroup:'Технические двери',brand:'Промет',format:'ДТ-1 · металлическая · глухая · 850–950×2050 мм',priceUnit:'шт.',packSize:'дверной блок · 1 шт.'},
+  'window-pvc-blind':{subgroup:'Оконные блоки',brand:'VEKA',format:'WHS Halo 60 · ПВХ · 1 створка глухая · однокамерный стеклопакет',priceUnit:'шт.',packSize:'оконный блок · 1 шт.'},
+  'window-pvc-single':{subgroup:'Оконные блоки',brand:'VEKA',format:'WHS Halo 60 · ПВХ · поворотно-откидная створка · однокамерный стеклопакет',priceUnit:'шт.',packSize:'оконный блок · 1 шт.'},
+  'window-pvc-double':{subgroup:'Оконные блоки',brand:'VEKA',format:'WHS Halo 60 · ПВХ · 2 створки · двухкамерный стеклопакет',priceUnit:'шт.',packSize:'оконный блок · 1 шт.'},
+  'window-sill-pvc':{subgroup:'Оконные комплектующие',brand:'Разные бренды',brandOptions:['FineBer','Bauset','Moeller','Danke'],format:'ПВХ · белый матовый · 200×2000×20 мм',priceUnit:'шт.',packSize:'2 пог. м · 1 шт.'},
+  'window-slope-pvc':{subgroup:'Оконные комплектующие',brand:'Разные бренды',brandOptions:['Bauset','FineBer'],format:'утеплённый откос ПВХ · белый · 250×2000×10 мм',priceUnit:'шт.',packSize:'1 шт.'},
+};
+Object.keys(MATERIAL_METADATA).forEach(id=>{const item=MATERIAL_CATALOG.find(material=>material.id===id);if(item)Object.assign(item,MATERIAL_METADATA[id]);});
+const MATERIAL_CONSUMPTION_METADATA={
+  'primer-deep':{consumptionPerM2:.1,consumptionMinPerM2:.1,consumptionMaxPerM2:.2,consumptionUnit:'л/м²',consumptionBasis:'техкарта производителя',consumptionApproximate:true,consumptionSourceTitle:'Ceresit CT 17 PRO · технические характеристики',consumptionSourceUrl:'https://www.ceresit.ru/ru/products/tiling/supplementary-materials/ct_17_pro'},
+  'primer-contact':{consumptionPerM2:.3,consumptionMinPerM2:.25,consumptionMaxPerM2:.35,consumptionUnit:'кг/м²',consumptionBasis:'ориентир по категории',consumptionApproximate:true},
+  'plaster-gypsum':{consumptionPerM2:10,consumptionUnit:'кг/м²',consumptionBasis:'при слое 10 мм',consumptionApproximate:true},
+  'plaster-cement':{consumptionPerM2:10,consumptionUnit:'кг/м²',consumptionBasis:'при слое 10 мм',consumptionApproximate:true},
+  'putty-polymer':{consumptionPerM2:2,consumptionUnit:'кг/м²',consumptionBasis:'при слое 1 мм',consumptionApproximate:true},
+  'self-leveling-floor':{consumptionPerM2:5,consumptionUnit:'кг/м²',consumptionBasis:'при слое 1 мм'},
+  'screed-cement':{consumptionPerM2:20,consumptionUnit:'кг/м²',consumptionBasis:'при слое 10 мм',consumptionApproximate:true},
+  'sand-cement-m150':{consumptionPerM2:20,consumptionUnit:'кг/м²',consumptionBasis:'при слое 10 мм',consumptionApproximate:true},
+  'thermo-adhesive':{consumptionPerM2:5,consumptionUnit:'кг/м²',consumptionBasis:'ориентир по категории',consumptionApproximate:true},
+  'paint-interior':{consumptionPerM2:.3,consumptionUnit:'л/м²',consumptionBasis:'0,15 л/м² × 2 слоя'},
+  'paint-washable':{consumptionPerM2:.24,consumptionUnit:'л/м²',consumptionBasis:'0,12 л/м² × 2 слоя',consumptionApproximate:true},
+  'paint-facade':{consumptionPerM2:.35,consumptionUnit:'кг/м²',consumptionBasis:'2–3 слоя',consumptionApproximate:true},
+  'paint-ceiling':{consumptionPerM2:.3,consumptionUnit:'л/м²',consumptionBasis:'0,15 л/м² × 2 слоя'},
+  'plaster-decorative':{consumptionPerM2:3,consumptionUnit:'кг/м²',consumptionBasis:'при слое 1,5 мм',consumptionApproximate:true},
+  'wallpaper-paper':{consumptionPerM2:.1,consumptionUnit:'рулон/м²',consumptionBasis:'1 рулон ≈ 10 м²',consumptionApproximate:true},
+  'wallpaper-liquid':{consumptionPerM2:.25,consumptionMinPerM2:.2,consumptionMaxPerM2:.333,consumptionUnit:'кг/м²',consumptionBasis:'1 кг на 3–5 м²',consumptionApproximate:true},
+  'drywall-standard':{consumptionPerM2:1/3,consumptionUnit:'лист/м²',consumptionBasis:'из формата листа'},
+  'drywall-moisture':{consumptionPerM2:1/3,consumptionUnit:'лист/м²',consumptionBasis:'из формата листа'},
+  'gvl-sheet':{consumptionPerM2:1/2.88,consumptionUnit:'лист/м²',consumptionBasis:'из площади листа'},
+  'osb3':{consumptionPerM2:1/3.125,consumptionUnit:'лист/м²',consumptionBasis:'из площади листа'},
+  'tile-wall':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'tile-floor':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'tile-mosaic':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'tile-adhesive':{consumptionPerM2:5,consumptionUnit:'кг/м²',consumptionBasis:'ориентир по категории',consumptionApproximate:true},
+  'tile-grout':{consumptionPerM2:.25,consumptionUnit:'кг/м²',consumptionBasis:'ориентир по категории',consumptionApproximate:true},
+  'laminate-33':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'laminate-32':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'laminate-34':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'spc-floor':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'pvc-floor':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'linoleum-semi':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'underlay-foam':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² подложки'},
+  'underlay-cork':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² подложки'},
+  'parquet-board':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² покрытия'},
+  'mineral-wool':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² утепления'},
+  'xps-50':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² утепления'},
+  'eps-50':{consumptionPerM2:1,consumptionUnit:'м²/м²',consumptionBasis:'1 м² утепления'}
+};
+Object.keys(MATERIAL_CONSUMPTION_METADATA).forEach(id=>{const item=MATERIAL_CATALOG.find(material=>material.id===id);if(item)Object.assign(item,MATERIAL_CONSUMPTION_METADATA[id]);});
+const MATERIAL_RETAIL_SOURCES={
+  'Грунтовки':{title:'Петрович · грунтовки',url:'https://petrovich.ru/catalog/6615/'},
+  'Штукатурки':{title:'Петрович · штукатурки',url:'https://petrovich.ru/catalog/1447/'},
+  'Шпаклёвки':{title:'Петрович · готовые шпаклёвки',url:'https://petrovich.ru/catalog/6648/'},
+  'Стяжки и наливные полы':{title:'Петрович · сухие строительные смеси',url:'https://petrovich.ru/catalog/1445/'},
+  'Клеевые смеси':{title:'Петрович · сухие строительные смеси',url:'https://petrovich.ru/catalog/1445/'},
+  'Краски':{title:'Петрович · водно-дисперсионные краски',url:'https://petrovich.ru/catalog/6627/'},
+  'Декоративные покрытия':{title:'Петрович · декоративные штукатурки',url:'https://petrovich.ru/catalog/1447/'},
+  'Обои':{title:'Петрович · обои',url:'https://petrovich.ru/catalog/12102/'},
+  'Гипсокартон':{title:'Петрович · гипсокартон',url:'https://petrovich.ru/catalog/113714477/'},
+  'ГВЛ и гипсовые листы':{title:'Петрович · листовые материалы',url:'https://petrovich.ru/catalog/816/'},
+  'ОСП и древесные листы':{title:'Петрович · листовые материалы',url:'https://petrovich.ru/catalog/816/'},
+  'Настенная плитка':{title:'Петрович · плитка для стен',url:'https://petrovich.ru/catalog/10042/plitka-dlja-sten/'},
+  'Напольная плитка и керамогранит':{title:'Петрович · керамогранит',url:'https://petrovich.ru/catalog/1352/'},
+  'Мозаика и декоративная плитка':{title:'Петрович · плитка и затирка',url:'https://petrovich.ru/catalog/1351/'},
+  'Плиточный клей':{title:'Петрович · плитка и затирка',url:'https://petrovich.ru/catalog/1351/'},
+  'Затирка':{title:'Петрович · затирка для плитки',url:'https://petrovich.ru/catalog/12116/'},
+  'Ламинат':{title:'Петрович · ламинат',url:'https://petrovich.ru/catalog/1550/'},
+  'SPC и кварцвинил':{title:'Петрович · SPC-ламинат',url:'https://petrovich.ru/catalog/126222126/spc-laminat/'},
+  'ПВХ и LVT-плитка':{title:'Петрович · напольные покрытия',url:'https://petrovich.ru/catalog/1547/'},
+  'Линолеум':{title:'Петрович · линолеум',url:'https://petrovich.ru/catalog/1548/'},
+  'Подложка':{title:'Петрович · напольные покрытия',url:'https://petrovich.ru/catalog/1547/'},
+  'Паркетная доска':{title:'Петрович · напольные покрытия',url:'https://petrovich.ru/catalog/1547/'},
+  'Минеральная и каменная вата':{title:'Петрович · тепло- и звукоизоляция',url:'https://petrovich.ru/catalog/1279/'},
+  'XPS и экструдированный пенополистирол':{title:'Петрович · тепло- и звукоизоляция',url:'https://petrovich.ru/catalog/1279/'},
+  'Пенополистирол':{title:'Петрович · тепло- и звукоизоляция',url:'https://petrovich.ru/catalog/1279/'},
+  'Межкомнатные двери':{title:'Петрович · межкомнатные двери',url:'https://petrovich.ru/catalog/10050/'},
+  'Входные двери':{title:'Петрович · входные двери',url:'https://petrovich.ru/catalog/17003/'},
+  'Противопожарные двери':{title:'Петрович · противопожарные двери',url:'https://petrovich.ru/catalog/285395950/'},
+  'Технические двери':{title:'Петрович · двери противопожарные и технические',url:'https://petrovich.ru/catalog/285395950/'},
+  'Оконные блоки':{title:'Петрович · готовые пластиковые окна',url:'https://petrovich.ru/catalog/15635/'},
+  'Оконные комплектующие':{title:'Петрович · окна и комплектующие',url:'https://petrovich.ru/catalog/10051/'}
+};
+MATERIAL_CATALOG.forEach(item=>{const source=MATERIAL_RETAIL_SOURCES[item.subgroup]||MATERIAL_RETAIL_SOURCES[item.group];if(source)Object.assign(item,{secondarySourceTitle:source.title,secondarySourceUrl:source.url});});
+const MATERIAL_DEFAULTS={scope:'room',wallIds:[],wallSegments:[],zone:null,materialId:'paint-interior',wastePct:null,customPrices:{},customCatalog:[]};
 const GROUP_ORDER=['Клинический кабинет','Диагностика','Стерилизация','Техническая зона','Безопасность','Мебель','Зона пациентов'];
 const TEMPLATES=[
   {id:'start',name:'Старт · 1 кресло',room:{w:9,d:7},
@@ -605,6 +1166,66 @@ const TEMPLATES=[
    items:[]},
 ];
 
+const PROJECT_DEFAULT_NAME='Новый проект';
+const PROJECT_LIBRARY_KEY='dentplan-project-library-v1';
+const PROJECT_LIBRARY_LIMIT=100;
+let currentProjectName=PROJECT_DEFAULT_NAME,currentProjectId=null,projectSearchQuery='';
+function normalizeProjectName(value){
+  const name=String(value??'').replace(/\s+/g,' ').trim().slice(0,120);
+  return name||PROJECT_DEFAULT_NAME;
+}
+function filterProjectRecords(records,query){
+  const needle=String(query??'').trim().toLocaleLowerCase('ru-RU');
+  return(Array.isArray(records)?records:[]).filter(record=>record&&String(record.name||'').toLocaleLowerCase('ru-RU').includes(needle));
+}
+function projectFileSafeName(value){
+  const safe=normalizeProjectName(value).replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,'-').replace(/^-+|-+$/g,'');
+  return(safe||'dentplan-proekt').slice(0,80);
+}
+function projectRecordId(){return'p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);}
+function projectLibraryStorage(){try{return typeof localStorage==='undefined'?null:localStorage;}catch(e){return null;}}
+function readProjectLibrary(){
+  const storage=projectLibraryStorage();if(!storage)return[];
+  try{
+    const raw=storage.getItem(PROJECT_LIBRARY_KEY),parsed=raw?JSON.parse(raw):[];
+    if(!Array.isArray(parsed))return[];
+    return parsed.filter(record=>record&&typeof record==='object'&&record.project&&record.project.app==='dentplan')
+      .map((record,index)=>({
+        id:/^[A-Za-z0-9_-]{1,100}$/.test(String(record.id||''))?String(record.id):'legacy-'+index,
+        name:normalizeProjectName(record.name||record.project.name),
+        saved:String(record.saved||record.project.saved||''),
+        project:record.project,
+      }))
+      .filter(record=>!validateProjectData(record.project));
+  }catch(e){return[];}
+}
+function saveProjectToLibrary(project){
+  const storage=projectLibraryStorage();if(!storage)return false;
+  const record={id:currentProjectId||projectRecordId(),name:normalizeProjectName(project.name),saved:project.saved||new Date().toISOString(),project};
+  try{
+    const records=readProjectLibrary().filter(item=>item.id!==record.id);
+    storage.setItem(PROJECT_LIBRARY_KEY,JSON.stringify([record,...records].slice(0,PROJECT_LIBRARY_LIMIT)));
+    currentProjectId=record.id;
+    if(appPage==='projects')buildProjectsPage();
+    return true;
+  }catch(e){return false;}
+}
+function deleteProjectFromLibrary(id){
+  const storage=projectLibraryStorage();if(!storage)return false;
+  try{
+    const next=readProjectLibrary().filter(record=>record.id!==String(id));
+    storage.setItem(PROJECT_LIBRARY_KEY,JSON.stringify(next));
+    if(currentProjectId===String(id))currentProjectId=null;
+    if(appPage==='projects')buildProjectsPage();
+    return true;
+  }catch(e){return false;}
+}
+function setCurrentProjectName(value,dirty=false){
+  currentProjectName=normalizeProjectName(value);
+  const input=$('#projectName');if(input&&input.value!==currentProjectName)input.value=currentProjectName;
+  if(dirty)markDirty();
+}
+
 const state={
   profile:'dental',
   room:{w:12,d:9},
@@ -612,9 +1233,12 @@ const state={
   nodes:[],walls:[],openings:[],
   items:[],seq:1,sel:null,
   mode:'items',tool:'select',selObj:null,
+  materials:{scope:'room',wallIds:[],wallSegments:[],zone:null,materialId:'paint-interior',wastePct:null,customPrices:{},customCatalog:loadCustomMaterialCatalog()},
   brand:'#0E7C7B',fire:false,view:'both',
 };
 const SELECT_COLOR='#BE4128';
+const APP_PAGES=['plan','calculations','catalog','statements','projects'];
+let appPage='plan',lastPlanMode='items';
 let nid=1,wid=1,oid=1;
 function shouldFinishDrawingOnDoubleClick(e,previous,current,now){
   if(!e||Number(e.detail)<2||!previous||!current)return false;
@@ -1093,6 +1717,275 @@ function roomBounds(){
   const area=src==='loop'?Math.abs(shoelace(loop.pts)):(maxX-minX)*(maxZ-minZ);
   return{minX,maxX,minZ,maxZ,area,closed:src==='loop',loop};
 }
+function normalizeCustomMaterial(material,index=0){
+  const src=material&&typeof material==='object'?material:{};
+  const rawId=String(src.id||'').trim().replace(/[^a-zA-Z0-9_-]/g,'').slice(0,60);
+  const id=(rawId.startsWith('custom-')?rawId:'custom-'+(rawId||Date.now().toString(36)+'-'+index));
+  const name=String(src.name||'').trim().slice(0,160);
+  if(!name)return null;
+  const price=Number(src.price),rawCoverage=Number(src.coverageM2PerUnit),calculationMode=src.calculationMode==='piece'?'piece':'area',pieceKind=['door','window','opening'].includes(src.pieceKind)?src.pieceKind:'opening',coverage=calculationMode==='piece'&&(!Number.isFinite(rawCoverage)||rawCoverage<=0)?1:rawCoverage,consumption=Number(src.consumptionPerM2),consumptionMin=Number(src.consumptionMinPerM2),consumptionMax=Number(src.consumptionMaxPerM2);
+  if(!Number.isFinite(price)||price<0||!Number.isFinite(coverage)||coverage<=0)return null;
+  const sourceUrl=/^https?:\/\//i.test(String(src.sourceUrl||''))?String(src.sourceUrl).slice(0,500):'';
+  const waste=Number(src.wastePct);
+  const unit=String(src.unit||'ед.').trim().slice(0,60)||'ед.';
+  const secondarySourceUrl=/^https?:\/\//i.test(String(src.secondarySourceUrl||''))?String(src.secondarySourceUrl).slice(0,500):'';
+  const hasConsumption=Number.isFinite(consumption)&&consumption>0,hasConsumptionMin=Number.isFinite(consumptionMin)&&consumptionMin>0,hasConsumptionMax=Number.isFinite(consumptionMax)&&consumptionMax>0;
+  return{id,name,group:String(src.group||'Пользовательские материалы').trim().slice(0,80)||'Пользовательские материалы',subgroup:String(src.subgroup||'Пользовательские позиции').trim().slice(0,80)||'Пользовательские позиции',brand:String(src.brand||'Без бренда').trim().slice(0,80)||'Без бренда',brandOptions:[],format:String(src.format||'').trim().slice(0,160),unit,price:Math.round(price*100)/100,priceUnit:String(src.priceUnit||unit).trim().slice(0,40)||unit,packSize:String(src.packSize||unit).trim().slice(0,80)||unit,coverageM2PerUnit:Math.round(coverage*10000)/10000,calculationMode,pieceKind:calculationMode==='piece'?pieceKind:'',quantityLabel:String(src.quantityLabel||(pieceKind==='door'?'дверных проёма':pieceKind==='window'?'оконных проёма':'проёма')).trim().slice(0,80),catalogOnly:false,consumptionPerM2:hasConsumption?Math.round(consumption*1000000)/1000000:null,consumptionMinPerM2:hasConsumptionMin?Math.round(consumptionMin*1000000)/1000000:null,consumptionMaxPerM2:hasConsumptionMax?Math.round(consumptionMax*1000000)/1000000:null,consumptionUnit:String(src.consumptionUnit||'').trim().slice(0,40),consumptionBasis:String(src.consumptionBasis||'').trim().slice(0,120),consumptionApproximate:Boolean(src.consumptionApproximate),norm:String(src.norm||'Задайте норму расхода').trim().slice(0,160)||'Задайте норму расхода',wastePct:Number.isFinite(waste)?clamp(waste,0,100):10,sourceTitle:String(src.sourceTitle||'Пользовательская позиция').trim().slice(0,160)||'Пользовательская позиция',sourceUrl,secondarySourceTitle:String(src.secondarySourceTitle||'').trim().slice(0,160),secondarySourceUrl,priceCheckedAt:String(src.priceCheckedAt||new Date().toISOString().slice(0,10)).slice(0,10),priceNote:String(src.priceNote||'добавлено пользователем').trim().slice(0,120)||'добавлено пользователем'};
+}
+function materialCatalogForSettings(settings){
+  const src=settings&&typeof settings==='object'?settings:{},ids=new Set(MATERIAL_CATALOG.map(m=>m.id)),custom=[];
+  (Array.isArray(src.customCatalog)?src.customCatalog:[]).forEach((item,index)=>{const normalized=normalizeCustomMaterial(item,index);if(normalized&&!ids.has(normalized.id)){ids.add(normalized.id);custom.push(normalized);}});
+  return MATERIAL_CATALOG.concat(custom);
+}
+function loadCustomMaterialCatalog(){
+  try{if(typeof localStorage==='undefined')return[];const raw=localStorage.getItem('dentplan-material-catalog-v1');const parsed=raw?JSON.parse(raw):[];return(Array.isArray(parsed)?parsed:[]).map(normalizeCustomMaterial).filter(Boolean);}
+  catch(e){return[];}
+}
+function persistCustomMaterialCatalog(list){
+  try{if(typeof localStorage!=='undefined')localStorage.setItem('dentplan-material-catalog-v1',JSON.stringify((Array.isArray(list)?list:[]).map(normalizeCustomMaterial).filter(Boolean)));}
+  catch(e){}
+}
+function normalizeMaterialSettings(settings){
+  const src=settings&&typeof settings==='object'?settings:{};
+  const scope=['room','zone','walls'].includes(src.scope)?src.scope:'room';
+  const wallIds=Array.isArray(src.wallIds)?[...new Set(src.wallIds.map(id=>String(id)).filter(Boolean))].slice(0,500):[];
+  const wallSegments=[];
+  if(Array.isArray(src.wallSegments))src.wallSegments.slice(0,1000).forEach(segment=>{
+    const wallId=String(segment&&segment.wallId||'').trim(),start=Number(segment&&segment.startM),end=Number(segment&&segment.endM);
+    if(!wallId||!Number.isFinite(start)||!Number.isFinite(end)||end-start<.001)return;
+    const a=Math.max(0,Math.min(start,end)),b=Math.max(0,Math.max(start,end));
+    wallSegments.push({wallId,startM:Math.round(a*1000)/1000,endM:Math.round(b*1000)/1000});
+  });
+  const uniqueSegments=[],segmentKeys=new Set();
+  wallSegments.forEach(segment=>{const key=materialWallSegmentKey(segment.wallId,segment.startM,segment.endM);if(segmentKeys.has(key))return;segmentKeys.add(key);uniqueSegments.push(segment);});
+  const rawZone=src.zone&&typeof src.zone==='object'?src.zone:null;
+  const zone=rawZone&&[rawZone.x1,rawZone.z1,rawZone.x2,rawZone.z2].every(v=>Number.isFinite(Number(v)))?{
+    x1:Number(rawZone.x1),z1:Number(rawZone.z1),x2:Number(rawZone.x2),z2:Number(rawZone.z2)}:null;
+  const customPrices={};
+  if(src.customPrices&&typeof src.customPrices==='object'&&!Array.isArray(src.customPrices))
+    Object.keys(src.customPrices).forEach(id=>{const value=Number(src.customPrices[id]);if(Number.isFinite(value)&&value>=0)customPrices[String(id)]=Math.round(value*100)/100;});
+  const waste=src.wastePct===null||src.wastePct===undefined?null:Number(src.wastePct);
+  const customCatalog=(Array.isArray(src.customCatalog)?src.customCatalog:[]).map(normalizeCustomMaterial).filter(Boolean),catalog=materialCatalogForSettings({customCatalog});
+  return{scope,wallIds,wallSegments:uniqueSegments,zone,materialId:catalog.some(m=>m.id===src.materialId)?src.materialId:MATERIAL_DEFAULTS.materialId,
+    wastePct:Number.isFinite(waste)?clamp(waste,0,100):null,customPrices,customCatalog};
+}
+function materialContour(source){
+  const nodes=(source&&Array.isArray(source.nodes)?source.nodes:[]).map(n=>({id:String(n.id),x:Number(n.x)||0,z:Number(n.z)||0}));
+  const nodeMap=new Map(nodes.map(n=>[n.id,n])),walls=(source&&Array.isArray(source.walls)?source.walls:[])
+    .filter(w=>w&&w.kind==='outer'&&nodeMap.has(String(w.a))&&nodeMap.has(String(w.b)));
+  if(walls.length<3)return{status:walls.length?'open':'empty',points:[]};
+  const adj=new Map();
+  walls.forEach(w=>{[String(w.a),String(w.b)].forEach(id=>{if(!adj.has(id))adj.set(id,[]);adj.get(id).push(w);});});
+  if([...adj.values()].some(list=>list.length!==2))return{status:'open',points:[]};
+  let current=walls[0],from=String(current.a);const used=new Set(),points=[nodeMap.get(from)];
+  for(let guard=0;guard<=walls.length;guard++){
+    if(!current||used.has(String(current.id)))break;
+    used.add(String(current.id));
+    const next=String(current.a)===from?String(current.b):String(current.a);
+    const point=nodeMap.get(next);if(!point)return{status:'open',points:[]};
+    points.push(point);
+    current=(adj.get(next)||[]).find(w=>String(w.id)!==String(current.id)&&!used.has(String(w.id)));
+    from=next;
+  }
+  if(used.size!==walls.length||points.length<4)return{status:'open',points:[]};
+  points.pop();
+  return{status:'closed',points};
+}
+function materialPolygonArea(points){
+  if(!Array.isArray(points)||points.length<3)return 0;
+  let sum=0;points.forEach((p,i)=>{const q=points[(i+1)%points.length];sum+=p.x*q.z-q.x*p.z;});
+  return Math.abs(sum)/2;
+}
+function materialBounds(source){
+  const contour=materialContour(source),points=contour.points;
+  if(points.length){
+    const xs=points.map(p=>p.x),zs=points.map(p=>p.z);
+    return{minX:Math.min(...xs),maxX:Math.max(...xs),minZ:Math.min(...zs),maxZ:Math.max(...zs),area:materialPolygonArea(points),exact:contour.status==='closed',status:contour.status};
+  }
+  const nodes=(source&&Array.isArray(source.nodes)?source.nodes:[]);
+  if(nodes.length){
+    const xs=nodes.map(n=>Number(n.x)||0),zs=nodes.map(n=>Number(n.z)||0);
+    return{minX:Math.min(...xs),maxX:Math.max(...xs),minZ:Math.min(...zs),maxZ:Math.max(...zs),area:(Math.max(...xs)-Math.min(...xs))*(Math.max(...zs)-Math.min(...zs)),exact:false,status:'open'};
+  }
+  const room=source&&source.room||{};
+  const w=Number(room.w)||12,d=Number(room.d)||9;
+  return{minX:-w/2,maxX:w/2,minZ:-d/2,maxZ:d/2,area:w*d,exact:false,status:'empty'};
+}
+function materialCalculation(source){
+  const c=source&&source.calculation&&typeof source.calculation==='object'?source.calculation:{};
+  const wallHeight=Number(c.wallHeightM);const h=Number.isFinite(wallHeight)?clamp(wallHeight,2,6):3;
+  const sourceHeights=c.openingHeightsM&&typeof c.openingHeightsM==='object'?c.openingHeightsM:{};
+  const heightFor=kind=>{const fallback=kind==='window'?1.5:2.1;const value=Number(sourceHeights[kind]);return Number.isFinite(value)?clamp(value,.5,4):fallback;};
+  return{wallHeightM:h,openingHeightsM:{door:heightFor('door'),evac:heightFor('evac'),window:heightFor('window')}};
+}
+function materialNodeMap(source){
+  return new Map((source&&Array.isArray(source.nodes)?source.nodes:[]).map(node=>[String(node.id),{x:Number(node.x)||0,z:Number(node.z)||0}]));
+}
+function materialWallGeometry(source,wall,nodeMap){
+  const nodes=nodeMap||materialNodeMap(source),a=nodes.get(String(wall&&wall.a)),b=nodes.get(String(wall&&wall.b));
+  if(!a||!b)return null;
+  const dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz);
+  if(length<.0001)return null;
+  return{A:a,B:b,dx,dz,length,ux:dx/length,uz:dz/length};
+}
+function materialWallSegmentKey(wallId,startM,endM){return String(wallId)+':'+Math.round(Number(startM)*1000)+'-'+Math.round(Number(endM)*1000);}
+function materialCross(a,b){return a.x*b.z-a.z*b.x;}
+function materialLineIntersectionParameter(a,b,c,d){
+  const r={x:b.x-a.x,z:b.z-a.z},s={x:d.x-c.x,z:d.z-c.z},den=materialCross(r,s);
+  if(Math.abs(den)<1e-9)return null;
+  const qp={x:c.x-a.x,z:c.z-a.z},t=materialCross(qp,s)/den,u=materialCross(qp,r)/den;
+  return t>=-1e-6&&t<=1+1e-6&&u>=-1e-6&&u<=1+1e-6?t:null;
+}
+function materialWallBreakpoints(source,wall){
+  const nodeMap=materialNodeMap(source),geo=materialWallGeometry(source,wall,nodeMap);
+  if(!geo)return[];
+  const points=[0,geo.length],add=value=>{const n=Number(value);if(!Number.isFinite(n)||n<=.05||n>=geo.length-.05)return;points.push(n);};
+  const openings=source&&Array.isArray(source.openings)?source.openings:[];
+  openings.filter(opening=>String(opening.wallId)===String(wall.id)).forEach(opening=>{
+    const center=clamp(Number(opening.t)||0,0,1)*geo.length,width=Math.max(0,Number(opening.w)||0);
+    add(center-width/2);add(center+width/2);
+  });
+  const walls=source&&Array.isArray(source.walls)?source.walls:[];
+  walls.forEach(other=>{
+    if(String(other.id)===String(wall.id))return;
+    const otherGeo=materialWallGeometry(source,other,nodeMap);if(!otherGeo)return;
+    const crossing=materialLineIntersectionParameter(geo.A,geo.B,otherGeo.A,otherGeo.B);
+    if(crossing!==null)add(crossing*geo.length);
+    [otherGeo.A,otherGeo.B].forEach(point=>{
+      const along=(point.x-geo.A.x)*geo.ux+(point.z-geo.A.z)*geo.uz;
+      const distance=Math.abs((point.x-geo.A.x)*geo.uz-(point.z-geo.A.z)*geo.ux);
+      if(distance<=.12)add(along);
+    });
+  });
+  return[...new Set(points.map(value=>Math.round(value*1000)/1000))].sort((a,b)=>a-b);
+}
+function materialWallSegments(source,wall){
+  const geo=materialWallGeometry(source,wall);if(!geo)return[];
+  const points=materialWallBreakpoints(source,wall),openings=source&&Array.isArray(source.openings)?source.openings.filter(opening=>String(opening.wallId)===String(wall.id)):[],segments=[];
+  for(let i=0;i<points.length-1;i++){
+    const startM=points[i],endM=points[i+1],mid=(startM+endM)/2;
+    if(endM-startM<.05)continue;
+    const blocked=openings.some(opening=>{
+      const center=clamp(Number(opening.t)||0,0,1)*geo.length,width=Math.max(0,Number(opening.w)||0);
+      return mid>center-width/2+.0001&&mid<center+width/2-.0001;
+    });
+    if(blocked)continue;
+    segments.push({wallId:String(wall.id),startM,endM,key:materialWallSegmentKey(wall.id,startM,endM)});
+  }
+  return segments;
+}
+function materialWallSegmentAt(source,wall,point){
+  const geo=materialWallGeometry(source,wall);if(!geo||!point)return null;
+  const offset=clamp((point.x-geo.A.x)*geo.ux+(point.z-geo.A.z)*geo.uz,0,geo.length),segments=materialWallSegments(source,wall);
+  return segments.find(segment=>offset>=segment.startM-.08&&offset<=segment.endM+.08)||null;
+}
+function materialSelectedWallSegments(source,settings){
+  const normalized=normalizeMaterialSettings(settings),walls=source&&Array.isArray(source.walls)?source.walls:[],wallMap=new Map(walls.map(w=>[String(w.id),w])),result=[],seen=new Set();
+  const add=(wallId,startM,endM)=>{
+    const wall=wallMap.get(String(wallId)),geo=materialWallGeometry(source,wall);if(!wall||!geo)return;
+    const start=Math.max(0,Math.min(Number(startM),Number(endM))),end=Math.min(geo.length,Math.max(Number(startM),Number(endM)));if(end-start<.001)return;
+    const key=materialWallSegmentKey(wall.id,start,end);if(seen.has(key))return;seen.add(key);result.push({wallId:String(wall.id),startM:start,endM:end,key});
+  };
+  if(normalized.wallSegments.length)normalized.wallSegments.forEach(segment=>add(segment.wallId,segment.startM,segment.endM));
+  else normalized.wallIds.forEach(wallId=>add(wallId,0,materialWallGeometry(source,wallMap.get(String(wallId)))?.length||0));
+  return result;
+}
+function materialOpeningSegmentOverlap(source,opening,segment){
+  const wall=(source&&Array.isArray(source.walls)?source.walls:[]).find(item=>String(item.id)===String(segment.wallId)),geo=materialWallGeometry(source,wall);if(!geo)return 0;
+  const center=clamp(Number(opening.t)||0,0,1)*geo.length,width=Math.max(0,Number(opening.w)||0),openingStart=Math.max(0,center-width/2),openingEnd=Math.min(geo.length,center+width/2);
+  return Math.max(0,Math.min(segment.endM,openingEnd)-Math.max(segment.startM,openingStart));
+}
+function materialWallRows(source){
+  const nodes=new Map((source&&Array.isArray(source.nodes)?source.nodes:[]).map(n=>[String(n.id),n]));
+  const calc=materialCalculation(source),openings=source&&Array.isArray(source.openings)?source.openings:[];
+  return(source&&Array.isArray(source.walls)?source.walls:[]).map(w=>{
+    const a=nodes.get(String(w.a)),b=nodes.get(String(w.b));
+    if(!a||!b)return null;
+    const length=Math.hypot((Number(b.x)||0)-(Number(a.x)||0),(Number(b.z)||0)-(Number(a.z)||0));
+    if(length<.0001)return null;
+    const wallOpenings=openings.filter(o=>String(o.wallId)===String(w.id));
+    const openingsArea=wallOpenings.reduce((sum,o)=>sum+Math.min(length,Math.max(0,Number(o.w)||0))*(calc.openingHeightsM[o.kind]||calc.openingHeightsM.door),0);
+    const gross=length*calc.wallHeightM;
+    return{id:String(w.id),kind:w.kind==='outer'?'outer':'inner',name:w.kind==='outer'?'Наружная стена':'Перегородка',lengthM:length,heightM:calc.wallHeightM,grossAreaM2:gross,openingsAreaM2:openingsArea,netAreaM2:Math.max(0,gross-openingsArea),openingsCount:wallOpenings.length};
+  }).filter(Boolean);
+}
+function materialWallSegmentRows(source,segments){
+  const calc=materialCalculation(source),walls=source&&Array.isArray(source.walls)?source.walls:[],openings=source&&Array.isArray(source.openings)?source.openings:[],rows=[];
+  (Array.isArray(segments)?segments:[]).forEach(segment=>{
+    const wall=walls.find(item=>String(item.id)===String(segment.wallId)),geo=materialWallGeometry(source,wall);if(!wall||!geo)return;
+    const startM=Math.max(0,Math.min(Number(segment.startM),Number(segment.endM))),endM=Math.min(geo.length,Math.max(Number(segment.startM),Number(segment.endM)));if(endM-startM<.001)return;
+    const wallOpenings=openings.filter(opening=>String(opening.wallId)===String(wall.id)),openingRows=wallOpenings.map(opening=>({opening,overlap:materialOpeningSegmentOverlap(source,opening,{wallId:String(wall.id),startM,endM})})).filter(item=>item.overlap>.0001);
+    const openingsArea=openingRows.reduce((sum,item)=>sum+item.overlap*(calc.openingHeightsM[item.opening.kind]||calc.openingHeightsM.door),0),length=endM-startM,gross=length*calc.wallHeightM;
+    rows.push({id:segment.key||materialWallSegmentKey(wall.id,startM,endM),wallId:String(wall.id),kind:wall.kind==='outer'?'outer':'inner',name:wall.kind==='outer'?'Наружная стена':'Перегородка',startM,endM,lengthM:length,heightM:calc.wallHeightM,grossAreaM2:gross,openingsAreaM2:openingsArea,netAreaM2:Math.max(0,gross-openingsArea),openingsCount:openingRows.length});
+  });
+  return rows;
+}
+function materialSelectionSummary(source,settings){
+  const s=normalizeMaterialSettings(settings),bounds=materialBounds(source),rows=[];
+  if(s.scope==='walls'){
+    const wallSegments=materialSelectedWallSegments(source,s),all=materialWallSegmentRows(source,wallSegments);
+    rows.push(...all.map(row=>({id:row.id,wallId:row.wallId,name:row.name,startM:row.startM,endM:row.endM,lengthM:row.lengthM,grossAreaM2:row.grossAreaM2,openingsAreaM2:row.openingsAreaM2,netAreaM2:row.netAreaM2,openingsCount:row.openingsCount})));
+    const total=rows.reduce((acc,row)=>{acc.lengthM+=row.lengthM;acc.grossAreaM2+=row.grossAreaM2;acc.openingsAreaM2+=row.openingsAreaM2;acc.netAreaM2+=row.netAreaM2;acc.openingsCount+=row.openingsCount;return acc;},{lengthM:0,grossAreaM2:0,openingsAreaM2:0,netAreaM2:0,openingsCount:0});
+    return{scope:'walls',label:'Выбранные участки стен',areaM2:total.netAreaM2,exact:true,rows,total,wallIds:[...new Set(wallSegments.map(segment=>segment.wallId))],wallSegments};
+  }
+  if(s.scope==='zone'&&s.zone){
+    const width=Math.abs(s.zone.x2-s.zone.x1),depth=Math.abs(s.zone.z2-s.zone.z1);
+    rows.push({id:'zone',name:'Прямоугольная зона',widthM:width,depthM:depth,areaM2:width*depth});
+    return{scope:'zone',label:'Прямоугольная зона',areaM2:width*depth,exact:true,rows,total:{areaM2:width*depth,widthM:width,depthM:depth},wallSegments:[]};
+  }
+  if(s.scope==='zone')return{scope:'zone',label:'Прямоугольная зона',areaM2:0,exact:false,rows:[],total:{areaM2:0,widthM:0,depthM:0},wallSegments:[]};
+  rows.push({id:'room',name:'Помещение',widthM:bounds.maxX-bounds.minX,depthM:bounds.maxZ-bounds.minZ,areaM2:bounds.area,exact:bounds.exact});
+  return{scope:'room',label:'Помещение',areaM2:bounds.area,exact:bounds.exact,rows,total:{areaM2:bounds.area,widthM:bounds.maxX-bounds.minX,depthM:bounds.maxZ-bounds.minZ},wallSegments:[]};
+}
+function materialCalculationMode(material){
+  if(material&&material.catalogOnly)return'catalog';
+  return material&&material.calculationMode==='piece'?'piece':'area';
+}
+function materialPieceKindLabel(kind){return kind==='window'?'оконный':kind==='door'?'дверной':'поштучный';}
+function materialCalculationLabel(material){
+  const mode=materialCalculationMode(material);
+  if(mode==='catalog')return'Только каталог · в смету автоматически не добавляется';
+  if(mode==='piece')return'Поштучно · 1 шт. на '+materialPieceKindLabel(material&&material.pieceKind)+' проём';
+  return'Расход на 1 м²: '+materialConsumptionLabel(material);
+}
+function materialCalculationHtml(material){
+  const mode=materialCalculationMode(material);
+  if(mode==='catalog')return'<span class="muted">Только каталог · в смету автоматически не добавляется</span>';
+  if(mode==='piece')return'<strong>Поштучно</strong> · 1 шт. на '+materialHtml(materialPieceKindLabel(material&&material.pieceKind))+' проём';
+  return'Расход на 1 м²: '+materialConsumptionHtml(material);
+}
+function materialOpeningsForSelection(source,selection){
+  const openings=source&&Array.isArray(source.openings)?source.openings:[];
+  if(!selection||selection.scope==='zone')return[];
+  if(selection.scope==='walls'){
+    const segments=Array.isArray(selection.wallSegments)?selection.wallSegments:[];
+    if(segments.length)return openings.filter(opening=>segments.some(segment=>String(segment.wallId)===String(opening.wallId)&&materialOpeningSegmentOverlap(source,opening,segment)>.0001));
+    const ids=new Set((selection.wallIds||[]).map(id=>String(id)));
+    return openings.filter(opening=>ids.has(String(opening.wallId)));
+  }
+  return openings;
+}
+function materialQuantityForSelection(source,selection,material){
+  if(materialCalculationMode(material)!=='piece')return null;
+  const openings=materialOpeningsForSelection(source,selection),kind=material&&material.pieceKind;
+  return openings.filter(opening=>kind==='window'?opening.kind==='window':kind==='door'?(opening.kind==='door'||opening.kind==='evac'):true).length;
+}
+function calculateMaterialEstimate(areaM2,material,settings){
+  const area=Math.max(0,Number(areaM2)||0),m=material||{},mode=materialCalculationMode(m),configured=Number(settings&&settings.wastePct),waste=Number.isFinite(configured)?clamp(configured,0,100):clamp(Number(m.wastePct)||0,0,100);
+  const price=Math.max(0,Number(settings&&settings.price!==undefined?settings.price:m.price)||0),isQuantityMode=mode==='piece',quantity=Number.isFinite(Number(settings&&settings.quantity))?Math.max(0,Number(settings.quantity)):0,measure=isQuantityMode?quantity:area,measureWithWaste=measure*(1+waste/100),coverage=mode==='area'?Math.max(.0001,Number(m.coverageM2PerUnit)||1):1,rawUnits=measureWithWaste/coverage;
+  const consumptionPerM2=Number(m.consumptionPerM2),consumptionMinPerM2=Number(m.consumptionMinPerM2),consumptionMaxPerM2=Number(m.consumptionMaxPerM2),hasConsumption=mode==='area'&&Number.isFinite(consumptionPerM2)&&consumptionPerM2>0;
+  const areaUnit=mode==='area'&&m.unit==='м²',purchaseUnits=mode==='piece'?Math.ceil(rawUnits):areaUnit?measureWithWaste:Math.ceil(rawUnits),cost=purchaseUnits*price;
+  return{calculationMode:mode,quantity:isQuantityMode?quantity:null,quantityWithWaste:isQuantityMode?measureWithWaste:null,quantityUnit:isQuantityMode?'шт.':'',quantityLabel:m.quantityLabel||'',areaM2:area,wastePct:waste,areaWithWasteM2:mode==='area'?measureWithWaste:null,coverageM2PerUnit:coverage,requiredUnits:rawUnits,purchaseUnits,purchaseUnitsPerM2:mode==='area'?1/coverage:null,purchaseUnitPerM2:mode==='area'?(m.priceUnit||m.unit||'ед.')+'/м²':'',consumptionPerM2:hasConsumption?consumptionPerM2:null,consumptionMinPerM2:mode==='area'&&Number.isFinite(consumptionMinPerM2)&&consumptionMinPerM2>0?consumptionMinPerM2:null,consumptionMaxPerM2:mode==='area'&&Number.isFinite(consumptionMaxPerM2)&&consumptionMaxPerM2>0?consumptionMaxPerM2:null,consumptionTotal:hasConsumption?Math.round(measureWithWaste*consumptionPerM2*1000000)/1000000:null,consumptionUnit:m.consumptionUnit||'',consumptionBasis:m.consumptionBasis||'',consumptionApproximate:Boolean(m.consumptionApproximate),consumptionSourceTitle:m.consumptionSourceTitle||'',consumptionSourceUrl:m.consumptionSourceUrl||'',pricePerUnit:price,cost,unit:m.unit||'ед.',norm:m.norm||'',isAreaUnit:areaUnit,sourceTitle:m.sourceTitle||'',sourceUrl:m.sourceUrl||'',priceCheckedAt:m.priceCheckedAt||''};
+}
+function materialStatements(source,catalog){
+  const settings=normalizeMaterialSettings(source&&source.materials),base=Array.isArray(catalog)&&catalog.length?catalog:MATERIAL_CATALOG,ids=new Set(base.map(m=>m.id)),list=base.concat(settings.customCatalog.filter(m=>!ids.has(m.id))),calculationList=list.filter(m=>!m.catalogOnly);
+  const selection=materialSelectionSummary(source,settings),material=calculationList.find(m=>m.id===settings.materialId)||calculationList[0]||null;
+  if(!material)return{selection,materials:[],catalog:[],totalCost:0,currency:'RUB'};
+  const custom=source&&source.materials&&source.materials.customPrices&&source.materials.customPrices[material.id];
+  const price=Number.isFinite(Number(custom))?Number(custom):material.price;
+  const quantity=materialQuantityForSelection(source,selection,material),estimate=calculateMaterialEstimate(selection.areaM2,material,{wastePct:settings.wastePct,price,quantity});
+  return{selection,materials:[{id:material.id,name:material.name,group:material.group,subgroup:material.subgroup||'',brand:material.brand||'',brandOptions:material.brandOptions||[],format:material.format||'',priceUnit:material.priceUnit||material.unit,packSize:material.packSize||material.unit,calculationMode:material.calculationMode||'area',pieceKind:material.pieceKind||'',quantityLabel:material.quantityLabel||'',catalogOnly:Boolean(material.catalogOnly),consumptionSourceTitle:material.consumptionSourceTitle||'',consumptionSourceUrl:material.consumptionSourceUrl||'',sourceTitle:material.sourceTitle||'',sourceUrl:material.sourceUrl||'',secondarySourceTitle:material.secondarySourceTitle||'',secondarySourceUrl:material.secondarySourceUrl||'',...estimate}],catalog:list.map(item=>({id:item.id,name:item.name,group:item.group,subgroup:item.subgroup||'',brand:item.brand||'',brandOptions:item.brandOptions||[],format:item.format||'',unit:item.unit,price:item.price,priceUnit:item.priceUnit||item.unit,packSize:item.packSize||item.unit,coverageM2PerUnit:item.coverageM2PerUnit,calculationMode:item.calculationMode||'area',pieceKind:item.pieceKind||'',quantityLabel:item.quantityLabel||'',catalogOnly:Boolean(item.catalogOnly),consumptionPerM2:item.consumptionPerM2??null,consumptionMinPerM2:item.consumptionMinPerM2??null,consumptionMaxPerM2:item.consumptionMaxPerM2??null,consumptionUnit:item.consumptionUnit||'',consumptionBasis:item.consumptionBasis||'',consumptionApproximate:Boolean(item.consumptionApproximate),consumptionSourceTitle:item.consumptionSourceTitle||'',consumptionSourceUrl:item.consumptionSourceUrl||'',norm:item.norm,sourceTitle:item.sourceTitle,sourceUrl:item.sourceUrl,secondarySourceTitle:item.secondarySourceTitle||'',secondarySourceUrl:item.secondarySourceUrl||'',priceCheckedAt:item.priceCheckedAt})),totalCost:estimate.cost,currency:'RUB',priceCheckedAt:material.priceCheckedAt};
+}
 function exitPoints(){
   const out=[];
   state.openings.forEach(o=>{
@@ -1120,6 +2013,53 @@ function snapPoint(m,lastPt){
   p.x=Math.round(p.x*20)/20;p.z=Math.round(p.z*20)/20;
   return{x:p.x,z:p.z};
 }
+function projectPointToWall(w,point){
+  if(!w||!point)return null;
+  const g=wallGeom(w);if(!g||!g.A||!g.B)return null;
+  const along=clamp((point.x-g.A.x)*g.ux+(point.z-g.A.z)*g.uz,0,g.len);
+  const projected={x:g.A.x+g.ux*along,z:g.A.z+g.uz*along};
+  return{...projected,along,distance:Math.hypot(point.x-projected.x,point.z-projected.z)};
+}
+function wallDrawSnapPoint(m,lastPt){
+  const nodeSnap=snapPoint(m,lastPt);
+  if(nodeSnap.nodeId)return nodeSnap;
+  let best=null;
+  state.walls.forEach(w=>{
+    const projection=projectPointToWall(w,m);if(!projection||projection.distance>.22)return;
+    const blocked=state.openings.some(o=>{
+      if(o.wallId!==w.id)return false;
+      const center=o.t*wallGeom(w).len;
+      return projection.along>center-o.w/2-.03&&projection.along<center+o.w/2+.03;
+    });
+    if(blocked)return;
+    if(!best||projection.distance<best.distance)best={...projection,wallId:w.id};
+  });
+  return best?{x:best.x,z:best.z,wallId:best.wallId}:nodeSnap;
+}
+function splitWallAtPoint(w,point){
+  if(!w||!point)return null;
+  const g=wallGeom(w),projection=projectPointToWall(w,point);if(!g||!projection)return null;
+  const edge=.08;
+  if(projection.along<=edge)return nById(w.a);
+  if(projection.along>=g.len-edge)return nById(w.b);
+  const blocked=state.openings.some(o=>{
+    if(o.wallId!==w.id)return false;
+    const center=o.t*g.len;
+    return projection.along>center-o.w/2-.03&&projection.along<center+o.w/2+.03;
+  });
+  if(blocked)return null;
+  const node=addNode(projection.x,projection.z),oldB=w.b,splitAt=projection.along;
+  const tail={id:'w'+(wid++),a:node.id,b:oldB,kind:w.kind};
+  w.b=node.id;state.walls.push(tail);
+  state.openings.forEach(o=>{
+    if(o.wallId!==w.id)return;
+    const center=o.t*g.len;
+    if(center>splitAt){o.wallId=tail.id;o.t=(center-splitAt)/(g.len-splitAt);}
+    else o.t=center/splitAt;
+  });
+  fixOpenings(w);fixOpenings(tail);
+  return node;
+}
 
 /* ═══════════════ ИСТОРИЯ ═══════════════ */
 let hist=[],redoStack=[],projectDirty=false;
@@ -1128,7 +2068,7 @@ window.addEventListener('beforeunload',e=>{
   if(projectDirty){e.preventDefault();e.returnValue='';}
 });
 function snapAll(){
-  return JSON.stringify({p:state.profile,n:state.nodes,w:state.walls,o:state.openings,i:state.items,calculation:state.calculation,seq:state.seq,nid,wid,oid});
+  return JSON.stringify({p:state.profile,n:state.nodes,w:state.walls,o:state.openings,i:state.items,calculation:state.calculation,materials:normalizeMaterialSettings(state.materials),seq:state.seq,nid,wid,oid});
 }
 function syncMeshes(){
   if(!itemsRoot)return;
@@ -1144,7 +2084,9 @@ function restore(s){
   const d=JSON.parse(s);
   state.nodes=d.n;state.walls=d.w;state.openings=d.o;state.items=d.i;state.seq=d.seq;
   state.calculation=normalizeCalculationSettings(d.calculation);
+  state.materials=normalizeMaterialSettings(d.materials);
   updateCalculationUI();
+  updateMaterialUI();
   setProjectProfile(d.p||'dental',false);
   nid=d.nid;wid=d.wid;oid=d.oid;
   state.sel=null;select(null);
@@ -1227,6 +2169,37 @@ function glyphOpening(g,X,Y,fit,wall,g2,t,width,kind,flip,selected,rot,hovered,h
   }
 }
 
+function drawMaterialSelection(g,X,Y,fit,b){
+  const settings=normalizeMaterialSettings(state.materials),selection=materialSelectionSummary(state,settings),rgb=hexRgb(state.brand);
+  g.save();
+  g.fillStyle='rgba('+rgb+',.18)';g.strokeStyle=state.brand;g.lineWidth=3;g.setLineDash([10,5]);
+  if(settings.scope==='walls'){
+    const selected=materialSelectedWallSegments(state,settings);
+    selected.forEach(segment=>{
+      const wall=wById(segment.wallId),geo=wall&&wallGeom(wall);if(!geo)return;
+      const start={x:geo.A.x+geo.ux*segment.startM,z:geo.A.z+geo.uz*segment.startM},end={x:geo.A.x+geo.ux*segment.endM,z:geo.A.z+geo.uz*segment.endM};
+      const wallThickness=(wall.kind==='outer'?.15:.1)*fit;
+      g.lineCap='butt';g.setLineDash([]);g.strokeStyle='rgba('+rgb+',.34)';g.lineWidth=wallThickness+14;
+      g.beginPath();g.moveTo(X(start.x),Y(start.z));g.lineTo(X(end.x),Y(end.z));g.stroke();
+      g.strokeStyle=state.brand;g.lineWidth=Math.max(3,wallThickness+3);g.setLineDash([10,5]);
+      g.beginPath();g.moveTo(X(start.x),Y(start.z));g.lineTo(X(end.x),Y(end.z));g.stroke();g.setLineDash([]);
+      [start,end].forEach(point=>{g.fillStyle='#fff';g.strokeStyle=state.brand;g.lineWidth=2;g.beginPath();g.arc(X(point.x),Y(point.z),5,0,7);g.fill();g.stroke();});
+      const row=selection.rows.find(item=>item.id===segment.key);
+      if(row){const mx=(start.x+end.x)/2,mz=(start.z+end.z)/2;drawTag(g,X(mx),Y(mz)-13,'В РАСЧЁТ · S '+fmtM(row.netAreaM2)+' м²',state.brand,'#fff');}
+    });
+  }else if(settings.scope==='zone'&&settings.zone){
+    const minX=Math.min(settings.zone.x1,settings.zone.x2),maxX=Math.max(settings.zone.x1,settings.zone.x2),minZ=Math.min(settings.zone.z1,settings.zone.z2),maxZ=Math.max(settings.zone.z1,settings.zone.z2);
+    g.fillRect(X(minX),Y(minZ),Math.max(0,maxX-minX)*fit,Math.max(0,maxZ-minZ)*fit);
+    g.strokeRect(X(minX),Y(minZ),Math.max(0,maxX-minX)*fit,Math.max(0,maxZ-minZ)*fit);
+    if(selection.areaM2>0)drawTag(g,X((minX+maxX)/2),Y((minZ+maxZ)/2),'В РАСЧЁТ · ЗОНА · S '+fmtM(selection.areaM2)+' м²',state.brand,'#fff');
+  }else{
+    if(b.loop&&b.loop.closed){g.beginPath();b.loop.pts.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.z)):g.moveTo(X(p.x),Y(p.z)));g.closePath();g.fill();g.stroke();}
+    else{g.fillRect(X(b.minX),Y(b.minZ),(b.maxX-b.minX)*fit,(b.maxZ-b.minZ)*fit);g.strokeRect(X(b.minX),Y(b.minZ),(b.maxX-b.minX)*fit,(b.maxZ-b.minZ)*fit);}
+    drawTag(g,X((b.minX+b.maxX)/2),Y((b.minZ+b.maxZ)/2),'В РАСЧЁТ · ПОМЕЩЕНИЕ · S '+fmtM(selection.areaM2)+' м²',state.brand,'#fff');
+  }
+  g.setLineDash([]);g.restore();
+}
+
 function drawPlan(g,W,H,opts={}){
   const b=roomBounds();
   const rw=b.maxX-b.minX,rd=b.maxZ-b.minZ;
@@ -1279,6 +2252,7 @@ function drawPlan(g,W,H,opts={}){
   }
 
   const wallsMode=state.mode==='walls'&&!opts.plain;
+  const materialsMode=state.mode==='materials'&&!opts.plain;
 
   const activeWalls=new Set();
   if(wallsMode){
@@ -1332,6 +2306,8 @@ function drawPlan(g,W,H,opts={}){
       g.textAlign='left';
     }
   });
+
+  if(materialsMode)drawMaterialSelection(g,X,Y,fit,b);
 
   /* призрак проёма: ширина + расстояния от обоих углов */
   if(wallsMode&&ghost&&TOOL_DEF[state.tool]){
@@ -1859,6 +2835,19 @@ function calculationError(c){
   }
   return null;
 }
+function materialSettingsError(s){
+  if(s===undefined||s===null)return null;
+  if(typeof s!=='object'||Array.isArray(s))return 'В файле повреждены настройки материалов';
+  if(s.scope!==undefined&&!['room','zone','walls'].includes(String(s.scope)))return 'В файле повреждено выделение материалов';
+  if(s.wallIds!==undefined&&(!Array.isArray(s.wallIds)||s.wallIds.length>PROJECT_LIMITS.walls))return 'В файле повреждены выбранные стены';
+  if(s.zone!==undefined&&s.zone!==null&&(!s.zone||typeof s.zone!=='object'||['x1','z1','x2','z2'].some(k=>!Number.isFinite(Number(s.zone[k])))))return 'В файле повреждена выделенная зона';
+  if(s.wastePct!==undefined&&s.wastePct!==null&&(!Number.isFinite(Number(s.wastePct))||Number(s.wastePct)<0||Number(s.wastePct)>100))return 'В файле повреждён запас материала';
+  if(s.customPrices!==undefined&&(typeof s.customPrices!=='object'||Array.isArray(s.customPrices)))return 'В файле повреждены цены материалов';
+  if(s.customPrices)for(const value of Object.values(s.customPrices))if(!Number.isFinite(Number(value))||Number(value)<0)return 'В файле повреждены цены материалов';
+  if(s.customCatalog!==undefined&&(!Array.isArray(s.customCatalog)||s.customCatalog.length>500))return 'В файле повреждён пользовательский каталог материалов';
+  if(Array.isArray(s.customCatalog)&&s.customCatalog.some((item,index)=>!normalizeCustomMaterial(item,index)))return 'В файле повреждена позиция пользовательского каталога';
+  return null;
+}
 function normalizeCalculationSettings(c){
   const src=c&&typeof c==='object'?c:{};
   const h=src.openingHeightsM&&typeof src.openingHeightsM==='object'?src.openingHeightsM:{};
@@ -1869,9 +2858,12 @@ function normalizeCalculationSettings(c){
 }
 function validateProjectData(p){
   if(!p||p.app!=='dentplan')return 'Это не файл проекта DentPlan';
+  if(p.name!==undefined&& (typeof p.name!=='string'||p.name.length>120))return 'В файле повреждено название проекта';
   if(!['dental','general'].includes(normalizeProjectProfile(p.profile)))return 'В файле указан неизвестный профиль проекта';
   const calculationValidation=calculationError(p.calculation);
   if(calculationValidation)return calculationValidation;
+  const materialValidation=materialSettingsError(p.materials);
+  if(materialValidation)return materialValidation;
   if(p.layout!==undefined){
     const l=p.layout;
     if(!l||!Array.isArray(l.nodes)||!Array.isArray(l.walls)||
@@ -1934,13 +2926,17 @@ function confirmReplaceProject(){
   return !projectDirty||window.confirm('Заменить текущий проект? Несохранённые изменения будут потеряны.');
 }
 function newProject(){
-  if(!confirmReplaceProject())return;
-  const room={...state.room},brand=state.brand;
+  if(!confirmReplaceProject())return false;
+  const room={...state.room},brand=state.brand,customCatalog=normalizeMaterialSettings(state.materials).customCatalog;
+  currentProjectId=null;setCurrentProjectName(PROJECT_DEFAULT_NAME,false);
   clearItems();
   state.nodes=[];state.walls=[];state.openings=[];
   state.room=room;state.brand=brand;state.seq=1;nid=1;wid=1;oid=1;
+  state.materials=normalizeMaterialSettings({...MATERIAL_DEFAULTS,customCatalog});
+  persistCustomMaterialCatalog(customCatalog);
   $('#roomW').value=room.w;$('#roomD').value=room.d;
   $('#roomWv').textContent=fmtM(room.w)+' м';$('#roomDv').textContent=fmtM(room.d)+' м';
+  updateMaterialUI();
   state.sel=null;state.selObj=null;state.fire=false;
   ulDrag=null;hoverNode=null;hoverErase=null;hoverLabel=null;hoverOpening=null;ghost=null;drawState=null;wallDrag=null;resizeDrag=null;liveLabel=null;rotDrag=null;justFinishedDrawing=false;
   setMode('items');setTool('select');removeUnderlay();closeModals();
@@ -1948,12 +2944,14 @@ function newProject(){
   staticDirty=true;refresh();resetHistory();
   if(state.view==='3d')camTo(perspPreset(),0);else camTo(topPreset(),0);
   toast('Новый проект создан. Сохранённый файл не удалён');
+  return true;
 }
 function saveProject(){
-  const proj={app:'dentplan',v:2,saved:new Date().toISOString(),
+  const proj={app:'dentplan',v:3,name:normalizeProjectName(currentProjectName),saved:new Date().toISOString(),
     profile:state.profile,
     brand:state.brand,
     calculation:normalizeCalculationSettings(state.calculation),
+    materials:normalizeMaterialSettings(state.materials),
     layout:{
       nodes:state.nodes.map(n=>({id:n.id,x:+n.x.toFixed(3),z:+n.z.toFixed(3)})),
       walls:state.walls.map(w=>({id:w.id,a:w.a,b:w.b,kind:w.kind})),
@@ -1981,22 +2979,23 @@ function saveProject(){
     }catch(e){toast('Не удалось сохранить подложку. Проект не скачан',true);return;}
   }
   try{
+    setCurrentProjectName(proj.name,false);
+    const librarySaved=saveProjectToLibrary(proj);
     const blob=new Blob([JSON.stringify(proj)],{type:'application/json'});
     const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);a.download='dentplan-proekt.json';a.click();
+    a.href=URL.createObjectURL(blob);a.download=projectFileSafeName(proj.name)+'.json';a.click();
     setTimeout(()=>URL.revokeObjectURL(a.href),3000);
     projectDirty=false;
-    toast('Проект сохранён: dentplan-proekt.json');
+    toast(librarySaved?'Проект сохранён: '+proj.name:'Файл проекта сохранён. Браузерная библиотека недоступна');
   }catch(e){toast('Не удалось сохранить файл',true);}
 }
-function loadProjectFile(f){
-  const rd=new FileReader();
-  rd.onload=()=>{
-    let p;
-    try{p=JSON.parse(rd.result);}catch(e){toast('Файл не является корректным JSON',true);return;}
+function loadProjectData(p,sourceName='',libraryId=null){
     const validationError=validateProjectData(p);
-    if(validationError){toast(validationError,true);return;}
-    if(!confirmReplaceProject())return;
+    if(validationError){toast(validationError,true);return false;}
+    if(!confirmReplaceProject())return false;
+    currentProjectId=libraryId;
+    const fallbackName=String(sourceName||'').trim();
+    setCurrentProjectName(p.name||fallbackName,false);
     const loadedCalculation=normalizeCalculationSettings(p.calculation);
     const loadedW=clamp(Number(p.room&&p.room.w)||12,8,18);
     const loadedD=clamp(Number(p.room&&p.room.d)||9,6,14);
@@ -2005,7 +3004,10 @@ function loadProjectFile(f){
     state.items=[];state.sel=null;state.selObj=null;
     state.room={w:loadedW,d:loadedD};
     state.calculation=loadedCalculation;
+    state.materials=normalizeMaterialSettings(p.materials);
+    persistCustomMaterialCatalog(state.materials.customCatalog);
     updateCalculationUI();
+    updateMaterialUI();
     $('#roomW').value=loadedW;$('#roomD').value=loadedD;
     $('#roomWv').textContent=fmtM(loadedW)+' м';$('#roomDv').textContent=fmtM(loadedD)+' м';
     if(p.layout&&Array.isArray(p.layout.nodes)&&p.layout.walls){
@@ -2045,7 +3047,16 @@ function loadProjectFile(f){
     setMode('items');
     refresh();
     resetHistory();
-    toast('Проект загружен: '+((p.items||[]).length)+' предметов, '+state.walls.length+' стен');
+    toast('Проект «'+currentProjectName+'» загружен: '+((p.items||[]).length)+' предметов, '+state.walls.length+' стен');
+    return true;
+}
+function loadProjectFile(f){
+  const rd=new FileReader();
+  rd.onload=()=>{
+    let p;
+    try{p=JSON.parse(rd.result);}catch(e){toast('Файл не является корректным JSON',true);return;}
+    const fileName=String(f&&f.name||'').replace(/\.[^.]+$/,'').replace(/[-_]+/g,' ').trim();
+    loadProjectData(p,/^dentplan proekt$/i.test(fileName)?'':fileName,null);
   };
   rd.onerror=()=>toast('Не удалось прочитать файл проекта',true);
   rd.readAsText(f);
@@ -2196,7 +3207,7 @@ function updateCapacity(){
 }
 
 function refresh(){
-  updateCapacity();updateRoomInfo();
+  updateCapacity();updateRoomInfo();updateMaterialUI();
   staticDirty=true;
   planRedraw();updateEvac();
 }
@@ -2592,7 +3603,7 @@ const TOOL_DEF={
   evac:{kind:'evac',label:'Эвакуационный выход'},
 };
 const toolW={door:.9,window:1.2,evac:1.0};
-let hoverNode=null,hoverErase=null,hoverLabel=null,hoverOpening=null,ghost=null,drawState=null,wallDrag=null,resizeDrag=null,liveLabel=null,rotDrag=null,justFinishedDrawing=false;
+let hoverNode=null,hoverErase=null,hoverLabel=null,hoverOpening=null,ghost=null,drawState=null,wallDrag=null,resizeDrag=null,liveLabel=null,rotDrag=null,materialDrag=null,justFinishedDrawing=false;
 
 function planCursor(){
   if(underlay.calibrating)return 'crosshair';
@@ -2601,6 +3612,7 @@ function planCursor(){
     if(state.tool==='select')return 'default';
     return 'crosshair';
   }
+  if(state.mode==='materials')return state.materials.scope==='walls'?'pointer':state.materials.scope==='zone'?'crosshair':'default';
   return 'default';
 }
 function setTool(t){
@@ -2628,8 +3640,9 @@ function setMode(m){
   $('#wallTools').hidden=m!=='walls';
   $('#wallLegend').hidden=m!=='walls';
   $('#toolHint').hidden=m!=='walls';
-  if(m!=='walls'){endDraw();selectWallObj(null);}
+  if(m!=='walls'){endDraw();selectWallObj(null);materialDrag=null;select(null);}
   else{setTool('select');select(null);}
+  if(m==='materials')updateMaterialUI();
   updateUlUI();planRedraw();
 }
 function selectWallObj(obj){
@@ -2643,21 +3656,25 @@ function finishWallDrawing(){
   if(state.mode==='walls'&&(state.tool==='wall'||state.tool==='outer'))setTool('select');
 }
 function chainClick(m){
-  const sp=snapPoint(m,drawState.last);
+  const sp=wallDrawSnapPoint(m,drawState.last);
   if(!drawState.last){
     drawState.last={x:sp.x,z:sp.z};
     drawState.lastNodeId=sp.nodeId||null;
+    drawState.lastWallId=sp.wallId||null;
     drawState.mouse=drawState.last;
     planRedraw();
     return;
   }
   if(Math.hypot(sp.x-drawState.last.x,sp.z-drawState.last.z)<.3)return;
-  const A=drawState.lastNodeId?nById(drawState.lastNodeId):addNode(drawState.last.x,drawState.last.z);
-  const B=sp.nodeId?nById(sp.nodeId):addNode(sp.x,sp.z);
+  const lastWall=drawState.lastWallId?wById(drawState.lastWallId):null;
+  const A=drawState.lastNodeId?nById(drawState.lastNodeId):lastWall?splitWallAtPoint(lastWall,drawState.last):addNode(drawState.last.x,drawState.last.z);
+  const targetWall=sp.wallId?wById(sp.wallId):null;
+  const B=sp.nodeId?nById(sp.nodeId):targetWall?splitWallAtPoint(targetWall,sp):addNode(sp.x,sp.z);
+  if(!A||!B)return;
   if(A===B)return;
   addWall(A,B,state.tool==='outer'?'outer':'inner');
   staticDirty=true;refresh();commit();
-  drawState.last={x:B.x,z:B.z};drawState.lastNodeId=B.id;
+  drawState.last={x:B.x,z:B.z};drawState.lastNodeId=B.id;drawState.lastWallId=null;
 }
 function mergeNode(n){
   const near=state.nodes.find(o=>o.id!==n.id&&Math.hypot(o.x-n.x,o.z-n.z)<.18);
@@ -2854,24 +3871,14 @@ function initPlan(){
     });
     return best;
   }
-  function beginWallDragAt(p){
-    const oh=openingAt(p);
-    if(oh){
-      setTool('select');
-      if(!selectOpening(oh))return false;
-      selectWallObj(state.selObj);
-      wallDrag={type:'opening',id:oh.id,moved:false};
-      plan.cv.style.cursor='grabbing';
-      return true;
-    }
-    const wh=wallAt(p);
-    if(!wh)return false;
-    setTool('select');
-    selectWallObj({type:'wall',id:wh.id});
-    const g=wallGeom(wh);
-    wallDrag={type:'wall',id:wh.id,startM:toMeters(p),oa:{...g.A},ob:{...g.B},moved:false};
-    plan.cv.style.cursor='grabbing';
-    return true;
+  function materialWallAt(p){
+    const m=toMeters(p);let best=null,bd=9;
+    state.walls.forEach(w=>{
+      const segment=materialWallSegmentAt(state,w,m);if(!segment)return;
+      const g=wallGeom(w),start={x:g.A.x+g.ux*segment.startM,z:g.A.z+g.uz*segment.startM},end={x:g.A.x+g.ux*segment.endM,z:g.A.z+g.uz*segment.endM},distance=distSeg(p,start,end);
+      if(distance<bd){bd=distance;best={wall:w,segment};}
+    });
+    return best;
   }
   function handleAt(p){
     if(!(state.mode==='walls'&&state.tool==='select'&&state.selObj))return null;
@@ -2942,6 +3949,22 @@ function initPlan(){
       planRedraw();return;
     }
     if(underlay.mode){ulDrag={sx:p.x,sy:p.y,ox:underlay.ux,oz:underlay.uz};plan.cv.style.cursor='move';return;}
+    if(state.mode==='materials'){
+      const settings=normalizeMaterialSettings(state.materials);
+      if(settings.scope==='walls'){
+        const hit=materialWallAt(p);
+        if(hit)toggleMaterialWall(hit.wall,p,hit.segment);
+        plan.cv.style.cursor='pointer';
+        return;
+      }
+      if(settings.scope==='zone'){
+        const m=toMeters(p);
+        materialDrag={start:{...m},current:{...m}};
+        state.materials.zone={x1:m.x,z1:m.z,x2:m.x,z2:m.z};
+        plan.cv.style.cursor='crosshair';planRedraw();return;
+      }
+      plan.cv.style.cursor='default';return;
+    }
     if(state.mode==='walls'){
       const t=state.tool;
       if(t==='wall'||t==='outer'){
@@ -2953,8 +3976,7 @@ function initPlan(){
           setTimeout(()=>{justFinishedDrawing=false;},700);
           finishWallDrawing();toast('Рисование завершено');return;
         }
-        if(drawState&&!nodeAt(p)&&beginWallDragAt(p))return;
-        if(!drawState){drawState={last:null,lastNodeId:null,mouse:null,snapId:null,lastClick:null};updateUlUI();}
+        if(!drawState){drawState={last:null,lastNodeId:null,lastWallId:null,mouse:null,snapId:null,lastClick:null};updateUlUI();}
         drawState.lastClick={at:now,x:p.x,y:p.y};
         chainClick(toMeters(p));return;
       }
@@ -3046,10 +4068,21 @@ function initPlan(){
       ulDrag.moved=true;
       planRedraw();return;
     }
+    if(state.mode==='materials'){
+      if(materialDrag){
+        const m=toMeters(p);materialDrag.current={...m};
+        state.materials.zone={x1:materialDrag.start.x,z1:materialDrag.start.z,x2:m.x,z2:m.z};
+        planRedraw();
+      }else{
+        const settings=normalizeMaterialSettings(state.materials);
+        plan.cv.style.cursor=settings.scope==='walls'?(materialWallAt(p)?'pointer':'default'):settings.scope==='zone'?'crosshair':'default';
+      }
+      return;
+    }
     if(state.mode==='walls'){
       hoverLabel=null;
       if(drawState){
-        const sp=snapPoint(toMeters(p),drawState.last);
+        const sp=wallDrawSnapPoint(toMeters(p),drawState.last);
         drawState.mouse={x:sp.x,z:sp.z};drawState.snapId=sp.nodeId||null;
         planRedraw();return;
       }
@@ -3198,6 +4231,14 @@ function initPlan(){
   });
 
   const end=()=>{
+    if(materialDrag){
+      const z=state.materials.zone;
+      const area=z?Math.abs(z.x2-z.x1)*Math.abs(z.z2-z.z1):0;
+      materialDrag=null;
+      if(area<.01){state.materials.zone=null;toast('Зона слишком мала — выделение очищено',true);}
+      else{markDirty();commit();}
+      updateMaterialUI();planRedraw();
+    }
     if(wallDrag){
       if(wallDrag.type==='node'){
         const n=nById(wallDrag.id);
@@ -3248,6 +4289,7 @@ function initPlan(){
 
 /* ═══════════════ КАТАЛОГ / КЛАВИШИ ═══════════════ */
 const catalogGroupOpen={};
+let objectCatalogQuery='',materialCatalogQuery='',materialCatalogGroup='all',materialCatalogSubgroup='all',materialCatalogBrand='all';
 function refreshCatalogControls(){
   const groups=$$('#catList .cat-group');
   groups.forEach(group=>{
@@ -3276,14 +4318,17 @@ function setAllCatalogGroups(open){
   refreshCatalogControls();
 }
 function buildCatalog(){
+  const q=String(objectCatalogQuery||'').trim().toLocaleLowerCase('ru-RU');
   let html='';
   GROUP_ORDER.forEach((gr,index)=>{
+    const groupItems=Object.keys(CATALOG).filter(k=>CATALOG[k].group===gr&&(!q||CATALOG[k].name.toLocaleLowerCase('ru-RU').includes(q)));
+    if(!groupItems.length)return;
     const groupId='catalog-group-'+index,itemsId=groupId+'-items',open=catalogGroupOpen[gr]!==false;
     html+='<section class="cat-group" data-group="'+gr+'" id="'+groupId+'">'+
       '<button type="button" class="cat-group-toggle" data-group-toggle="'+gr+'" aria-expanded="'+open+'" aria-controls="'+itemsId+'" aria-label="'+(open?'Свернуть':'Развернуть')+' группу '+gr+'">'+
       '<span>'+gr+'</span><i data-lucide="chevron-down" aria-hidden="true"></i></button>'+
       '<div class="cat-items" id="'+itemsId+'"'+(open?'':' hidden')+'>';
-    Object.keys(CATALOG).filter(k=>CATALOG[k].group===gr).forEach(k=>{
+    groupItems.forEach(k=>{
       const c=CATALOG[k];
       html+='<button class="cat-item" data-type="'+k+'">'+
         '<span class="cat-ic"><i data-lucide="'+c.icon+'"></i></span>'+
@@ -3291,7 +4336,7 @@ function buildCatalog(){
     });
     html+='</div></section>';
   });
-  $('#catList').innerHTML=html;
+  $('#catList').innerHTML=html||'<div class="material-empty">По этому запросу предметов не найдено.</div>';
   $$('#catList .cat-group-toggle').forEach(b=>b.addEventListener('click',()=>{
     const gr=b.dataset.groupToggle;
     setCatalogGroupOpen(gr,catalogGroupOpen[gr]===false);
@@ -3628,7 +4673,7 @@ function buildDataExport(source,catalog,generatedAt){
   const items=(source.items||[]).map((it,i)=>{const c=catalog[it.type]||{},rot=roundExport(+it.rot||0,6);return{id:String(it.id||'item-'+(i+1)),type:String(it.type),name:c.name||String(it.type),x:roundExport(+it.x||0),z:roundExport(+it.z||0),rot,rotationDeg:roundExport(rot*180/Math.PI),sizeM:{width:roundExport(+c.w||0),depth:roundExport(+c.d||0)}};});
   const count=k=>openings.filter(o=>o.kind===k).length;
   const guidance=projectProfile==='dental'?{applicability:'preliminary',reviewedAt:'2026-09-09',recommendations:['Проверить функциональное зонирование и состав помещений по СП 158.13330.2014 с изменением № 5.','Проверить санитарную эксплуатацию по СП 2.1.3678-20 с изменением от 20.03.2024.','Проверить эвакуацию, доступность и все численные параметры у профильных специалистов.'],sources:[{title:'Каталог Минстроя: запись об изменении № 5 к СП 158.13330.2014',url:'https://minstroyrf.gov.ru/docs/?PAGEN_1=8',publishedAt:'2024-12-28',sourceType:'official-catalog-entry'},{title:'Официальное опубликование: изменение СП 2.1.3678-20 от 20.03.2024',url:'https://publication.pravo.gov.ru/document/0001202407120010',publishedAt:'2024-07-12',publicationId:'0001202407120010'}]}:{applicability:'not-applicable',recommendations:[]};
-  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),projectProfile,units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,guidance,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM,openingHeightM:{...openingHeightsM}}},walls,openings},counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
+  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),projectProfile,units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,guidance,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM,openingHeightM:{...openingHeightsM}}},walls,openings},materials:materialStatements(source),counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
 }
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function dataExportToCsv(data){
@@ -3638,6 +4683,12 @@ function dataExportToCsv(data){
   data.layout.walls.forEach(w=>rows.push(['wall',w.id,w.kind,'',w.start.x,w.start.z,w.angleDeg,'','',w.lengthM,w.heightM,'','','']));
   data.layout.openings.forEach(o=>rows.push(['opening',o.id,o.kind,'',o.center.x,o.center.z,o.rotationDeg,o.widthM,'','',o.heightM,o.wallId,o.hingeSide||'left',o.openingDirection||'inside']));
   data.items.forEach(i=>rows.push(['item',i.id,i.type,i.name,i.x,i.z,i.rotationDeg,i.sizeM.width,i.sizeM.depth,'','','','','']));
+  rows.push(['# materials','scope','label','areaM2','exact','materialId','materialName','group','unit','calculationMode','pieceKind','quantity','quantityWithWaste','norm','wastePct','areaWithWasteM2','requiredUnits','purchaseUnits','pricePerUnit','cost','priceCheckedAt','sourceUrl','secondarySourceUrl','consumptionPerM2','consumptionUnit','consumptionBasis','consumptionTotal','consumptionSourceUrl']);
+  const materialSelection=data.materials&&data.materials.selection;
+  if(materialSelection)rows.push(['material-selection',materialSelection.scope,materialSelection.label,materialSelection.areaM2,materialSelection.exact,'','','','','','','','','','','','','']);
+  (data.materials&&data.materials.materials||[]).forEach(m=>rows.push(['material',m.id,m.name,m.group,m.unit,m.calculationMode||'area',m.pieceKind||'',m.quantity??'',m.quantityWithWaste??'',m.norm,m.wastePct,m.areaWithWasteM2??'',m.requiredUnits,m.purchaseUnits,m.pricePerUnit,m.cost,m.priceCheckedAt,m.sourceUrl||'',m.secondarySourceUrl||'',m.consumptionPerM2??'',m.consumptionUnit||'',m.consumptionBasis||'',m.consumptionTotal??'',m.consumptionSourceUrl||'']));
+  (data.materials&&data.materials.catalog||[]).forEach(m=>rows.push(['material-catalog',m.id,m.name,m.group,m.unit,m.norm,'','','','','',m.price,'',m.priceCheckedAt,m.sourceUrl||'',m.secondarySourceUrl||'',m.consumptionPerM2??'',m.consumptionUnit||'',m.consumptionBasis||'','','']));
+  if(data.materials)rows.push(['material-total','','','','','','','','','','','','',data.materials.totalCost,'RUB','','']);
   return '\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\n');
 }
 function currentDataExport(){return buildDataExport(state,CATALOG);}
@@ -3726,8 +4777,10 @@ function buildSheet(){
       const ah=wa.assumptions.openingHeightM;
       g.fillText('Площадь стен без проёмов: '+fmtM(wa.netM2)+' м² · стена: '+fmtM(wa.assumptions.wallHeightM)+' м · дверь: '+fmtM(ah.door)+' м · эвак.: '+fmtM(ah.evac)+' м · окно: '+fmtM(ah.window)+' м',66,1082);
       g.fillText('Двери: '+cnt.doors+' · окна: '+cnt.windows+' · эвак. проёмы: '+cnt.evacuationOpenings+' · оборудование: '+cnt.equipment+' · камеры: '+cnt.cameras,66,1106);
+      const material=data.materials&&data.materials.materials&&data.materials.materials[0];
+      if(material){const materialBasis=material.calculationMode==='piece'?'проёмов: '+material.quantity+' '+(material.quantityUnit||'шт.') :fmtM(data.materials.selection.areaM2)+' м²';g.fillText('Материалы: '+material.name+' · '+materialBasis+' · к покупке: '+material.purchaseUnits+' '+material.unit+' · ориентир: '+materialMoney(material.cost)+' ₽',66,1132);}
       g.fillStyle='#8B8371';g.font='11px "IBM Plex Sans",sans-serif';
-      g.fillText(state.profile==='dental'?'Стоматологический профиль · предварительные ориентиры, нужна проверка специалистом.':'Общий профиль · стоматологические рекомендации не применяются.',66,1132);
+      g.fillText(state.profile==='dental'?'Стоматологический профиль · предварительные ориентиры, нужна проверка специалистом.':'Общий профиль · стоматологические рекомендации не применяются.',66,1156);
       g.strokeStyle='#DCCFB4';g.beginPath();g.moveTo(64,H-64);g.lineTo(W-64,H-64);g.stroke();
       g.fillStyle='#8B8371';g.font='11px "IBM Plex Mono",monospace';
       g.fillText('DentPlan · профиль: '+(state.profile==='dental'?'стоматологическое помещение':'общее помещение'),64,H-40);
@@ -3782,19 +4835,23 @@ function setStatus3d(s){
   else if(s==='err'){el.classList.add('err');tx.textContent='3D недоступна';
     $('#glMsg').innerHTML='3D-движок не загрузился — проверьте интернет и обновите страницу.<br>План, стены и экспорт продолжают работать.';}
 }
+function isMobileViewport(){return window.matchMedia('(max-width:680px)').matches;}
+function applyView(v,moveCamera=true){
+  const effective=isMobileViewport()&&v==='both'?'plan':v;
+  state.view=v;
+  $$('#viewSeg button').forEach(x=>x.classList.toggle('on',x.dataset.view===effective));
+  const pp=$('#planPane'),tp=$('#threePane');
+  pp.classList.toggle('hidden',effective==='3d');
+  tp.classList.toggle('hidden',effective==='plan');
+  pp.classList.toggle('wide',effective==='plan');
+  if(moveCamera&&effective==='plan')camTo(topPreset(),1000);
+  if(moveCamera&&effective==='3d')camTo(perspPreset(),1200);
+  resizeAll();
+  planRedraw();updateEvacSvg();
+}
 function initView(){
-  $$('#viewSeg button').forEach(b=>b.addEventListener('click',()=>{
-    $$('#viewSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-    const v=b.dataset.view;state.view=v;
-    const pp=$('#planPane'),tp=$('#threePane');
-    pp.classList.toggle('hidden',v==='3d');
-    tp.classList.toggle('hidden',v==='plan');
-    pp.classList.toggle('wide',v==='plan');
-    if(v==='plan')camTo(topPreset(),1000);
-    if(v==='3d')camTo(perspPreset(),1200);
-    resizeAll();
-    planRedraw();updateEvacSvg();
-  }));
+  $$('#viewSeg button').forEach(b=>b.addEventListener('click',()=>applyView(b.dataset.view)));
+  applyView(state.view,false);
 }
 function initModes(){
   $$('#modeSeg button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
@@ -3832,6 +4889,296 @@ function setCalculationSetting(key,value){
   state.calculation=next;
   markDirty();commit();refresh();
 }
+function materialHtml(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function materialMoney(value){return Number(value||0).toLocaleString('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:2});}
+function materialValue(value,digits=2){return Number(value||0).toLocaleString('ru-RU',{minimumFractionDigits:digits,maximumFractionDigits:digits});}
+function materialNumber(value){return Number(value).toLocaleString('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:3});}
+function materialConsumptionLabel(material){
+  if(!material)return'нет данных';
+  const value=Number(material.consumptionPerM2),min=Number(material.consumptionMinPerM2),max=Number(material.consumptionMaxPerM2),unit=String(material.consumptionUnit||'').trim();
+  if(!unit)return'нет данных';
+  if(Number.isFinite(min)&&min>0&&Number.isFinite(max)&&max>min)return materialNumber(min)+'–'+materialNumber(max)+' '+unit;
+  if(Number.isFinite(value)&&value>0)return(material.consumptionApproximate?'≈':'')+materialNumber(value)+' '+unit;
+  return'нет данных';
+}
+function materialConsumptionHtml(material){
+  const label=materialConsumptionLabel(material),basis=material&&material.consumptionBasis?String(material.consumptionBasis).trim():'';
+  return label==='нет данных'?'<span class="muted">нет данных</span>':'<strong>'+materialHtml(label)+'</strong>'+(basis?' · <span class="muted">'+materialHtml(basis)+'</span>':'');
+}
+function materialBrands(material){
+  if(!material)return[];
+  const primary=String(material.brand||'').trim(),options=Array.isArray(material.brandOptions)?material.brandOptions:[];
+  const seen=new Set(),result=[];
+  [primary,...options].map(value=>String(value||'').trim()).filter(Boolean).forEach(value=>{const key=value.toLocaleLowerCase('ru-RU');if(!seen.has(key)){seen.add(key);result.push(value);}});
+  return result;
+}
+function materialSourceHtml(material){
+  if(!material)return'Источник не указан';
+  const links=[],title=materialHtml(material.sourceTitle||'Источник не указан');
+  if(material.sourceUrl)links.push('<a href="'+materialHtml(material.sourceUrl)+'" target="_blank" rel="noopener">'+title+'</a>');
+  else if(title)links.push(title);
+  const secondaryTitle=materialHtml(material.secondarySourceTitle||'Дополнительная проверка в Петровиче');
+  if(material.secondarySourceUrl)links.push('<a href="'+materialHtml(material.secondarySourceUrl)+'" target="_blank" rel="noopener">'+secondaryTitle+'</a>');
+  return links.join(' · ')||'Источник не указан';
+}
+function materialConsumptionSourceHtml(material){
+  if(!material||!material.consumptionSourceUrl)return'';
+  return'<br><a href="'+materialHtml(material.consumptionSourceUrl)+'" target="_blank" rel="noopener">Норма: '+materialHtml(material.consumptionSourceTitle||'технический источник')+'</a>';
+}
+function materialScopeLabel(scope){return scope==='walls'?'выбранных участков стен':scope==='zone'?'прямоугольной зоны':'помещения';}
+function materialSelectionStatementHtml(selection){
+  if(!selection||!selection.rows||!selection.rows.length)return'<div class="material-empty">Выделение пока пустое. Выберите зону или кликните по одной или нескольким стенам на плане.</div>';
+  if(selection.scope==='walls')return'<table class="material-table"><thead><tr><th>Элемент</th><th>Участок</th><th>Длина</th><th>Брутто</th><th>Проёмы</th><th>Нетто</th><th>Проёмов</th></tr></thead><tbody>'+selection.rows.map(row=>'<tr><td>'+materialHtml(row.name)+'<br><span class="muted">'+materialHtml(row.wallId||row.id)+'</span></td><td class="num">'+materialValue(row.startM)+'–'+materialValue(row.endM)+' м</td><td class="num">'+materialValue(row.lengthM)+' м</td><td class="num">'+materialValue(row.grossAreaM2)+' м²</td><td class="num">−'+materialValue(row.openingsAreaM2)+' м²</td><td class="num">'+materialValue(row.netAreaM2)+' м²</td><td class="num">'+row.openingsCount+'</td></tr>').join('')+'<tr><td><strong>Итого</strong></td><td></td><td class="num"><strong>'+materialValue(selection.total.lengthM)+' м</strong></td><td class="num"><strong>'+materialValue(selection.total.grossAreaM2)+' м²</strong></td><td class="num"><strong>−'+materialValue(selection.total.openingsAreaM2)+' м²</strong></td><td class="num"><strong>'+materialValue(selection.total.netAreaM2)+' м²</strong></td><td class="num"><strong>'+selection.total.openingsCount+'</strong></td></tr></tbody></table>';
+  const row=selection.rows[0];
+  return'<table class="material-table"><thead><tr><th>Элемент</th><th>Ширина</th><th>Глубина</th><th>Площадь</th><th>Метод</th></tr></thead><tbody><tr><td>'+materialHtml(row.name)+'</td><td class="num">'+materialValue(row.widthM)+' м</td><td class="num">'+materialValue(row.depthM)+' м</td><td class="num">'+materialValue(row.areaM2)+' м²</td><td class="muted">'+(selection.exact?'геометрия':'по габаритам')+'</td></tr><tr><td><strong>Итого</strong></td><td></td><td></td><td class="num"><strong>'+materialValue(selection.areaM2)+' м²</strong></td><td></td></tr></tbody></table>';
+}
+function materialEstimateStatementHtml(statement){
+  const m=statement&&statement.materials&&statement.materials[0];
+  if(!m)return'<div class="material-empty">Материал не выбран.</div>';
+  const brand=m.brand||'Без бренда',format=m.format||'Формат не указан',priceUnit=m.priceUnit||m.unit,mode=materialCalculationMode(m),consumptionUnit=String(m.consumptionUnit||'').split('/')[0],totalConsumption=Number(m.consumptionTotal);
+  const consumptionTotal=Number.isFinite(totalConsumption)&&totalConsumption>0?materialValue(totalConsumption,3)+' '+materialHtml(consumptionUnit):mode==='piece'?materialValue(m.quantity)+' '+materialHtml(m.quantityUnit||m.unit||'шт.'):materialValue(m.requiredUnits)+' ед.';
+  const measureHeader=mode==='piece'?'Количество с запасом':'Площадь с запасом',measureValue=mode==='piece'?materialValue(m.quantityWithWaste)+' '+materialHtml(m.quantityUnit||m.unit||'шт.'):materialValue(m.areaWithWasteM2)+' м²',measureLabel=mode==='piece'?'Норма на проём':'Норма на 1 м²',consumptionHeader=mode==='piece'?'Количество по выделению':'Расход на площадь',calculationCell=mode==='piece'?'<strong>'+materialValue(m.quantity)+' '+materialHtml(m.quantityUnit||m.unit||'шт.')+'</strong>':consumptionTotal;
+  return'<table class="material-table"><thead><tr><th>Материал</th><th>'+measureLabel+'</th><th>'+measureHeader+'</th><th>'+consumptionHeader+'</th><th>К покупке</th><th>Цена</th><th>Сумма</th></tr></thead><tbody><tr><td><strong>'+materialHtml(m.name)+'</strong><br><span class="muted">'+materialHtml(brand)+' · '+materialHtml(format)+' · '+materialHtml(priceUnit)+'</span></td><td>'+materialCalculationHtml(m)+'<br><span class="muted">'+materialHtml(m.norm)+'</span>'+materialConsumptionSourceHtml(m)+'</td><td class="num">'+measureValue+'</td><td class="num">'+calculationCell+'</td><td class="num"><strong>'+materialValue(m.purchaseUnits)+'</strong> '+materialHtml(m.unit||'ед.')+'</td><td class="num">'+materialMoney(m.pricePerUnit)+' ₽</td><td class="num"><strong>'+materialMoney(m.cost)+' ₽</strong></td></tr></tbody></table>';
+}
+function removeCustomMaterial(id){
+  if(!String(id).startsWith('custom-'))return;
+  const settings=normalizeMaterialSettings(state.materials);
+  const material=settings.customCatalog.find(item=>item.id===id);
+  if(!material||!window.confirm('Удалить позицию «'+material.name+'» из пользовательского каталога?'))return;
+  settings.customCatalog=settings.customCatalog.filter(item=>item.id!==id);
+  if(settings.materialId===id)settings.materialId=MATERIAL_DEFAULTS.materialId;
+  delete settings.customPrices[id];
+  state.materials=settings;persistCustomMaterialCatalog(settings.customCatalog);markDirty();updateMaterialUI();planRedraw();commit();
+  toast('Позиция удалена из пользовательского каталога');
+}
+function buildMaterialCatalog(){
+  const list=$('#materialCatalogList');if(!list)return;
+  const catalog=materialCatalogForSettings(state.materials);
+  list.innerHTML=catalog.map(m=>'<div class="material-card"><strong>'+materialHtml(m.name)+'</strong><span>'+materialHtml(m.group)+' / '+materialHtml(m.subgroup||'Без подкатегории')+' · '+materialHtml(m.brand||'Без бренда')+' · '+materialMoney(m.price)+' ₽ / '+materialHtml(m.priceUnit||m.unit)+(m.priceNote?' · '+materialHtml(m.priceNote):'')+'<br>'+materialHtml(m.format||'Формат не указан')+' · норма: '+materialHtml(m.norm)+'<br>'+materialCalculationHtml(m)+'</span><span>'+materialSourceHtml(m)+materialConsumptionSourceHtml(m)+' · проверено '+materialHtml(m.priceCheckedAt)+'</span>'+(String(m.id).startsWith('custom-')?'<button type="button" data-remove-material="'+materialHtml(m.id)+'" title="Удалить пользовательскую позицию" aria-label="Удалить '+materialHtml(m.name)+'"><i data-lucide="trash-2"></i></button>':'')+'</div>').join('');
+  $$('#materialCatalogList [data-remove-material]').forEach(button=>button.addEventListener('click',()=>removeCustomMaterial(button.dataset.removeMaterial)));
+  icons();
+}
+function updateMaterialUI(){
+  const panel=$('#materialPanel');if(!panel)return;
+  const settings=normalizeMaterialSettings(state.materials);state.materials=settings;
+  const catalog=materialCatalogForSettings(settings),calculationCatalog=catalog.filter(item=>!item.catalogOnly),selection=materialSelectionSummary(state,settings),statement=materialStatements(state,catalog),material=calculationCatalog.find(m=>m.id===settings.materialId)||calculationCatalog[0];
+  if(!material)return;
+  if(settings.materialId!==material.id){settings.materialId=material.id;state.materials=settings;}
+  $$('#materialScopeSeg button').forEach(button=>button.classList.toggle('on',button.dataset.materialScope===settings.scope));
+  const hint={room:'Выбрано всё помещение. Если контур не замкнут, площадь показана по его габаритам.',zone:'Перетащите на плане прямоугольник нужного участка помещения.',walls:'Кликайте по нужным участкам стен. Границы участков проходят по углам, примыканиям перегородок и проёмам — вся наружная стена целиком не выбирается.'};
+  const hintEl=$('#materialScopeHint');if(hintEl)hintEl.textContent=hint[settings.scope];
+  const info=$('#materialSelectionInfo');
+  if(info){const detail=settings.scope==='walls'?' · участков '+selection.wallSegments.length+' · длина '+materialValue(selection.total.lengthM)+' м · проёмов '+selection.total.openingsCount:'';info.textContent='Выделено: '+materialScopeLabel(settings.scope)+' · площадь '+materialValue(selection.areaM2)+' м²'+detail+(selection.exact?' · точно':' · ориентир по габаритам');}
+  const select=$('#materialSelect');
+  if(select&&select.options.length!==calculationCatalog.length){select.innerHTML=calculationCatalog.map(m=>'<option value="'+materialHtml(m.id)+'">'+materialHtml(m.group)+' / '+materialHtml(m.subgroup||'Без подкатегории')+' · '+materialHtml(m.name)+' · '+materialHtml(m.brand||'Без бренда')+' · '+materialMoney(m.price)+' ₽/'+materialHtml(m.priceUnit||m.unit)+'</option>').join('');}
+  if(select)select.value=material.id;
+  const custom=state.materials.customPrices[material.id],price=Number.isFinite(Number(custom))?Number(custom):material.price;
+  const priceInput=$('#materialPrice');if(priceInput)priceInput.value=price;
+  const wasteInput=$('#materialWaste');if(wasteInput)wasteInput.value=settings.wastePct===null?material.wastePct??10:settings.wastePct;
+  const meta=$('#materialMeta');if(meta)meta.innerHTML='Раздел: <strong>'+materialHtml(material.group)+'</strong> · '+materialHtml(material.subgroup||'Без подкатегории')+'<br>Бренд: <strong>'+materialHtml(material.brand||'Без бренда')+'</strong> · формат: '+materialHtml(material.format||'не указан')+'<br>Норма: <strong>'+materialHtml(material.norm)+'</strong><br>'+materialCalculationHtml(material)+'<br>Цена: <strong>'+materialMoney(price)+' ₽ / '+materialHtml(material.priceUnit||material.unit)+'</strong> · фасовка: '+materialHtml(material.packSize||material.unit)+(material.priceNote?' · '+materialHtml(material.priceNote):'')+(material.brand==='Разные бренды'?'<br>Цена — ориентир категории, не конкретный SKU.':'')+'<br>'+materialSourceHtml(material)+materialConsumptionSourceHtml(material)+' · проверено '+materialHtml(material.priceCheckedAt);
+  const selectionEl=$('#materialSelectionStatement');if(selectionEl)selectionEl.innerHTML=materialSelectionStatementHtml(selection);
+  const estimateEl=$('#materialEstimateStatement');if(estimateEl)estimateEl.innerHTML=materialEstimateStatementHtml(statement);
+  const totalEl=$('#materialTotal');if(totalEl){const span=totalEl.querySelector('span');if(span)span.textContent=selection.areaM2>0?materialMoney(statement.totalCost)+' ₽':'—';}
+  buildMaterialCatalog();
+  buildMaterialCatalogPage();
+  updateStatementsPage();
+}
+function setMaterialScope(scope){
+  if(!['room','zone','walls'].includes(scope))return;
+  state.materials.scope=scope;markDirty();updateMaterialUI();planRedraw();commit();
+}
+function clearMaterialSelection(){
+  const settings=normalizeMaterialSettings(state.materials);
+  if(settings.scope==='room'){toast('Для режима «Помещение» выделено всё помещение');return;}
+  if(settings.scope==='zone')state.materials.zone=null;
+  if(settings.scope==='walls'){state.materials.wallIds=[];state.materials.wallSegments=[];}
+  markDirty();updateMaterialUI();planRedraw();commit();
+}
+function toggleMaterialWall(wall,point,hitSegment){
+  if(!wall)return;
+  const settings=normalizeMaterialSettings(state.materials),id=String(wall.id),picked=hitSegment||materialWallSegmentAt(state,wall,point&&toMeters(point));if(!picked)return;
+  const explicit=settings.wallSegments.length>0,selected=materialSelectedWallSegments(state,settings),same=(a,b)=>String(a.wallId)===String(b.wallId)&&Math.abs(a.startM-b.startM)<.002&&Math.abs(a.endM-b.endM)<.002;
+  let next=selected.slice(),index=next.findIndex(segment=>same(segment,picked));
+  if(!explicit&&settings.wallIds.includes(id)){
+    const full=selected.find(segment=>segment.wallId===id),isWhole=full&&same(full,picked);
+    next=next.filter(segment=>segment.wallId!==id);
+    if(!isWhole)next.push(picked);
+  }else if(index>=0)next.splice(index,1);
+  else next.push(picked);
+  settings.scope='walls';settings.wallSegments=next.map(segment=>({wallId:String(segment.wallId),startM:segment.startM,endM:segment.endM}));settings.wallIds=[...new Set(next.map(segment=>String(segment.wallId)))];
+  state.materials=settings;markDirty();updateMaterialUI();planRedraw();commit();
+}
+function addCustomMaterial(){
+  const calculationMode=$('#materialCustomCalculationMode').value==='piece'?'piece':'area',fields={name:$('#materialCustomName').value.trim(),group:$('#materialCustomGroup').value.trim(),subgroup:$('#materialCustomSubgroup').value.trim(),brand:$('#materialCustomBrand').value.trim(),format:$('#materialCustomFormat').value.trim(),unit:$('#materialCustomUnit').value.trim(),price:Number($('#materialCustomPrice').value),priceUnit:$('#materialCustomPriceUnit').value.trim(),calculationMode,pieceKind:$('#materialCustomPieceKind').value,coverageM2PerUnit:calculationMode==='piece'?1:Number($('#materialCustomCoverage').value),consumptionPerM2:Number($('#materialCustomConsumption').value),consumptionUnit:$('#materialCustomConsumptionUnit').value.trim(),norm:$('#materialCustomNorm').value.trim(),sourceUrl:$('#materialCustomSourceUrl').value.trim(),sourceTitle:$('#materialCustomSourceTitle').value.trim(),priceCheckedAt:new Date().toISOString().slice(0,10)};
+  if(!fields.name||!Number.isFinite(fields.price)||fields.price<0||!Number.isFinite(fields.coverageM2PerUnit)||fields.coverageM2PerUnit<=0){toast('Заполните название, цену и покрытие одной единицы',true);return;}
+  if(fields.sourceUrl&&!/^https?:\/\//i.test(fields.sourceUrl)){toast('Ссылка на источник должна начинаться с http:// или https://',true);return;}
+  const settings=normalizeMaterialSettings(state.materials),existing=new Set(settings.customCatalog.map(m=>m.id));
+  let id='custom-'+Date.now().toString(36),suffix=1;while(existing.has(id))id='custom-'+Date.now().toString(36)+'-'+suffix++;
+  const material=normalizeCustomMaterial({...fields,id});
+  if(!material){toast('Не удалось проверить новую позицию',true);return;}
+  settings.customCatalog.push(material);settings.materialId=material.id;settings.wastePct=null;
+  state.materials=normalizeMaterialSettings(settings);persistCustomMaterialCatalog(state.materials.customCatalog);markDirty();updateMaterialUI();planRedraw();commit();
+  ['materialCustomName','materialCustomBrand','materialCustomFormat','materialCustomPrice','materialCustomPriceUnit','materialCustomCoverage','materialCustomConsumption','materialCustomConsumptionUnit','materialCustomNorm','materialCustomSourceUrl','materialCustomSourceTitle'].forEach(id=>{$('#'+id).value='';});
+  $('#materialCustomGroup').value='Пользовательские материалы';$('#materialCustomSubgroup').value='Пользовательские позиции';$('#materialCustomBrand').value='Без бренда';$('#materialCustomUnit').value='ведро';$('#materialCustomPriceUnit').value='единицу';
+  $('#materialCustomCalculationMode').value='area';$('#materialCustomPieceKind').value='door';
+  toast('Позиция добавлена в каталог: '+material.name);
+}
+function applyMaterialFromCatalog(id){
+  const catalog=materialCatalogForSettings(state.materials),material=catalog.find(item=>item.id===id);
+  if(!material)return;
+  if(material.catalogOnly){toast('Эта позиция нужна для подбора и пока не участвует в автоматической смете',true);return;}
+  state.materials.materialId=material.id;state.materials.wastePct=null;
+  markDirty();updateMaterialUI();planRedraw();commit();setPage('calculations');
+  toast('Материал выбран для расчёта: '+material.name);
+}
+function buildMaterialCatalogPage(){
+  const list=$('#catalogPageList'),groupSelect=$('#materialCatalogGroup'),subgroupSelect=$('#materialCatalogSubgroup'),brandSelect=$('#materialCatalogBrand');
+  if(!list||!groupSelect||!subgroupSelect||!brandSelect)return;
+  const catalog=materialCatalogForSettings(state.materials),groups=[...new Set(catalog.map(item=>item.group).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru'));
+  const selectedGroup=materialCatalogGroup==='all'||groups.includes(materialCatalogGroup)?materialCatalogGroup:'all';
+  const subgroupSource=catalog.filter(item=>selectedGroup==='all'||item.group===selectedGroup);
+  const subgroups=[...new Set(subgroupSource.map(item=>item.subgroup||'Без подкатегории'))].sort((a,b)=>a.localeCompare(b,'ru'));
+  const selectedSubgroup=materialCatalogSubgroup==='all'||subgroups.includes(materialCatalogSubgroup)?materialCatalogSubgroup:'all';
+  const brandSource=subgroupSource.filter(item=>selectedSubgroup==='all'||(item.subgroup||'Без подкатегории')===selectedSubgroup);
+  const brands=[...new Set(brandSource.flatMap(item=>materialBrands(item)))].sort((a,b)=>a.localeCompare(b,'ru'));
+  const selectedBrand=materialCatalogBrand==='all'||brands.includes(materialCatalogBrand)?materialCatalogBrand:'all';
+  groupSelect.innerHTML='<option value="all">Все разделы</option>'+groups.map(group=>'<option value="'+materialHtml(group)+'">'+materialHtml(group)+'</option>').join('');
+  subgroupSelect.innerHTML='<option value="all">Все подкатегории</option>'+subgroups.map(subgroup=>'<option value="'+materialHtml(subgroup)+'">'+materialHtml(subgroup)+'</option>').join('');
+  brandSelect.innerHTML='<option value="all">Все бренды</option>'+brands.map(brand=>'<option value="'+materialHtml(brand)+'">'+materialHtml(brand)+'</option>').join('');
+  groupSelect.value=selectedGroup;subgroupSelect.value=selectedSubgroup;brandSelect.value=selectedBrand;
+  const query=String(materialCatalogQuery||'').trim().toLocaleLowerCase('ru-RU');
+  const filtered=catalog.filter(item=>{
+    const subgroup=item.subgroup||'Без подкатегории',itemBrands=materialBrands(item);
+    const haystack=[item.name,item.group,subgroup,item.brand,itemBrands.join(' '),item.format,item.unit,item.priceUnit,item.packSize,item.norm,item.sourceTitle].join(' ').toLocaleLowerCase('ru-RU');
+    return(selectedGroup==='all'||item.group===selectedGroup)&&(selectedSubgroup==='all'||subgroup===selectedSubgroup)&&(selectedBrand==='all'||itemBrands.includes(selectedBrand))&&(!query||haystack.includes(query));
+  });
+  const path=['Все материалы',selectedGroup!=='all'?selectedGroup:'',selectedSubgroup!=='all'?selectedSubgroup:'',selectedBrand!=='all'?selectedBrand:''].filter(Boolean);
+  const pathEl=$('#materialCatalogPath');if(pathEl)pathEl.textContent=path.join(' / ');
+  const count=$('#materialCatalogCount');if(count)count.textContent=filtered.length+' из '+catalog.length+' позиций';
+  const current=normalizeMaterialSettings(state.materials).materialId;
+  list.innerHTML=filtered.length?filtered.map(item=>{
+    const isSelected=item.id===current,isCustom=String(item.id).startsWith('custom-'),brands=materialBrands(item),primaryBrand=item.brand||'Без бренда',isCalculable=!item.catalogOnly,cardMeasure=materialCalculationMode(item)==='piece'?'<span>Расчёт<b>по проёмам</b></span>':item.catalogOnly?'<span>Статус<b>только каталог</b></span>':'<span>Покрытие<b>'+materialValue(item.coverageM2PerUnit)+' м²</b></span>';
+    return'<article class="catalog-page-card '+(isSelected?'is-selected':'')+'">'+
+      '<div class="card-top"><div><div class="card-group">'+materialHtml(item.group)+' · '+materialHtml(item.subgroup||'Без подкатегории')+'</div><h3>'+materialHtml(item.name)+'</h3></div>'+(isSelected?'<span class="material-badge">выбран</span>':'')+'</div>'+
+      '<div class="card-brand"><span>Бренд: <strong>'+materialHtml(primaryBrand)+'</strong></span>'+(brands.length>1?'<span class="brand-options">Варианты: '+brands.map(brand=>'<span class="brand-pill">'+materialHtml(brand)+'</span>').join(' ')+'</span>':'')+'</div>'+
+      '<div class="card-note"><strong>'+materialHtml(item.format||'Формат не указан')+'</strong><br>'+(item.brand==='Разные бренды'?'<span class="muted">Цена — ориентир категории, не конкретный SKU</span><br>':'')+materialCalculationHtml(item)+'<br>'+materialHtml(item.norm)+(item.priceNote?' · '+materialHtml(item.priceNote):'')+'</div>'+
+      '<div class="card-meta"><span>Цена<b>'+materialMoney(item.price)+' ₽ / '+materialHtml(item.priceUnit||item.unit)+'</b></span><span>Фасовка<b>'+materialHtml(item.packSize||item.unit)+'</b></span>'+cardMeasure+'<span>Запас<b>'+materialValue(item.wastePct||0,0)+'%</b></span></div>'+
+      '<div class="card-source">'+materialSourceHtml(item)+' · '+materialHtml(item.priceCheckedAt)+'</div>'+
+      '<div class="card-actions">'+(isCalculable?'<button type="button" class="mini primary" data-material-page-id="'+materialHtml(item.id)+'">'+(isSelected?'Изменить расчёт':'Применить к расчёту')+'</button>':'<span class="material-badge">только для подбора</span>')+(isCustom?'<button type="button" class="mini danger" data-remove-material="'+materialHtml(item.id)+'" title="Удалить пользовательский материал" aria-label="Удалить '+materialHtml(item.name)+'"><i data-lucide="trash-2"></i></button>':'')+'</div>'+
+      '</article>';
+  }).join(''):'<div class="material-empty">Ничего не найдено. Измените запрос или фильтры.</div>';
+  $$('#catalogPageList [data-material-page-id]').forEach(button=>button.addEventListener('click',()=>applyMaterialFromCatalog(button.dataset.materialPageId)));
+  $$('#catalogPageList [data-remove-material]').forEach(button=>button.addEventListener('click',()=>removeCustomMaterial(button.dataset.removeMaterial)));
+  icons();
+}
+function projectDateLabel(value){
+  const date=new Date(value);
+  return Number.isNaN(date.getTime())?'дата не указана':date.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function buildProjectsPage(){
+  const list=$('#projectsList'),count=$('#projectCount'),search=$('#projectSearch');
+  if(!list||!count)return;
+  const records=readProjectLibrary(),filtered=filterProjectRecords(records,projectSearchQuery);
+  if(search&&search.value!==projectSearchQuery)search.value=projectSearchQuery;
+  count.textContent=filtered.length+' из '+records.length+' проектов';
+  list.innerHTML=filtered.length?filtered.map(record=>{
+    const project=record.project||{},room=project.room||{},walls=project.layout&&Array.isArray(project.layout.walls)?project.layout.walls.length:0,items=Array.isArray(project.items)?project.items.length:0;
+    const roomLabel=Number(room.w)>0&&Number(room.d)>0?materialNumber(room.w)+' × '+materialNumber(room.d)+' м':'размер не указан';
+    const profile=project.profile==='general'?'Общее помещение':'Стоматологическое помещение';
+    return'<article class="project-page-card">'+
+      '<div class="project-card-top"><h2>'+materialHtml(record.name)+'</h2><span class="project-date">'+materialHtml(projectDateLabel(record.saved))+'</span></div>'+
+      '<p class="project-description">'+materialHtml(profile)+' · помещение '+materialHtml(roomLabel)+'</p>'+
+      '<div class="project-meta"><span>Стены<b>'+walls+'</b></span><span>Предметы<b>'+items+'</b></span><span>Профиль<b>'+materialHtml(project.profile==='general'?'общий':'стомат.')+'</b></span></div>'+
+      '<div class="project-actions"><button type="button" class="mini primary" data-project-open="'+materialHtml(record.id)+'"><i data-lucide="folder-open"></i>Открыть</button><button type="button" class="mini danger" data-project-delete="'+materialHtml(record.id)+'" title="Удалить сохранённый проект" aria-label="Удалить проект '+materialHtml(record.name)+'"><i data-lucide="trash-2"></i></button></div>'+
+      '</article>';
+  }).join(''):'<div class="projects-empty">'+(records.length?'По вашему запросу проекты не найдены.':'Здесь пока нет сохранённых проектов. Назовите текущий проект и нажмите «Сохранить проект».')+'</div>';
+  $$('#projectsList [data-project-open]').forEach(button=>button.addEventListener('click',()=>openSavedProject(button.dataset.projectOpen)));
+  $$('#projectsList [data-project-delete]').forEach(button=>button.addEventListener('click',()=>{
+    const record=readProjectLibrary().find(item=>item.id===button.dataset.projectDelete);
+    if(!record||!window.confirm('Удалить сохранённый проект «'+record.name+'»?'))return;
+    if(!deleteProjectFromLibrary(record.id))toast('Не удалось удалить проект',true);
+  }));
+  icons();
+}
+function openSavedProject(id){
+  const record=readProjectLibrary().find(item=>item.id===String(id));
+  if(!record){toast('Проект не найден в библиотеке',true);buildProjectsPage();return;}
+  if(loadProjectData(record.project,record.name,record.id))setPage('plan');
+}
+function updateStatementsPage(){
+  const selectionEl=$('#statementsSelectionPage'),estimateEl=$('#statementsEstimatePage'),materialEl=$('#statementsMaterialPage'),summaryEl=$('#statementsSummary');
+  if(!selectionEl||!estimateEl||!materialEl||!summaryEl)return;
+  const statement=materialStatements(state),selection=statement.selection,material=statement.materials[0];
+  summaryEl.innerHTML='<div class="statement-chip"><span>Выделение</span><strong>'+materialHtml(selection.label)+'</strong></div><div class="statement-chip"><span>Площадь</span><strong>'+materialValue(selection.areaM2)+' м²</strong></div><div class="statement-chip"><span>Материал</span><strong>'+materialHtml(material?material.name:'—')+'</strong></div><div class="statement-chip"><span>Итого</span><strong>'+materialMoney(statement.totalCost)+' ₽</strong></div>';
+  selectionEl.innerHTML=materialSelectionStatementHtml(selection);
+  estimateEl.innerHTML=materialEstimateStatementHtml(statement);
+  materialEl.innerHTML=material?'<div class="material-meta">Раздел: <strong>'+materialHtml(material.group)+'</strong> · подкатегория: <strong>'+materialHtml(material.subgroup||'—')+'</strong><br>Бренд: <strong>'+materialHtml(material.brand||'Без бренда')+'</strong> · формат: '+materialHtml(material.format||'—')+'<br>'+materialCalculationHtml(material)+'<br>Единица цены: <strong>'+materialHtml(material.priceUnit||material.unit)+'</strong> · фасовка: '+materialHtml(material.packSize||material.unit)+'<br>Цена: <strong>'+materialMoney(material.pricePerUnit)+' ₽</strong> · проверено: '+materialHtml(material.priceCheckedAt)+'<br>'+materialSourceHtml(material)+materialConsumptionSourceHtml(material)+'</div>':'<div class="material-empty">Материал пока не выбран.</div>';
+}
+function openMaterialAdd(){
+  setPage('catalog');
+  const details=$('#materialAddMount .material-add');
+  if(details){details.open=true;setTimeout(()=>details.scrollIntoView({behavior:'smooth',block:'start'}),40);}
+}
+function setPage(page){
+  if(!APP_PAGES.includes(page))page='plan';
+  appPage=page;document.body.dataset.page=page;
+  $$('#workspaceNav button').forEach(button=>{const active=button.dataset.page===page;button.classList.toggle('on',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
+  const canvasPage=page==='plan'||page==='calculations';
+  const catalog=$('#catalog'),center=$('#center');
+  if(catalog)catalog.hidden=!canvasPage;
+  if(center)center.hidden=!canvasPage;
+  $('#catalogPage').hidden=page!=='catalog';
+  $('#statementsPage').hidden=page!=='statements';
+  $('#projectsPage').hidden=page!=='projects';
+  $('#calculationIntro').hidden=page!=='calculations';
+  $('#materialPanel').hidden=page!=='calculations';
+  $$('[data-page-context="plan"]').forEach(el=>{el.hidden=page!=='plan';});
+  $('#viewSeg').hidden=!canvasPage;
+  $('#btnTemplates').hidden=page!=='plan';
+  $('#fireToggle').hidden=page!=='plan';
+  $('#btnCatalogToggle').hidden=!canvasPage;
+  if(page==='calculations'){
+    if(state.mode!=='materials'){lastPlanMode=state.mode;setMode('materials');}
+  }else if(page==='plan'&&state.mode==='materials'){
+    setMode(lastPlanMode==='walls'?'walls':'items');
+  }
+  if(!canvasPage)setCatalogOpen(false);
+  if(page==='catalog')buildMaterialCatalogPage();
+  if(page==='statements')updateStatementsPage();
+  if(page==='projects')buildProjectsPage();
+  if(canvasPage){resizeAll();planRedraw();}
+}
+function initPageShell(){
+  const addForm=$('#materialPanel .material-add'),addMount=$('#materialAddMount');
+  if(addForm&&addMount)addMount.appendChild(addForm);
+  $$('#workspaceNav button').forEach(button=>button.addEventListener('click',()=>setPage(button.dataset.page)));
+  $('#btnCalcCatalog').addEventListener('click',()=>setPage('catalog'));
+  $('#btnCalcStatements').addEventListener('click',()=>setPage('statements'));
+  $('#btnMaterialCatalog').addEventListener('click',()=>setPage('catalog'));
+  $('#btnMaterialStatements').addEventListener('click',()=>setPage('statements'));
+  $('#btnCatalogToCalc').addEventListener('click',()=>setPage('calculations'));
+  $('#btnStatementsToCalc').addEventListener('click',()=>setPage('calculations'));
+  $('#btnStatementsExport').addEventListener('click',openExport);
+  $('#btnProjectsNew').addEventListener('click',()=>{if(newProject())setPage('plan');});
+  $('#btnProjectsSave').addEventListener('click',saveProject);
+  $('#projectSearch').addEventListener('input',event=>{projectSearchQuery=event.target.value;buildProjectsPage();});
+  $('#btnCatalogPageAdd').addEventListener('click',openMaterialAdd);
+  $('#materialCatalogSearch').addEventListener('input',event=>{materialCatalogQuery=event.target.value;buildMaterialCatalogPage();});
+  $('#materialCatalogGroup').addEventListener('change',event=>{materialCatalogGroup=event.target.value;materialCatalogSubgroup='all';materialCatalogBrand='all';buildMaterialCatalogPage();});
+  $('#materialCatalogSubgroup').addEventListener('change',event=>{materialCatalogSubgroup=event.target.value;materialCatalogBrand='all';buildMaterialCatalogPage();});
+  $('#materialCatalogBrand').addEventListener('change',event=>{materialCatalogBrand=event.target.value;buildMaterialCatalogPage();});
+  $('#objectCatalogSearch').addEventListener('input',event=>{objectCatalogQuery=event.target.value;buildCatalog();});
+}
+function initMaterialCalculator(){
+  $$('#materialScopeSeg button').forEach(button=>button.addEventListener('click',()=>setMaterialScope(button.dataset.materialScope)));
+  $('#btnMaterialClear').addEventListener('click',clearMaterialSelection);
+  $('#btnMaterialSelectMode').addEventListener('click',()=>{if(state.mode!=='materials')setMode('materials');$('#materialPanel').scrollIntoView({behavior:'smooth',block:'start'});toast('Выберите режим и выделите область на плане');});
+  $('#materialSelect').addEventListener('change',e=>{if(!materialCatalogForSettings(state.materials).some(m=>m.id===e.target.value))return;state.materials.materialId=e.target.value;markDirty();updateMaterialUI();planRedraw();commit();});
+  $('#materialPrice').addEventListener('change',e=>{const value=Number(e.target.value);if(!Number.isFinite(value)||value<0){updateMaterialUI();toast('Цена должна быть неотрицательным числом',true);return;}state.materials.customPrices[state.materials.materialId]=Math.round(value*100)/100;markDirty();updateMaterialUI();planRedraw();commit();});
+  $('#materialWaste').addEventListener('change',e=>{const value=Number(e.target.value);if(!Number.isFinite(value)||value<0||value>100){updateMaterialUI();toast('Запас должен быть от 0 до 100%',true);return;}state.materials.wastePct=Math.round(value*100)/100;markDirty();updateMaterialUI();planRedraw();commit();});
+  $('#btnMaterialAdd').addEventListener('click',addCustomMaterial);
+  updateMaterialUI();
+}
 function initCalculation(){
   updateCalculationUI();
   $('#calcWallHeight').addEventListener('change',e=>setCalculationSetting('wallHeightM',Number(e.target.value)));
@@ -3854,13 +5201,28 @@ function initBrand(){
   $$('.sw').forEach(b=>b.addEventListener('click',()=>{setBrand(b.dataset.c);markDirty();}));
   $('#brandInput').addEventListener('input',e=>{setBrand(e.target.value);markDirty();});
 }
+function setCatalogOpen(open){
+  const catalog=$('#catalog'),backdrop=$('#menuBackdrop'),button=$('#btnCatalogToggle');
+  if(!catalog||!backdrop||!button)return;
+  const next=Boolean(open)&&isMobileViewport();
+  catalog.classList.toggle('open',next);
+  backdrop.classList.toggle('open',next);
+  button.setAttribute('aria-expanded',String(next));
+  button.setAttribute('aria-label',next?'Закрыть меню':'Открыть меню');
+}
 function initRest(){
+  $('#btnCatalogToggle').addEventListener('click',()=>setCatalogOpen(!$('#catalog').classList.contains('open')));
+  $('#menuBackdrop').addEventListener('click',()=>setCatalogOpen(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')setCatalogOpen(false);});
+  window.addEventListener('resize',()=>{if(!isMobileViewport())setCatalogOpen(false);});
   $('#btnCatalogAll').addEventListener('click',()=>{
     const groups=$$('#catList .cat-group');
     const allOpen=groups.length>0&&groups.every(group=>catalogGroupOpen[group.dataset.group]!==false);
     setAllCatalogGroups(!allOpen);
   });
   $('#projectProfile').addEventListener('change',e=>setProjectProfile(e.target.value,true));
+  $('#projectName').addEventListener('input',e=>{currentProjectName=String(e.target.value||'').slice(0,120);markDirty();});
+  $('#projectName').addEventListener('blur',()=>setCurrentProjectName(currentProjectName,true));
   $('#btnTemplates').addEventListener('click',()=>$('#tplModal').classList.add('open'));
   $('#tplClose').addEventListener('click',()=>$('#tplModal').classList.remove('open'));
   $('#tplModal').addEventListener('click',e=>{if(e.target.id==='tplModal')e.target.classList.remove('open');});
@@ -3945,8 +5307,9 @@ function loop(now){
 
 /* ═══════════════ ФАЗА 1 ═══════════════ */
 initPlan();buildCatalog();buildTplGrid();
-initView();initModes();initCalculation();initRoom();initBrand();initUnderlay();initRest();initKeys();
+initView();initModes();initPageShell();initCalculation();initMaterialCalculator();initRoom();initBrand();initUnderlay();initRest();initKeys();
 setProjectProfile(state.profile,false);
+setPage('plan');
 icons();
 resizeAll();
 if(window.ResizeObserver){
@@ -3956,6 +5319,7 @@ if(window.ResizeObserver){
   layoutObserver.observe($('#threePane'));
 }
 window.addEventListener('resize',resizeAll);
+window.addEventListener('resize',()=>applyView(state.view,false));
 applyTemplate(TEMPLATES[1]);
 requestAnimationFrame(loop);
 

@@ -14,14 +14,26 @@ assert.match(html, /function confirmReplaceProject\(/, 'Перед замено�
 assert.match(html, /id="btnProjNew"/, 'В блоке проекта должна быть кнопка нового проекта');
 assert.match(html, /Новый проект/, 'Кнопка нового проекта должна быть подписана');
 assert.match(html, /Сохранённый файл не удаляется/, 'Новый проект не должен удалять сохранённый JSON');
+assert.match(html, /data-page="projects"/, 'В верхнем меню должен быть отдельный раздел проектов');
+assert.match(html, /id="projectsPage"/, 'Для проектов должна быть отдельная страница');
+assert.match(html, /id="projectSearch"/, 'В разделе проектов должен быть поиск по названию');
+assert.match(html, /function filterProjectRecords\(/, 'Поиск проектов должен быть отдельной функцией');
+assert.match(html, /function saveProjectToLibrary\(/, 'Проект должен сохраняться в локальную библиотеку');
 assert.match(html, /\$\('#btnProjNew'\)\.addEventListener\('click',newProject\)/, 'Кнопка нового проекта должна запускать сброс текущего чертежа');
 assert.match(html, /projectDirty/, 'Должен отслеживаться статус несохранённых изменений');
 assert.match(html, /document\.createTextNode\(String\(msg\)\)/, 'Текст тоста нельзя вставлять как HTML');
-assert.match(html, /if\(!confirmReplaceProject\(\)\)return;/, 'Импорт и шаблоны должны уважать отмену замены проекта');
+assert.match(html, /if\(!confirmReplaceProject\(\)\)return(?: false)?;/, 'Импорт и шаблоны должны уважать отмену замены проекта');
 assert.doesNotMatch(html, /проверка пройдена/i, 'Даже предварительный статус не должен звучать как заключение');
 assert.doesNotMatch(html, /Нормы соблюдены/, 'В интерфейсе не должно быть неподтверждённого заявления о нормативах');
 assert.doesNotMatch(html, /соответствует требованиям/i, 'Нельзя выдавать юридическое заключение о соответствии');
 assert.match(html, /id="projectProfile"/, 'В интерфейсе должен быть переключатель профиля проекта');
+assert.match(html, /id="btnCatalogToggle"[^>]*aria-controls="catalog"/, 'На мобильном должна быть отдельная кнопка открытия каталога');
+assert.match(html, /id="menuBackdrop"/, 'Открытое мобильное меню должно иметь доступный фон для закрытия');
+assert.match(html, /function setCatalogOpen\(/, 'Мобильное меню должно открываться и закрываться отдельным состоянием');
+assert.match(html, /function applyView\(/, 'Переключение вида должно быть общей функцией для desktop и mobile');
+assert.match(html, /isMobileViewport\(\)&&v==='both'\?'plan':v/, 'На мобильном режим Рядом должен заменяться полноэкранным Планом');
+assert.match(html, /#catalog\.open\{/, 'Мобильное меню должно иметь открытое состояние');
+assert.match(html, /\.menu-backdrop\.open\{/, 'Фон мобильного меню должен иметь открытое состояние');
 assert.match(html, /function normalizeProjectProfile\(/, 'Старые проекты должны получать совместимый профиль');
 assert.match(html, /profile:state\.profile/, 'Профиль должен сохраняться в JSON проекта');
 assert.match(html, /setProjectProfile\(normalizeProjectProfile\(p\.profile\)/, 'Профиль должен восстанавливаться при загрузке');
@@ -33,6 +45,21 @@ assert.match(html, /p:state\.profile/, 'Профиль должен входит
 assert.match(html, /if\(dirty\)commit\(\)/, 'Переключение профиля должно добавляться в историю действий');
 assert.doesNotMatch(html, /#planPane\{display:none!important\}/, 'План не должен безусловно исчезать на узком экране');
 assert.match(html, /aria-label=/, 'Интерактивные элементы должны иметь доступные подписи');
+
+const projectHelpers = script[1].match(/function normalizeProjectName\(value\)\{[\s\S]*?\n\}\nfunction filterProjectRecords\(records,query\)\{[\s\S]*?\n\}/);
+assert(projectHelpers, 'Не найдены чистые функции работы с названиями проектов');
+const projectHelperSandbox = {};
+vm.runInNewContext(`const PROJECT_DEFAULT_NAME='Новый проект';\n${projectHelpers[0]}\nthis.normalizeProjectName=normalizeProjectName;this.filterProjectRecords=filterProjectRecords;`, projectHelperSandbox);
+assert.equal(projectHelperSandbox.normalizeProjectName('  Клиника   на   Ленина  '), 'Клиника на Ленина', 'Название проекта должно нормализоваться');
+assert.equal(projectHelperSandbox.normalizeProjectName(''), 'Новый проект', 'Пустому проекту должно назначаться понятное имя');
+assert.deepEqual(
+  JSON.parse(JSON.stringify(projectHelperSandbox.filterProjectRecords([
+    { name: 'Стоматология на Ленина' },
+    { name: 'Кабинет на Петровской' },
+  ], 'лен'))),
+  [{ name: 'Стоматология на Ленина' }],
+  'Поиск проектов должен находить название без учёта регистра',
+);
 assert.match(html, /id="calcWallHeight"/, 'В интерфейсе должна быть высота стен');
 assert.match(html, /id="calcDoorHeight"/, 'В интерфейсе должна быть высота дверей');
 assert.match(html, /id="calcEvacHeight"/, 'В интерфейсе должна быть высота эвакуационных проёмов');
@@ -64,7 +91,7 @@ assert.match(html, /function selectOpening\(/, 'Дверь, окно и эвак
 assert.match(html, /function deleteSelectedOpening\(/, 'Удаление выбранного проёма должно иметь отдельный безопасный маршрут');
 assert.match(html, /if\(act==='del'\)\{[\s\S]*?deleteSelectedOpening\(\)/, 'Кнопка корзины должна удалять именно выбранный проём');
 assert.match(html, /if\(e\.key==='Delete'\|\|e\.key==='Backspace'\)\{[\s\S]*?wallBarAct\('del'\)/, 'Delete/Backspace должны удалять выбранный проём через тот же маршрут');
-assert.match(html, /if\(oh\)\{[^}]*selectOpening\(oh\)/, 'Клик по проёму должен выделять именно выбранный проём');
+assert.match(html, /if\(openingHit\)\{if\(!selectOpening\(openingHit\)\)return;/, 'Клик по проёму должен выделять именно выбранный проём');
 assert.match(html, /function normalizeOpeningRot\(/, 'Угол проёма должен нормализоваться перед сохранением');
 assert.match(html, /function rotateOpening\(/, 'Проём должен вращаться независимо от стены');
 assert.match(html, /hingeSide:'left',openingDirection:'inside'/, 'Новая дверь должна иметь отдельные начальные значения петель и открывания');
@@ -106,8 +133,9 @@ assert.match(html, /data-act="orthogonal"[^>]*>[\s\S]*?Выровнять до 9
 assert.match(html, /const doubleClick=shouldFinishDrawingOnDoubleClick\(e,prev,p,now\)\|\|/, 'Двойной клик должен завершать цепочку рисования только в той же точке');
 assert.match(html, /function shouldFinishDrawingOnDoubleClick\(e,previous,current,now\)/, 'Завершение рисования должно проверять координаты повторного клика');
 assert.match(html, /function pointNearOpeningArc\(/, 'Hit-test должен учитывать дугу двери');
-assert.match(html, /function beginWallDragAt\(/, 'После рисования клик по готовой стене должен запускать её перенос');
-assert.match(html, /if\(drawState&&!nodeAt\(p\)&&beginWallDragAt\(p\)\)return;/, 'Активная цепочка не должна перекрывать выбор готовой стены или проёма');
+assert.doesNotMatch(html, /function beginWallDragAt\(/, 'Во время рисования не должно быть отдельной ветки выбора готовой стены');
+assert.match(html, /const sp=wallDrawSnapPoint\(m,drawState\.last\)/, 'Цепочное рисование должно привязывать конечную точку к существующей стене');
+assert.doesNotMatch(html, /if\(drawState&&!nodeAt\(p\)&&beginWallDragAt\(p\)\)return;/, 'Активная цепочка не должна превращать клик по наружной стене в выбор стены');
 assert.match(html, /function shouldPrioritizeOpeningHit\(/, 'Существующий проём должен иметь приоритет над добавлением нового');
 assert.match(html, /else\{setTool\('select'\);select\(null\);\}/, 'При входе в режим стен должен включаться выбор существующих объектов');
 assert.match(html, /function finishWallDrawing\(/, 'Завершение рисования стены должно возвращать инструмент выбора');
@@ -122,7 +150,7 @@ assert.ok(selectPointerBranch.indexOf('const openingHit=openingAt(p)') < selectP
 assert.match(selectPointerBranch, /if\(hd&&!\(openingHit&&hd\.type==='wall'\)\)/, 'Ручка стены не должна перехватывать клик по проёму');
 assert.match(selectPointerBranch, /if\(openingHit\)\{[^}]*wallDrag=\{type:'opening',id:openingHit\.id/, 'Клик по проёму должен запускать drag только выбранного проёма');
 assert.match(html, /wallDrag=\{type:'wall',id:wh\.id/, 'Клик по стене должен начинать её drag');
-assert.match(html, /wallDrag=\{type:'opening',id:oh\.id/, 'Клик по проёму должен начинать его drag');
+assert.match(html, /wallDrag=\{type:'opening',id:openingHit\.id/, 'Клик по проёму должен начинать его drag');
 assert.match(html, /startM:toMeters\(p\),oa:\{\.\.\.g\.A\},ob:\{\.\.\.g\.B\}/, 'Drag стены должен сохранить исходную точку и оба конца');
 assert.match(html, /const dx=m\.x-wallDrag\.startM\.x,dz=m\.z-wallDrag\.startM\.z/, 'Перенос стены должен считаться от начала drag, а не от уже изменённой геометрии');
 assert.match(html, /translateWall\(w,dx,dz,wallDrag\.oa,wallDrag\.ob\)/, 'Drag стены должен переносить оба конца');
@@ -162,9 +190,28 @@ assert.match(html, /КАМЕР[^\n]*String\(s\.cameras\)/, 'Число каме�
 assert.match(html, /BUILDERS=\{[\s\S]*camera\(\)/, 'Для камеры нужна 3D-модель');
 assert.match(html, /function addItem\([^]*?clampItem\(item\)/, 'Новый предмет должен сразу ограничиваться контуром');
 assert.match(html, /function nudgeSelectedItem\([^]*?moveItem\(it\)/, 'Сдвиг клавишами должен сохранять предмет в контуре');
-assert.doesNotMatch(html, /\bprice\s*:/i, 'CATALOG не должен содержать ценовые поля');
-assert.doesNotMatch(html, /\b(?:budget|estimate|updateEstimate|estimateTotal)\b/i, 'Бюджетные функции должны быть удалены');
-assert.doesNotMatch(html, /btnEstimate|estPanel|estBody|estTotal|estSum|cat-price|Смета|Монтаж и пусконаладка|₽|руб\.?/i, 'В UI и экспорте не должно быть сметы');
+assert.match(html, /data-mode="materials"/, 'Для расчёта материалов должен быть отдельный режим');
+assert.match(html, /id="materialPanel"/, 'В боковой панели должен быть раздел материалов');
+assert.match(html, /id="materialSelectionStatement"/, 'Должна быть смета выделенной геометрии');
+assert.match(html, /id="materialEstimateStatement"/, 'Должна быть смета материалов');
+assert.match(html, /id="materialCatalogList"/, 'В интерфейсе должен быть каталог материалов');
+assert.match(html, /function materialSelectionSummary\(/, 'Выделение должно иметь единый расчёт площади');
+assert.match(html, /function calculateMaterialEstimate\(/, 'Расход и стоимость должны считаться отдельной чистой функцией');
+assert.match(html, /function materialWallSegments\(/, 'Выделение стен должно уметь находить отдельные участки');
+assert.match(html, /function materialWallSegmentAt\(/, 'Клик по плану должен определять конкретный участок стены');
+assert.match(html, /wallSegments/, 'Выбранные участки стен должны сохраняться отдельно от целых стен');
+assert.match(html, /В РАСЧЁТ · S/, 'Выделенный участок должен иметь понятную подпись на чертеже');
+assert.match(html, /customPrices/, 'Цена материала должна быть изменяемой вручную');
+assert.match(html, /sourceUrl/, 'Для ориентировочной цены должен сохраняться источник');
+assert.match(html, /consumptionPerM2/, 'Каталог должен хранить расход на единицу площади');
+assert.match(html, /consumptionTotal/, 'Смета должна рассчитывать общий расход по норме');
+assert.match(html, /materials:normalizeMaterialSettings\(state\.materials\)/, 'Настройки материалов должны сохраняться в JSON проекта');
+assert.match(html, /materials:materialStatements\(source\)/, 'Выгрузка должна содержать сметные данные');
+assert.match(html, /priceCheckedAt/, 'В каталоге должна быть дата проверки ориентировочной цены');
+assert.match(html, /id="btnMaterialAdd"/, 'В каталоге должна быть кнопка добавления пользовательской позиции');
+assert.match(html, /function addCustomMaterial\(/, 'Добавление пользовательской позиции должно быть отдельной функцией');
+assert.match(html, /customCatalog/, 'Пользовательский каталог должен сохраняться в состоянии проекта');
+assert.match(html, /persistCustomMaterialCatalog\(/, 'Пользовательский каталог должен сохраняться между сессиями браузера');
 assert.match(html, /СПЕЦИФИКАЦИЯ ОСНАЩЕНИЯ/, 'В PDF должна остаться спецификация');
 assert.match(html, /id="btnCatalogAll"[^>]*aria-controls="catList"/, 'У каталога должна быть доступна общая кнопка управления');
 assert.match(html, /class="cat-group-toggle"/, 'У каждой группы должна быть отдельная кнопка сворачивания');
@@ -176,6 +223,42 @@ assert.match(html, /function setCatalogGroupOpen\(/, 'Должна быть фу
 assert.match(html, /function refreshCatalogControls\(/, 'После перерисовки каталога должно восстанавливаться состояние');
 assert.match(html, /catalogGroupOpen\[gr\]/, 'Перерисовка каталога должна использовать сохранённое состояние группы');
 assert.match(html, /state\.items\.forEach\(i=>map\[i\.type\]=\(map\[i\.type\]\|\|0\)\+1\)/, 'Экспорт должен сохранять количество единиц');
+assert.match(html, /id="workspaceNav"/, 'У проекта должна быть верхняя навигация по разделам');
+assert.match(html, /data-page="calculations"/, 'Должен быть отдельный раздел расчётов');
+assert.match(html, /data-page="catalog"/, 'Должен быть отдельный раздел каталога');
+assert.match(html, /data-page="statements"/, 'Должен быть отдельный раздел смет');
+assert.match(html, /<span>Сметы<\/span>/, 'Раздел ведомостей должен называться сметами');
+assert.match(html, /id="catalogPage"/, 'Каталог материалов должен иметь отдельную страницу');
+assert.match(html, /id="statementsPage"/, 'Сметы должны иметь отдельную страницу');
+assert.match(html, /id="materialCatalogSearch"/, 'На странице каталога должен быть поиск материалов');
+assert.match(html, /id="materialCatalogGroup"/, 'На странице каталога должен быть фильтр категорий');
+assert.match(html, /id="materialCatalogSubgroup"/, 'На странице каталога должен быть фильтр подкатегорий');
+assert.match(html, /id="materialCatalogBrand"/, 'На странице каталога должен быть фильтр брендов');
+assert.match(html, /id="materialCatalogPath"/, 'Каталог должен показывать путь текущего выбора');
+assert.match(html, /function materialBrands\(/, 'Поиск бренда должен учитывать бренды карточки');
+assert.match(html, /brandOptions/, 'Карточка должна хранить найденные варианты бренда');
+assert.match(html, /MATERIAL_RETAIL_SOURCES/, 'Каталог должен хранить вторые розничные источники');
+assert.match(html, /secondarySourceUrl/, 'Карточка должна сохранять дополнительную ссылку на источник');
+assert.match(html, /priceUnit/, 'Карточка должна отдельно хранить единицу цены');
+assert.match(html, /group:'Двери и окна'/, 'В каталоге должен быть отдельный раздел дверей и окон');
+assert.match(html, /subgroup:'Межкомнатные двери'/, 'В каталоге должна быть подкатегория межкомнатных дверей');
+assert.match(html, /subgroup:'Оконные блоки'/, 'В каталоге должна быть подкатегория оконных блоков');
+assert.match(html, /calculationMode:'piece'/, 'Двери и оконные блоки должны иметь поштучный режим расчёта');
+assert.match(html, /pieceKind:'window'/, 'Для оконного блока должен сохраняться тип проёма');
+assert.match(html, /petrovich\.ru\/catalog\/10050\//, 'Для дверей должен сохраняться источник Петровича');
+assert.match(html, /petrovich\.ru\/catalog\/15635\//, 'Для окон должен сохраняться источник Петровича');
+assert.match(html, /materialCustomSubgroup/, 'Пользовательская позиция должна принимать подкатегорию');
+assert.match(html, /materialCustomBrand/, 'Пользовательская позиция должна принимать бренд');
+assert.match(html, /materialCustomFormat/, 'Пользовательская позиция должна принимать формат');
+assert.match(html, /materialCustomCalculationMode/, 'Пользовательская позиция должна принимать тип расчёта');
+assert.match(html, /materialCustomPieceKind/, 'Пользовательская позиция должна принимать тип проёма');
+assert.match(html, /materialCustomConsumption/, 'Пользовательская позиция должна принимать расход на 1 м²');
+assert.match(html, /materialCustomConsumptionUnit/, 'Пользовательская позиция должна принимать единицу нормы');
+assert.match(html, /id="objectCatalogSearch"/, 'Каталог предметов должен иметь собственный поиск');
+assert.match(html, /function setPage\(/, 'Навигация по разделам должна быть централизованной');
+assert.match(html, /function buildMaterialCatalogPage\(/, 'Страница каталога должна собираться из актуального каталога');
+assert.match(html, /function updateStatementsPage\(/, 'Страница смет должна обновляться из актуального расчёта');
+assert.doesNotMatch(html, /Ведомость выделений|Ведомость материалов/, 'В интерфейсе не должно остаться старых названий ведомостей');
 for (const type of ['instrument', 'compressor', 'camera', 'desk', 'officechair']) {
   assert.match(html, new RegExp(`case '${type}'`), `Для ${type} нужно 2D-представление`);
   assert.match(html, new RegExp(`\\n\\s{2}${type}\\(\\)`), `Для ${type} нужно 3D-представление`);
@@ -230,7 +313,7 @@ const newProjectStart = scriptSource.indexOf('function newProject()');
 const saveProjectStart = scriptSource.indexOf('function saveProject()');
 assert(newProjectStart >= 0 && saveProjectStart > newProjectStart, 'Сброс нового проекта должен быть отдельной операцией перед сохранением');
 const newProjectSection = scriptSource.slice(newProjectStart, saveProjectStart);
-assert.match(newProjectSection, /if\(!confirmReplaceProject\(\)\)return;/, 'Новый проект должен спрашивать подтверждение перед сбросом');
+assert.match(newProjectSection, /if\(!confirmReplaceProject\(\)\)return(?: false)?;/, 'Новый проект должен спрашивать подтверждение перед сбросом');
 assert.match(newProjectSection, /clearItems\(\)/, 'Новый проект должен очищать предметы');
 assert.match(newProjectSection, /state\.nodes=\[\];state\.walls=\[\];state\.openings=\[\];/, 'Новый проект должен очищать геометрию и проёмы');
 assert.match(newProjectSection, /state\.seq=1;nid=1;wid=1;oid=1;/, 'Новый проект должен сбрасывать идентификаторы');
@@ -238,6 +321,10 @@ assert.match(newProjectSection, /removeUnderlay\(\)/, 'Новый проект �
 assert.match(newProjectSection, /state\.fire=false/, 'Новый проект должен выключать направления эвакуации');
 assert.match(newProjectSection, /setMode\('items'\);setTool\('select'\)/, 'Новый проект должен возвращать базовый режим выбора');
 assert.match(newProjectSection, /refresh\(\);resetHistory\(\)/, 'Новый проект должен обновлять экран и чистую историю');
+const saveProjectSection = scriptSource.slice(saveProjectStart, scriptSource.indexOf('function loadProjectData('));
+assert.match(saveProjectSection, /name:normalizeProjectName\(currentProjectName\)/, 'Файл проекта должен сохранять название');
+assert.match(saveProjectSection, /saveProjectToLibrary\(proj\)/, 'Сохранение должно обновлять библиотеку проектов');
+assert.match(scriptSource, /if\(page==='projects'\)buildProjectsPage\(\)/, 'Переход в проекты должен перерисовывать библиотеку');
 const renderCallIndex = scriptSource.indexOf('await page.render({canvasContext:ctx,viewport})');
 const underlayAssignmentIndex = scriptSource.indexOf('underlay.img=canvas');
 assert(renderCallIndex >= 0 && underlayAssignmentIndex > renderCallIndex, 'Подложка не должна заменяться до успешного render PDF');
@@ -308,8 +395,39 @@ const exportSection = scriptSource.slice(
   scriptSource.indexOf('const CALCULATION_DEFAULTS='),
   scriptSource.indexOf('/* ═══════════════ ЭКСПОРТ ═══════════════ */'),
 );
-const exportSandbox = {};
-vm.runInNewContext(`function normalizeOpeningRot(rot){const full=Math.PI*2,a=Number(rot);if(!Number.isFinite(a))return 0;return((a+Math.PI)%full+full)%full-Math.PI;}\nfunction normalizeHingeSide(side){return side==='right'?'right':'left';}\nfunction normalizeOpeningDirection(direction,legacyFlip){return direction==='outside'||(!direction&&legacyFlip)?'outside':'inside';}\n${exportSection}\nthis.buildDataExport=buildDataExport;this.dataExportToCsv=dataExportToCsv;this.normalizeCalculationSettings=normalizeCalculationSettings;`, exportSandbox);
+const materialSection = scriptSource.slice(
+  scriptSource.indexOf('function normalizeCustomMaterial('),
+  scriptSource.indexOf('function exitPoints()'),
+);
+const materialCatalogFixture = [{
+  id: 'paint-interior',
+  name: 'Тестовая краска',
+  group: 'Тест',
+  subgroup: 'Краски',
+  brand: 'ТестБренд',
+  brandOptions: ['ТестБренд', 'ДругойБренд'],
+  format: 'моющаяся · интерьерная',
+  unit: 'ведро',
+  priceUnit: 'ведро',
+  packSize: '10 л',
+  price: 100,
+  coverageM2PerUnit: 10,
+  consumptionPerM2: 0.3,
+  consumptionUnit: 'л/м²',
+  consumptionBasis: 'тестовая норма',
+  norm: '1 ведро на 10 м²',
+  wastePct: 10,
+  sourceTitle: 'Тестовый источник',
+  sourceUrl: 'https://example.com/material',
+  secondarySourceTitle: 'Петрович · тестовая категория',
+  secondarySourceUrl: 'https://petrovich.ru/catalog/10042/',
+  priceCheckedAt: '2026-10-20',
+}];
+const exportSandbox = {
+  MATERIAL_CATALOG: materialCatalogFixture,
+  MATERIAL_DEFAULTS: { scope: 'room', wallIds: [], wallSegments: [], zone: null, materialId: 'paint-interior', wastePct: null, customPrices: {} },
+};
+vm.runInNewContext(`const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));\nfunction normalizeOpeningRot(rot){const full=Math.PI*2,a=Number(rot);if(!Number.isFinite(a))return 0;return((a+Math.PI)%full+full)%full-Math.PI;}\nfunction normalizeHingeSide(side){return side==='right'?'right':'left';}\nfunction normalizeOpeningDirection(direction,legacyFlip){return direction==='outside'||(!direction&&legacyFlip)?'outside':'inside';}\n${materialSection}\n${exportSection}\nthis.buildDataExport=buildDataExport;this.dataExportToCsv=dataExportToCsv;this.normalizeCalculationSettings=normalizeCalculationSettings;this.normalizeMaterialSettings=normalizeMaterialSettings;this.materialSelectionSummary=materialSelectionSummary;this.calculateMaterialEstimate=calculateMaterialEstimate;this.materialStatements=materialStatements;this.materialWallSegments=materialWallSegments;this.materialWallSegmentAt=materialWallSegmentAt;`, exportSandbox);
 const exportState = {
   room: { w: 4, d: 3 },
   nodes: [
@@ -344,6 +462,97 @@ assert.equal(dataExport.layout.openings[0].openingDirection, 'inside', 'Выгр
 assert.equal(dataExport.layout.openings[0].flip, false, 'Legacy flip должен совпадать с направлением открывания');
 assert.match(exportSandbox.dataExportToCsv(dataExport), /item,i1,chair/);
 assert.match(exportSandbox.dataExportToCsv(dataExport), /opening,o1,door,[^\n]*,30,/, 'CSV должен содержать угол проёма');
+const materialSource = {
+  room: { w: 4, d: 3 },
+  nodes: exportState.nodes,
+  walls: exportState.walls,
+  openings: [exportState.openings[0]],
+  calculation: { wallHeightM: 3, openingHeightsM: { door: 2.1, evac: 2.1, window: 1.5 } },
+  materials: { scope: 'walls', wallIds: ['w1', 'w2'], materialId: 'paint-interior', wastePct: 10 },
+};
+const materialStatements = exportSandbox.materialStatements(materialSource, materialCatalogFixture);
+assert.equal(materialStatements.selection.areaM2, 18.9, 'Площадь стен должна вычитать дверь из выбранной стены');
+assert.equal(materialStatements.materials[0].areaWithWasteM2, 20.79, 'К площади должен добавляться заданный запас');
+assert.equal(materialStatements.materials[0].purchaseUnits, 3, 'Количество упаковок должно округляться вверх');
+assert.equal(materialStatements.totalCost, 300, 'Итог должен умножать упаковки на цену');
+assert.equal(materialStatements.materials[0].subgroup, 'Краски', 'Смета должна сохранять подкатегорию материала');
+assert.equal(materialStatements.materials[0].brand, 'ТестБренд', 'Смета должна сохранять бренд материала');
+assert.equal(materialStatements.materials[0].format, 'моющаяся · интерьерная', 'Смета должна сохранять формат материала');
+assert.equal(materialStatements.materials[0].priceUnit, 'ведро', 'Смета должна сохранять единицу цены');
+assert.equal(materialStatements.materials[0].secondarySourceUrl, 'https://petrovich.ru/catalog/10042/', 'Смета должна сохранять дополнительный источник');
+assert.equal(materialStatements.materials[0].consumptionPerM2, 0.3, 'Смета должна сохранять норму на 1 м²');
+assert.equal(materialStatements.materials[0].consumptionTotal, 6.237, 'Смета должна рассчитывать общий расход по норме');
+assert.equal(materialStatements.materials[0].purchaseUnitsPerM2, 0.1, 'Смета должна сохранять расход покупной единицы на 1 м²');
+const pieceMaterial = {
+  id: 'door-block',
+  name: 'Тестовый дверной блок',
+  group: 'Двери и окна',
+  subgroup: 'Межкомнатные двери',
+  brand: 'ТестБренд',
+  format: '800×2000 мм · глухая',
+  unit: 'шт.',
+  priceUnit: 'шт.',
+  packSize: '1 шт.',
+  price: 5603,
+  coverageM2PerUnit: 1,
+  calculationMode: 'piece',
+  pieceKind: 'door',
+  quantityLabel: 'дверных проёма',
+  norm: '1 шт. на дверной проём',
+  wastePct: 0,
+  sourceTitle: 'Тестовый источник дверей',
+  sourceUrl: 'https://example.com/door',
+  priceCheckedAt: '2026-10-20',
+};
+const pieceStatements = exportSandbox.materialStatements({ ...materialSource, openings: exportState.openings, materials: { scope: 'walls', wallIds: ['w1', 'w2'], materialId: 'door-block', wastePct: 0 } }, [pieceMaterial]);
+assert.equal(pieceStatements.materials[0].quantity, 1, 'Поштучный материал должен считать дверные проёмы на выбранных стенах');
+assert.equal(pieceStatements.materials[0].purchaseUnits, 1, 'Дверной блок должен считаться одной покупной единицей');
+assert.equal(pieceStatements.totalCost, 5603, 'Смета дверного блока должна умножать количество на цену за штуку');
+assert.equal(pieceStatements.materials[0].calculationMode, 'piece', 'Смета должна сохранять режим поштучного расчёта');
+const segmentedSource = {
+  room: { w: 4, d: 3 },
+  nodes: [
+    { id: 'a', x: 0, z: 0 }, { id: 'b', x: 4, z: 0 },
+    { id: 'c', x: 1.5, z: -2 }, { id: 'd', x: 1.5, z: 0 },
+  ],
+  walls: [
+    { id: 'outer', a: 'a', b: 'b', kind: 'outer' },
+    { id: 'partition', a: 'c', b: 'd', kind: 'inner' },
+  ],
+  openings: [{ id: 'seg-door', wallId: 'outer', t: 0.75, w: 1, kind: 'door' }],
+  calculation: { wallHeightM: 3, openingHeightsM: { door: 2.1, evac: 2.1, window: 1.5 } },
+};
+const outerParts = exportSandbox.materialWallSegments(segmentedSource, segmentedSource.walls[0]);
+assert.deepEqual(JSON.parse(JSON.stringify(outerParts.map(part => [part.startM, part.endM]))), [[0, 1.5], [1.5, 2.5], [3.5, 4]], 'Наружная стена должна делиться по примыканию перегородки и проёму');
+assert.equal(exportSandbox.materialWallSegmentAt(segmentedSource, segmentedSource.walls[0], { x: 0.75, z: 0 }).key, outerParts[0].key, 'Клик по наружной стене должен выбирать ближайший отдельный участок');
+const partialWallStatements = exportSandbox.materialStatements({ ...segmentedSource, materials: { scope: 'walls', wallSegments: [{ wallId: 'outer', startM: 0, endM: 1.5 }], materialId: 'paint-interior', wastePct: 0 } }, materialCatalogFixture);
+assert.equal(partialWallStatements.selection.total.lengthM, 1.5, 'В смету должна попадать только длина выбранного участка');
+assert.equal(partialWallStatements.selection.areaM2, 4.5, 'Площадь должна считаться по выбранному участку, а не по всей наружной стене');
+assert.equal(partialWallStatements.selection.rows.length, 1, 'Смета должна содержать только выбранный участок');
+assert.equal(partialWallStatements.selection.rows[0].endM, 1.5, 'Смета должна хранить конец выбранного участка');
+const materialCsv=exportSandbox.dataExportToCsv(exportSandbox.buildDataExport(materialSource, exportCatalog, '2026-09-08T00:00:00.000Z'));
+assert.match(materialCsv, /material/);
+assert.match(materialCsv, /consumptionPerM2/, 'CSV должен содержать поля нормы расхода');
+const customMaterial = {
+  id: 'custom-clinic-paint',
+  name: 'Краска из пользовательского каталога',
+  group: 'Пользовательские материалы',
+  unit: 'ведро 12 л',
+  price: 250,
+  coverageM2PerUnit: 12,
+  consumptionPerM2: 0.25,
+  consumptionUnit: 'кг/м²',
+  norm: '1 ведро на 12 м²',
+  sourceTitle: 'Карточка пользователя',
+  sourceUrl: 'https://example.com/custom-material',
+  priceCheckedAt: '2026-10-20',
+};
+const customSettings = exportSandbox.normalizeMaterialSettings({ scope: 'walls', wallIds: ['w1', 'w2'], materialId: customMaterial.id, wastePct: 0, customCatalog: [customMaterial] });
+assert.equal(customSettings.customCatalog[0].id, customMaterial.id, 'Позиция пользователя должна проходить нормализацию');
+assert.equal(customSettings.customCatalog[0].consumptionPerM2, 0.25, 'Пользовательская позиция должна сохранять норму на 1 м²');
+const customStatements = exportSandbox.materialStatements({ ...materialSource, materials: { ...materialSource.materials, ...customSettings } });
+assert.equal(customStatements.materials[0].id, customMaterial.id, 'Расчёт должен разрешать пользовательский материал');
+assert.equal(customStatements.totalCost, 500, 'Пользовательская цена и фасовка должны участвовать в расчёте');
 const tunedExport=exportSandbox.buildDataExport({...exportState,calculation:{wallHeightM:4,openingHeightsM:{door:2,evac:3,window:1}}},exportCatalog,'2026-09-08T00:00:00.000Z');
 assert.equal(tunedExport.layout.wallArea.netM2,49.8,'Площадь стен должна меняться от настроек');
 assert.deepEqual(JSON.parse(JSON.stringify(tunedExport.layout.wallArea.assumptions)),{wallHeightM:4,openingHeightM:{door:2,evac:3,window:1}});
@@ -376,6 +585,13 @@ const projectSection = scriptSource.slice(
 const sandbox = {
   window: { addEventListener() {} },
   CATALOG: { chair: {}, sofa: {}, camera: {} },
+  normalizeCustomMaterial(item) {
+    const src = item && typeof item === 'object' ? item : {};
+    const name = String(src.name || '').trim();
+    const price = Number(src.price);
+    const coverage = Number(src.coverageM2PerUnit);
+    return name && Number.isFinite(price) && price >= 0 && Number.isFinite(coverage) && coverage > 0 ? src : null;
+  },
   console,
 };
 vm.runInNewContext(`${projectSection}\nthis.validateProjectData=validateProjectData;this.normalizeCalculationSettings=normalizeCalculationSettings;`, sandbox);
@@ -395,6 +611,22 @@ assert.equal(sandbox.validateProjectData({...validProject,calculation:{wallHeigh
 assert.equal(sandbox.validateProjectData({...validProject,calculation:{openingHeightsM:{window:4.1}}}), 'Некорректная высота проёма');
 assert.equal(sandbox.validateProjectData({ ...validProject, profile: 'dental' }), null);
 assert.equal(sandbox.validateProjectData({ ...validProject, profile: 'general' }), null);
+assert.equal(
+  sandbox.validateProjectData({
+    ...validProject,
+    materials: { customCatalog: [{ name: 'Краска пользователя', price: 500, coverageM2PerUnit: 10 }] },
+  }),
+  null,
+  'Проект должен принимать корректную пользовательскую позицию материала',
+);
+assert.match(
+  sandbox.validateProjectData({
+    ...validProject,
+    materials: { customCatalog: [{ name: 'Повреждённый материал', price: -1, coverageM2PerUnit: 10 }] },
+  }),
+  /позиция пользовательского каталога/,
+  'Повреждённая пользовательская позиция должна отклоняться',
+);
 assert.match(sandbox.validateProjectData({ ...validProject, profile: 'unknown' }), /профиль/, 'Неизвестный профиль должен отклоняться');
 assert.equal(
   sandbox.validateProjectData({ ...validProject, items: [{ type: 'camera', x: 1, z: 1, rot: Math.PI / 3 }] }),
@@ -452,7 +684,7 @@ const engine = {
   fmtM: String,
   fmt2: value => Number(value).toFixed(2).replace('.', ','),
 };
-vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,openingHitDistance,openingMarkerPoint,openingHoverActive,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode,angleCorrectionText,angleHintText,translateWall,moveOpeningTo,deleteWall,deleteOpening,deleteSelectedOpening,selectOpening,wallHoverLabel,openingVisualColor,pointNearOpeningArc,wallNeighborDistances,wallNeighborDistanceText,wallMotionAxis,wallClearance,wallClearanceText,alignWallToPerpendicular,normalizeOpeningRot,rotateOpening,rotateOpeningHalfTurn,doorPose,doorState,normalizeHingeSide,normalizeOpeningDirection,toggleDoorHingeSide,toggleDoorOpeningDirection,openingWallNormal,doorSwingSign,openingDoorGeometry,wallGeom,shouldFinishDrawingOnDoubleClick};`, engine);
+vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,openingHitDistance,openingMarkerPoint,openingHoverActive,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode,angleCorrectionText,angleHintText,translateWall,moveOpeningTo,deleteWall,deleteOpening,deleteSelectedOpening,selectOpening,wallHoverLabel,openingVisualColor,pointNearOpeningArc,wallNeighborDistances,wallNeighborDistanceText,wallMotionAxis,wallClearance,wallClearanceText,alignWallToPerpendicular,normalizeOpeningRot,rotateOpening,rotateOpeningHalfTurn,doorPose,doorState,normalizeHingeSide,normalizeOpeningDirection,toggleDoorHingeSide,toggleDoorOpeningDirection,openingWallNormal,doorSwingSign,openingDoorGeometry,wallGeom,projectPointToWall,wallDrawSnapPoint,splitWallAtPoint,shouldFinishDrawingOnDoubleClick};`, engine);
 engine.TOOL_DEF = { door: {}, window: {}, evac: {} };
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', { id: 'o1' }), true, 'При клике по двери нужно начать её перенос');
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', null), false, 'Без проёма нужно оставить возможность его добавить');
@@ -620,6 +852,23 @@ assert.equal(diagonalClearance.axis, 'normal', 'Для диагональног�
 assert.equal(diagonalClearance.displayAxis, 'normal');
 assert.match(engine.api.wallClearanceText(diagonalClearance), /по нормали .* · против нормали /);
 assert.doesNotThrow(() => engine.api.wallClearance({ a: 'missing', b: 'missing' }, { dx: 1, dz: 0 }), 'Повреждённая ссылка стены не должна ломать перерисовку плана');
+
+engine.api.state.nodes.length = 0;
+engine.api.state.walls.length = 0;
+engine.api.state.openings.length = 0;
+const outerStart = engine.api.addNode(0, 0);
+const outerEnd = engine.api.addNode(4, 0);
+const outerWall = engine.api.addWall(outerStart, outerEnd, 'outer');
+const wallTarget = engine.api.wallDrawSnapPoint({ x: 2.02, z: .12 }, null);
+assert.equal(wallTarget.wallId, outerWall.id, 'Конец перегородки рядом с наружной стеной должен привязаться к её линии');
+assert.deepEqual({ x: wallTarget.x, z: wallTarget.z }, { x: 2.02, z: 0 }, 'Точка примыкания должна попасть точно на наружную стену');
+const junction = engine.api.splitWallAtPoint(outerWall, wallTarget);
+assert.ok(junction, 'Наружная стена должна разделяться в точке примыкания');
+assert.deepEqual({ x: junction.x, z: junction.z }, { x: 2.02, z: 0 });
+assert.equal(engine.api.state.walls.length, 2, 'После примыкания наружная стена должна состоять из двух сегментов');
+const partitionStart = engine.api.addNode(2, -2);
+const partition = engine.api.addWall(partitionStart, junction, 'inner');
+assert.equal(partition.b, junction.id, 'Новая перегородка должна ссылаться на узел наружной стены');
 
 engine.api.state.nodes.length = 0;
 engine.api.state.walls.length = 0;

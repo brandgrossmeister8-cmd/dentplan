@@ -26,16 +26,14 @@ body{
     linear-gradient(rgba(150,134,100,.07) 1px,transparent 1px),
     linear-gradient(90deg,rgba(150,134,100,.07) 1px,transparent 1px);
   background-size:112px 112px,112px 112px,28px 28px,28px 28px;
-  display:grid; grid-template-rows:56px 1fr 46px; overflow:hidden;
+  display:grid; grid-template-rows:1fr 46px; overflow:hidden;
 }
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
-#topbar{display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--paper2);border-bottom:1px solid var(--line);position:relative;z-index:30}
 .mark{width:32px;height:32px;border-radius:9px;background:var(--brand);display:grid;place-items:center;color:#fff;flex:none;transition:background .2s}
 .mark svg{width:18px;height:18px}
 .brand-name{font-family:var(--head);font-weight:700;font-size:17px;line-height:1}
 .brand-sub{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
-.tb-sep{width:1px;height:26px;background:var(--line);flex:none}
 .btn{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--paper2);font-size:13px;font-weight:500;color:var(--coal2);transition:border-color .15s,background .15s,color .15s;white-space:nowrap}
 .btn:hover{border-color:var(--coal2);color:var(--coal)}
 .btn svg{width:15px;height:15px}
@@ -52,7 +50,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .switch::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .2s}
 .fire.on .switch{background:var(--evac)}
 .fire.on .switch::after{transform:translateX(13px)}
-.spacer{flex:1}
 .lib{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:5px 10px;border:1px solid var(--line);border-radius:20px;color:var(--mut);white-space:nowrap}
 .lib .dot{width:7px;height:7px;border-radius:50%;background:var(--warn);animation:blink 1s infinite alternate;flex:none}
 .lib.ok .dot{background:var(--ok);animation:none}
@@ -69,6 +66,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #main{display:flex;min-height:0;position:relative}
 #catalog{width:286px;flex:none;background:var(--paper2);border-right:1px solid var(--line);overflow-y:auto;padding:12px 12px 24px}
 #catalogControls{display:block}
+.sidebar-brand{display:flex;align-items:center;gap:9px;padding:2px 2px 14px;border-bottom:1px solid var(--line);margin-bottom:13px}
+.sidebar-brand .brand-copy{min-width:0}
+.sidebar-brand .brand-sub{margin-top:4px}
+.sidebar-common{display:grid;gap:9px;padding:0 2px 14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.sidebar-common-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sidebar-common-title{color:var(--mut);font:600 9px var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.sidebar-common-row{display:grid;gap:6px}
+.sidebar-common-row .sec-title{margin:0}
+.sidebar-common-row .seg{width:100%}
+.sidebar-common-row .seg button{flex:1;justify-content:center;padding:0 7px}
+.sidebar-common-row .fire{width:100%;justify-content:flex-start}
+.sidebar-common-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sidebar-common-actions .btn{flex:1;justify-content:center}
+.sidebar-common-actions .swatches{margin-left:auto}
+.sidebar-common-actions .sw{width:20px;height:20px}
+.sidebar-common-actions .sw-custom{width:20px;height:20px}
+.sidebar-common-actions .sw-custom svg{width:10px;height:10px}
+.sidebar-common .lib{font-size:9px;padding:4px 7px}
+.sidebar-common .lib .dot{width:6px;height:6px}
+#btnCatalogToggle{display:none}
 .menu-backdrop{display:none}
 #center{flex:1;display:flex;min-width:0;position:relative}
 .workspace-nav{display:grid;gap:7px;margin:0 0 15px}
@@ -425,18 +442,15 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 @media (max-width:1180px){#planPane{flex-basis:40%}.st-hint{display:none}}
 @media (max-width:940px){
   #catalog{width:252px}
-  #topbar,#statusbar{overflow-x:auto}
+  #statusbar{overflow-x:auto}
   .catalog-page-layout{grid-template-columns:1fr}
   .page-aside{grid-template-columns:repeat(2,minmax(0,1fr))}
   body[data-page="calculations"] #catalog{width:300px}
   #objectInfoPanel{width:238px}
 }
 @media (max-width:680px){
-  #topbar{gap:2px;padding:0 8px;overflow:hidden}
-  .brand-sub,.lib,.swatches,.tb-sep{display:none}
-  .mobile-menu-btn{display:inline-flex;flex:0 0 34px;width:34px;padding:0;justify-content:center;gap:0}
+  #btnCatalogToggle{display:inline-flex;position:fixed;top:10px;left:10px;z-index:60;flex:0 0 34px;width:34px;padding:0;justify-content:center;gap:0}
   .mobile-menu-btn span{display:none}
-  #btnTemplates,#fireToggle,#btnExport{width:34px;flex:0 0 34px;padding:0;justify-content:center;gap:0;font-size:0}
   #viewSeg{flex:0 0 auto;gap:1px}
   #viewSeg button{padding:0 5px}
   #viewSeg button[data-view="both"]{display:none}
@@ -466,38 +480,47 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 <body>
 <noscript><p style="padding:20px">Для работы планировщика нужен включённый JavaScript.</p></noscript>
 
-<header id="topbar">
-  <div class="mark"><i data-lucide="armchair"></i></div>
-  <div>
-    <div class="brand-name">DentPlan</div>
-    <div class="brand-sub">планировщик клиник</div>
-  </div>
-  <button class="btn mobile-menu-btn" id="btnCatalogToggle" type="button" aria-expanded="false" aria-controls="catalog" aria-label="Открыть меню"><i data-lucide="menu"></i><span>Меню</span></button>
-  <div class="tb-sep"></div>
-  <button class="btn" id="btnTemplates" aria-label="Открыть шаблоны"><i data-lucide="layout-template"></i>Шаблоны</button>
-  <div class="seg" id="viewSeg">
-    <button data-view="both" class="on"><i data-lucide="columns"></i>Рядом</button>
-    <button data-view="plan"><i data-lucide="map"></i>План</button>
-    <button data-view="3d"><i data-lucide="box"></i>3D</button>
-  </div>
-  <button class="fire" id="fireToggle" aria-pressed="false" aria-label="Направления эвакуации" title="Показать ориентировочные направления к выходам"><i data-lucide="flame"></i>Направления эвакуации<span class="switch"></span></button>
-  <div class="spacer"></div>
-  <span class="lib" id="libStatus"><span class="dot"></span><span id="libTx">3D: загрузка…</span></span>
-  <div class="swatches" id="swatches" title="Фирменный цвет">
-    <button class="sw on" data-c="#0E7C7B" style="background:#0E7C7B" title="Глубокая бирюза" aria-label="Цвет: глубокая бирюза"></button>
-    <button class="sw" data-c="#C05B39" style="background:#C05B39" title="Терракота" aria-label="Цвет: терракота"></button>
-    <button class="sw" data-c="#3E6B48" style="background:#3E6B48" title="Хвоя" aria-label="Цвет: хвоя"></button>
-    <button class="sw" data-c="#8E4A5B" style="background:#8E4A5B" title="Слива" aria-label="Цвет: слива"></button>
-    <button class="sw" data-c="#B0812A" style="background:#B0812A" title="Охра" aria-label="Цвет: охра"></button>
-    <button class="sw" data-c="#22384D" style="background:#22384D" title="Ночной синий" aria-label="Цвет: ночной синий"></button>
-    <label class="sw-custom" title="Свой цвет"><i data-lucide="pipette"></i><input type="color" id="brandInput" value="#0E7C7B" aria-label="Выбрать свой цвет"></label>
-  </div>
-  <div class="tb-sep"></div>
-  <button class="btn primary" id="btnExport" aria-label="Экспорт"><i data-lucide="download"></i>Экспорт</button>
-</header>
-
+<button class="btn mobile-menu-btn" id="btnCatalogToggle" type="button" aria-expanded="false" aria-controls="catalog" aria-label="Открыть меню"><i data-lucide="menu"></i><span>Меню</span></button>
 <div id="main">
   <aside id="catalog">
+    <div class="sidebar-brand">
+      <div class="mark"><i data-lucide="armchair"></i></div>
+      <div class="brand-copy">
+        <div class="brand-name">DentPlan</div>
+        <div class="brand-sub">планировщик клиник</div>
+      </div>
+    </div>
+
+    <div class="sidebar-common" aria-label="Общие параметры проекта">
+      <div class="sidebar-common-head">
+        <span class="sidebar-common-title">Общие параметры</span>
+        <span class="lib" id="libStatus"><span class="dot"></span><span id="libTx">3D: загрузка…</span></span>
+      </div>
+      <div class="sidebar-common-row" data-page-context="plan">
+        <div class="sec-title">Вид</div>
+        <div class="seg" id="viewSeg">
+          <button data-view="both" class="on"><i data-lucide="columns"></i>Рядом</button>
+          <button data-view="plan"><i data-lucide="map"></i>План</button>
+          <button data-view="3d"><i data-lucide="box"></i>3D</button>
+        </div>
+      </div>
+      <div class="sidebar-common-row" data-page-context="plan">
+        <button class="fire" id="fireToggle" aria-pressed="false" aria-label="Направления эвакуации" title="Показать ориентировочные направления к выходам"><i data-lucide="flame"></i>Направления эвакуации<span class="switch"></span></button>
+      </div>
+      <div class="sidebar-common-actions">
+        <button class="btn" id="btnTemplates" aria-label="Открыть шаблоны"><i data-lucide="layout-template"></i>Шаблоны</button>
+        <div class="swatches" id="swatches" title="Фирменный цвет">
+          <button class="sw on" data-c="#0E7C7B" style="background:#0E7C7B" title="Глубокая бирюза" aria-label="Цвет: глубокая бирюза"></button>
+          <button class="sw" data-c="#C05B39" style="background:#C05B39" title="Терракота" aria-label="Цвет: терракота"></button>
+          <button class="sw" data-c="#3E6B48" style="background:#3E6B48" title="Хвоя" aria-label="Цвет: хвоя"></button>
+          <button class="sw" data-c="#8E4A5B" style="background:#8E4A5B" title="Слива" aria-label="Цвет: слива"></button>
+          <button class="sw" data-c="#B0812A" style="background:#B0812A" title="Охра" aria-label="Цвет: охра"></button>
+          <button class="sw" data-c="#22384D" style="background:#22384D" title="Ночной синий" aria-label="Цвет: ночной синий"></button>
+          <label class="sw-custom" title="Свой цвет"><i data-lucide="pipette"></i><input type="color" id="brandInput" value="#0E7C7B" aria-label="Выбрать свой цвет"></label>
+        </div>
+      </div>
+    </div>
+
     <nav class="workspace-nav" id="workspaceNav" aria-label="Разделы проекта">
       <div class="workspace-nav-head">
         <span>Навигация</span>
@@ -583,7 +606,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       </div>
     </div>
 
-    <div class="sec" data-page-context="plan">
+    <div class="sec">
       <div class="sec-title">Профиль проекта</div>
       <label class="sr-only" for="projectProfile">Тип помещения</label>
       <select id="projectProfile" class="profile-select">
@@ -709,7 +732,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       </div>
     </div>
 
-    <div class="sec" data-page-context="plan">
+    <div class="sec">
       <div class="sec-title">Проект</div>
       <label class="project-name-field">Название проекта<input id="projectName" type="text" maxlength="120" value="Новый проект" placeholder="Например, Клиника на Ленина" aria-label="Название проекта"></label>
       <div class="ul-btns" style="margin-top:0">
@@ -899,9 +922,9 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       <h3 id="objectInfoSelectionTitle">Текущий выбор</h3>
       <div class="object-info-selection" id="objectInfoSelection"><strong>Ничего не выбрано</strong><span>Выберите предмет, стену или проём на плане.</span></div>
     </section>
-    <section class="object-info-block" aria-labelledby="objectInfoCalcTitle">
-      <h3 id="objectInfoCalcTitle">Расчёт</h3>
-      <p class="object-info-note" id="objectInfoCalculation">Переходите в «Расчёты», чтобы выбрать область и материал.</p>
+    <section class="object-info-block" aria-labelledby="objectInfoContextTitle">
+      <h3 id="objectInfoContextTitle">Контекст</h3>
+      <p class="object-info-note" id="objectInfoContext">Выберите раздел слева, чтобы увидеть его текущую информацию.</p>
     </section>
   </aside>
 
@@ -3296,8 +3319,8 @@ function computeStats(){
   return{a,chairs,cameras,patients,waiting,staff,total,perChair,exitHint,hasExits,closed:b.closed};
 }
 function updateObjectInfoPanel(){
-  const title=$('#objectInfoTitle'),profile=$('#objectInfoProfile'),area=$('#objectInfoArea'),walls=$('#objectInfoWalls'),openings=$('#objectInfoOpenings'),items=$('#objectInfoItems'),selectionEl=$('#objectInfoSelection'),calculation=$('#objectInfoCalculation');
-  if(!title||!profile||!area||!walls||!openings||!items||!selectionEl||!calculation)return;
+  const title=$('#objectInfoTitle'),profile=$('#objectInfoProfile'),area=$('#objectInfoArea'),walls=$('#objectInfoWalls'),openings=$('#objectInfoOpenings'),items=$('#objectInfoItems'),selectionEl=$('#objectInfoSelection'),contextTitle=$('#objectInfoContextTitle'),context=$('#objectInfoContext');
+  if(!title||!profile||!area||!walls||!openings||!items||!selectionEl||!contextTitle||!context)return;
   const stats=computeStats(),bounds=roomBounds(),pageLabels={plan:'План',calculations:'Расчёты',catalog:'Каталог',statements:'Сметы',projects:'Проекты'};
   title.textContent=normalizeProjectName(currentProjectName);
   profile.textContent=(state.profile==='general'?'Общее помещение':'Стоматологическое помещение')+' · '+(pageLabels[appPage]||'План');
@@ -3321,15 +3344,30 @@ function updateObjectInfoPanel(){
   selectionEl.textContent='';
   const selectedTitleEl=document.createElement('strong'),selectedDetailEl=document.createElement('span');
   selectedTitleEl.textContent=selectedTitle;selectedDetailEl.textContent=selectedDetail;selectionEl.append(selectedTitleEl,selectedDetailEl);
-  if(appPage==='calculations'){
-    const scopeLabels={room:'Помещение',zone:'Зона',walls:'Стены и участки'};
-    calculation.textContent='Выделение: '+(scopeLabels[state.materials.scope]||'Помещение')+' · выберите материал в левой панели.';
+  const modeLabels={items:'План помещения',walls:'Стены и проёмы',materials:'Расчёт'},viewLabels={both:'Рядом',plan:'План','3d':'3D'};
+  let contextHeading='Контекст',contextText='Выберите раздел слева, чтобы увидеть его текущую информацию.';
+  if(appPage==='plan'){
+    contextHeading=modeLabels[state.mode]||'План помещения';
+    contextText='Вид: '+(viewLabels[state.view]||'План')+'. '+(state.mode==='walls'?'Выбирайте стены, двери, окна и проёмы на чертеже.':state.mode==='materials'?'Выберите область и материал для расчёта.':'Добавляйте оборудование из каталога и расставляйте его на плане.');
+  }else if(appPage==='calculations'){
+    const scopeLabels={room:'Помещение',zone:'Выделенная зона',walls:'Стены и участки'},statement=materialStatements(state),material=statement.materials[0];
+    contextHeading='Расчёты';
+    contextText='Выделение: '+(scopeLabels[state.materials.scope]||'Помещение')+' · '+fmtM(statement.selection.areaM2)+' м².'+(material?' Материал: '+material.name+' · итог '+materialMoney(statement.totalCost)+' ₽.':' Материал пока не выбран.');
+  }else if(appPage==='catalog'){
+    const catalog=materialCatalogForSettings(state.materials),query=String(materialCatalogQuery||'').trim();
+    contextHeading='Каталог';
+    contextText=catalog.length+' позиций. '+(query?'Поиск: «'+query+'».':'Выберите раздел, подкатегорию или бренд слева.');
   }else if(appPage==='statements'){
     const statement=materialStatements(state),material=statement.materials[0];
-    calculation.textContent='Смета: '+fmtM(statement.selection.areaM2)+' м² · итог '+materialMoney(statement.totalCost)+' ₽'+(material?' · '+material.name:'');
-  }else{
-    calculation.textContent='Перейдите в «Расчёты», чтобы выбрать область и материал.';
+    contextHeading='Сметы';
+    contextText='Выделение: '+statement.selection.label+' · '+fmtM(statement.selection.areaM2)+' м² · итог '+materialMoney(statement.totalCost)+' ₽'+(material?' · '+material.name:'')+'.';
+  }else if(appPage==='projects'){
+    const records=readProjectLibrary();
+    contextHeading='Проекты';
+    contextText='Сохранено проектов: '+records.length+'. Поиск и открытие проектов доступны на странице слева.';
   }
+  contextTitle.textContent=contextHeading;
+  context.textContent=contextText;
 }
 function updateRoomInfo(){
   const b=roomBounds();
@@ -5227,6 +5265,7 @@ function buildMaterialCatalogPage(){
   $$('#catalogPageList [data-material-page-id]').forEach(button=>button.addEventListener('click',()=>applyMaterialFromCatalog(button.dataset.materialPageId)));
   $$('#catalogPageList [data-remove-material]').forEach(button=>button.addEventListener('click',()=>removeCustomMaterial(button.dataset.removeMaterial)));
   icons();
+  updateObjectInfoPanel();
 }
 function projectDateLabel(value){
   const date=new Date(value);
@@ -5256,6 +5295,7 @@ function buildProjectsPage(){
     if(!deleteProjectFromLibrary(record.id))toast('Не удалось удалить проект',true);
   }));
   icons();
+  updateObjectInfoPanel();
 }
 function openSavedProject(id){
   const record=readProjectLibrary().find(item=>item.id===String(id));
@@ -5325,8 +5365,7 @@ function setPage(page){
   appPage=page;document.body.dataset.page=page;
   $$('#workspaceNav .workspace-nav-item').forEach(button=>{if(workspaceNavButtonIsActive(button,page))button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
   const canvasPage=page==='plan'||page==='calculations';
-  const catalogControls=$('#catalogControls'),center=$('#center');
-  if(catalogControls)catalogControls.hidden=!canvasPage;
+  const center=$('#center');
   if(center)center.hidden=!canvasPage;
   $('#catalogPage').hidden=page!=='catalog';
   $('#statementsPage').hidden=page!=='statements';
@@ -5334,9 +5373,6 @@ function setPage(page){
   $('#calculationIntro').hidden=page!=='calculations';
   $('#materialPanel').hidden=page!=='calculations';
   $$('[data-page-context="plan"]').forEach(el=>{el.hidden=page!=='plan';});
-  $('#viewSeg').hidden=!canvasPage;
-  $('#btnTemplates').hidden=page!=='plan';
-  $('#fireToggle').hidden=page!=='plan';
   $('#btnCatalogToggle').hidden=false;
   if(page==='calculations'){
     if(state.mode!=='materials'){lastPlanMode=state.mode;setMode('materials');}
@@ -5446,7 +5482,6 @@ function initRest(){
     if(state.fire&&!exitPoints().length)toast('Выходов не найдено — инструмент «Эвакуационный выход» на внешней стене',true);
     else toast(state.fire?'Показаны ориентировочные направления к выходам':'Направления к выходам скрыты');
   });
-  $('#btnExport').addEventListener('click',openExport);
   $('#exDl').addEventListener('click',downloadPdf);
   $('#exJson').addEventListener('click',downloadDataJson);
   $('#exCsv').addEventListener('click',downloadDataCsv);

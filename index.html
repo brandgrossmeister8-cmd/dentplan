@@ -493,7 +493,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       <p class="ul-hint" id="toolHint" hidden></p>
       <div id="wallLegend" hidden role="note" aria-label="Как выбрать элемент стены">
         <strong>1 · Выбор и перенос</strong>
-        <span>Обе кнопки рисуют прямой сегмент, но тип стены различается: внутренняя перегородка или наружная стена. Линия стены — стена · дуга или значок двери/эвакуационного проёма — проём · линия окна — окно. Выбранное подсвечивается красным, карточка с типом появляется снизу. Между проёмами выбирается стена.</span>
+        <span>Обе кнопки рисуют прямой сегмент, но тип стены различается: внутренняя перегородка или наружная стена. Линия стены — стена · дуга двери, значок эвакуационного или обычного проёма — проём · линия окна — окно. Выбранное подсвечивается красным, карточка с типом появляется снизу. Между проёмами выбирается стена.</span>
       </div>
     </div>
 
@@ -534,6 +534,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       <div class="room-row"><span class="ul-lbl">Высота двери</span><input type="number" id="calcDoorHeight" min="0.5" max="4" step="0.1" value="2.1" aria-label="Высота двери, метры"><span class="val"> м</span></div>
       <div class="room-row"><span class="ul-lbl">Высота эвак.</span><input type="number" id="calcEvacHeight" min="0.5" max="4" step="0.1" value="2.1" aria-label="Высота эвакуационного проёма, метры"><span class="val"> м</span></div>
       <div class="room-row"><span class="ul-lbl">Высота окна</span><input type="number" id="calcWindowHeight" min="0.5" max="4" step="0.1" value="1.5" aria-label="Высота окна, метры"><span class="val"> м</span></div>
+      <div class="room-row"><span class="ul-lbl">Высота обычного проёма</span><input type="number" id="calcOpeningHeight" min="0.5" max="4" step="0.1" value="2.1" aria-label="Высота обычного проёма, метры"><span class="val"> м</span></div>
       <p class="ul-hint">Допустимые диапазоны: стены 2–6 м, проёмы 0,5–4 м. Это геометрический расчёт, а не нормативное заключение.</p>
     </div>
 
@@ -672,8 +673,9 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
         <button data-tool="door" title="Дверь: клик по стене — 4" aria-label="Добавить дверь"><i data-lucide="door-open"></i></button>
         <button data-tool="window" title="Окно: клик по стене — 5" aria-label="Добавить окно"><i data-lucide="blinds"></i></button>
         <button data-tool="evac" title="Эвакуационный выход — 6" aria-label="Добавить выход"><i data-lucide="door-closed"></i></button>
+        <button data-tool="opening" title="Обычный проём: клик по стене — 7" aria-label="Добавить обычный проём"><i data-lucide="square-dashed"></i></button>
         <span class="wt-div"></span>
-        <button data-tool="erase" title="Стереть: клик по стене / проёму / узлу — 7" aria-label="Стереть элемент"><i data-lucide="eraser"></i></button>
+        <button data-tool="erase" title="Стереть: клик по стене / проёму / узлу — 8" aria-label="Стереть элемент"><i data-lucide="eraser"></i></button>
       </div>
       <canvas id="plan2d"></canvas>
       <svg id="evacSvg"></svg>
@@ -1229,7 +1231,7 @@ function setCurrentProjectName(value,dirty=false){
 const state={
   profile:'dental',
   room:{w:12,d:9},
-  calculation:{wallHeightM:3,openingHeightsM:{door:2.1,evac:2.1,window:1.5}},
+  calculation:{wallHeightM:3,openingHeightsM:{door:2.1,evac:2.1,window:1.5,opening:2.1}},
   nodes:[],walls:[],openings:[],
   items:[],seq:1,sel:null,
   mode:'items',tool:'select',selObj:null,
@@ -1329,7 +1331,7 @@ function openingHitDistance(op,point){
   const along=dx*g.ux+dz*g.uz;
   const lateral=Math.abs(dx*(-g.uz)+dz*g.ux);
   const span=Math.max(0,Math.abs(along-center)-op.w/2);
-  const visualDepth=op.kind==='window'?.12:op.w+.08;
+  const visualDepth=(op.kind==='window'||op.kind==='opening')?.12:op.w+.08;
   const depth=Math.max(0,lateral-visualDepth);
   return Math.hypot(span,depth);
 }
@@ -1394,12 +1396,12 @@ function doorPose(wall,t,width,rot,g2){
   return{g:geo,rot:r,center,hinge,endHinge,closedAngle,leafEnd};
 }
 function toggleDoorHingeSide(op){
-  if(!op||op.kind==='window')return false;
+  if(!op||op.kind==='window'||op.kind==='opening')return false;
   op.hingeSide=doorState(op).hingeSide==='right'?'left':'right';
   return true;
 }
 function toggleDoorOpeningDirection(op){
-  if(!op||op.kind==='window')return false;
+  if(!op||op.kind==='window'||op.kind==='opening')return false;
   op.openingDirection=doorState(op).openingDirection==='outside'?'inside':'outside';
   op.flip=op.openingDirection==='outside';
   return true;
@@ -1436,7 +1438,7 @@ function openingMarkerPoint(wall,g2,op){
 }
 function rotateOpeningHalfTurn(op){
   const changed=rotateOpening(op,Math.PI);
-  if(changed&&op&&op.kind!=='window')toggleDoorHingeSide(op);
+  if(changed&&op&&op.kind!=='window'&&op.kind!=='opening')toggleDoorHingeSide(op);
   return changed;
 }
 function selectOpening(op){
@@ -1608,7 +1610,7 @@ function alignWallToPerpendicular(w){
   return true;
 }
 const WALL_HOVER_LABELS={outer:'Наружная стена',inner:'Перегородка'};
-const OPENING_HOVER_LABELS={door:'Дверь',window:'Окно',evac:'Эвакуационный проём'};
+const OPENING_HOVER_LABELS={door:'Дверь',window:'Окно',evac:'Эвакуационный проём',opening:'Обычный проём'};
 function wallHoverLabel(opening,wall){
   if(opening)return OPENING_HOVER_LABELS[opening.kind]||'Проём';
   if(wall)return WALL_HOVER_LABELS[wall.kind]||'Стена';
@@ -1617,7 +1619,7 @@ function wallHoverLabel(opening,wall){
 function openingVisualColor(kind,selected,hovered){
   if(selected)return SELECT_COLOR;
   if(hovered)return '#D97706';
-  return kind==='evac'?'#1F9D55':(kind==='window'?'#5B7A8C':'#26241F');
+  return kind==='evac'?'#1F9D55':(kind==='window'?'#5B7A8C':(kind==='opening'?'#8B5E3C':'#26241F'));
 }
 function openingHoverActive(wallsMode,opening,hovered){
   return !!(wallsMode&&opening&&hovered&&opening.id===hovered.id);
@@ -1816,7 +1818,7 @@ function materialCalculation(source){
   const wallHeight=Number(c.wallHeightM);const h=Number.isFinite(wallHeight)?clamp(wallHeight,2,6):3;
   const sourceHeights=c.openingHeightsM&&typeof c.openingHeightsM==='object'?c.openingHeightsM:{};
   const heightFor=kind=>{const fallback=kind==='window'?1.5:2.1;const value=Number(sourceHeights[kind]);return Number.isFinite(value)?clamp(value,.5,4):fallback;};
-  return{wallHeightM:h,openingHeightsM:{door:heightFor('door'),evac:heightFor('evac'),window:heightFor('window')}};
+  return{wallHeightM:h,openingHeightsM:{door:heightFor('door'),evac:heightFor('evac'),window:heightFor('window'),opening:heightFor('opening')}};
 }
 function materialNodeMap(source){
   return new Map((source&&Array.isArray(source.nodes)?source.nodes:[]).map(node=>[String(node.id),{x:Number(node.x)||0,z:Number(node.z)||0}]));
@@ -2150,10 +2152,10 @@ function openTag(g,x,y,text,col,bg){
 }
 
 function glyphOpening(g,X,Y,fit,wall,g2,t,width,kind,flip,selected,rot,hovered,hingeSide,openingDirection){
-  const isEvac=kind==='evac',isWin=kind==='window';
+  const isWin=kind==='window',isPlain=kind==='opening';
   const col=openingVisualColor(kind,selected,hovered);
   const s=t*g2.len;
-  if(!isWin){
+  if(!isWin&&!isPlain){
     const door=openingDoorGeometry(wall,g2,{t,width,w:width,kind,flip,rot,hingeSide,openingDirection});
     const hinge=door.hinge,a1=door.a1,a2=door.a2,cross=door.cross;
     g.strokeStyle=col;g.lineWidth=1.3;
@@ -2166,6 +2168,10 @@ function glyphOpening(g,X,Y,fit,wall,g2,t,width,kind,flip,selected,rot,hovered,h
     const h2={x:g2.A.x+g2.ux*s+ux*width/2,z:g2.A.z+g2.uz*s+uz*width/2};
     g.strokeStyle=col;g.lineWidth=1.2;
     g.beginPath();g.moveTo(X(h1.x),Y(h1.z));g.lineTo(X(h2.x),Y(h2.z));g.stroke();
+    if(isPlain){
+      const nx=-uz,nz=ux,tick=.12;
+      [h1,h2].forEach(h=>{g.beginPath();g.moveTo(X(h.x-nx*tick/2),Y(h.z-nz*tick/2));g.lineTo(X(h.x+nx*tick/2),Y(h.z+nz*tick/2));g.stroke();});
+    }
   }
 }
 
@@ -2298,11 +2304,11 @@ function drawPlan(g,W,H,opts={}){
       g.strokeStyle=col;g.lineWidth=1.5;
       g.beginPath();g.rect(X(cc.x)-sz,Y(cc.z)-sz,sz*2,sz*2);g.fill();g.stroke();
     }
-    if(w.kind==='outer'&&!opts.plain&&(o.kind==='door'||o.kind==='evac')){
+    if(w.kind==='outer'&&!opts.plain&&(o.kind==='door'||o.kind==='evac'||o.kind==='opening')){
       const n=interiorNormal(w);
       g.fillStyle=o.kind==='evac'?'#1F9D55':'#26241F';
       g.font='600 9px "IBM Plex Mono",monospace';g.textAlign='center';
-      g.fillText(o.kind==='evac'?'ЭВАК. ВЫХОД':'ВХОД',X(cc.x+n.x*.55),Y(cc.z+n.z*.55)+3);
+      g.fillText(o.kind==='evac'?'ЭВАК. ВЫХОД':o.kind==='opening'?'ПРОЁМ':'ВХОД',X(cc.x+n.x*.55),Y(cc.z+n.z*.55)+3);
       g.textAlign='left';
     }
   });
@@ -2817,7 +2823,7 @@ function initUnderlay(){
 }
 
 /* ═══════════════ ПРОЕКТ ═══════════════ */
-const CALCULATION_DEFAULTS={wallHeightM:3,openingHeightsM:{door:2.1,evac:2.1,window:1.5}};
+const CALCULATION_DEFAULTS={wallHeightM:3,openingHeightsM:{door:2.1,evac:2.1,window:1.5,opening:2.1}};
 const CALCULATION_LIMITS={wallHeightM:[2,6],openingHeightM:[.5,4]};
 const PROJECT_LIMITS={nodes:500,walls:500,openings:1000,items:500,underlayBytes:25*1024*1024};
 const finiteNumber=v=>typeof v==='number'&&Number.isFinite(v);
@@ -2829,7 +2835,7 @@ function calculationError(c){
   if(wall!==undefined&&(!finiteNumber(wall)||wall<CALCULATION_LIMITS.wallHeightM[0]||wall>CALCULATION_LIMITS.wallHeightM[1]))return 'Некорректная высота стен';
   if(c.openingHeightsM!==undefined&&(typeof c.openingHeightsM!=='object'||Array.isArray(c.openingHeightsM)))return 'В файле повреждены высоты проёмов';
   const heights=c.openingHeightsM||{};
-  for(const kind of ['door','evac','window']){
+  for(const kind of ['door','evac','window','opening']){
     const v=heights[kind];
     if(v!==undefined&&(!finiteNumber(v)||v<CALCULATION_LIMITS.openingHeightM[0]||v>CALCULATION_LIMITS.openingHeightM[1]))return 'Некорректная высота проёма';
   }
@@ -2854,7 +2860,8 @@ function normalizeCalculationSettings(c){
   return{wallHeightM:src.wallHeightM===undefined?CALCULATION_DEFAULTS.wallHeightM:+src.wallHeightM,
     openingHeightsM:{door:h.door===undefined?CALCULATION_DEFAULTS.openingHeightsM.door:+h.door,
       evac:h.evac===undefined?CALCULATION_DEFAULTS.openingHeightsM.evac:+h.evac,
-      window:h.window===undefined?CALCULATION_DEFAULTS.openingHeightsM.window:+h.window}};
+      window:h.window===undefined?CALCULATION_DEFAULTS.openingHeightsM.window:+h.window,
+      opening:h.opening===undefined?CALCULATION_DEFAULTS.openingHeightsM.opening:+h.opening}};
 }
 function validateProjectData(p){
   if(!p||p.app!=='dentplan')return 'Это не файл проекта DentPlan';
@@ -2893,7 +2900,7 @@ function validateProjectData(p){
       const id=String(o&&o.id||'');
       if(!id||id.length>80||openingIds.has(id)||!wallIds.has(String(o.wallId))||
          !finiteNumber(o.t)||o.t<0||o.t>1||!finiteNumber(o.w)||o.w<.5||o.w>3||
-         !['door','evac','window'].includes(o.kind)||
+         !['door','evac','window','opening'].includes(o.kind)||
          (o.hingeSide!==undefined&&!['left','right'].includes(String(o.hingeSide)))||
          (o.openingDirection!==undefined&&!['inside','outside'].includes(String(o.openingDirection)))||
          (o.rot!==undefined&&(!finiteNumber(o.rot)||Math.abs(o.rot)>1000)))return 'В файле повреждены проёмы';
@@ -3013,7 +3020,7 @@ function loadProjectData(p,sourceName='',libraryId=null){
     if(p.layout&&Array.isArray(p.layout.nodes)&&p.layout.walls){
       state.nodes=p.layout.nodes.map(n=>({id:String(n.id),x:+n.x||0,z:+n.z||0}));
       state.walls=p.layout.walls.map(w=>({id:String(w.id),a:String(w.a),b:String(w.b),kind:w.kind==='inner'?'inner':'outer'}));
-      state.openings=(p.layout.openings||[]).map(o=>{const openingDirection=normalizeOpeningDirection(o.openingDirection,o.flip);return{id:String(o.id),wallId:String(o.wallId),t:clamp(+o.t||.5,0,1),w:clamp(+o.w||.9,.5,3),kind:['door','evac','window'].includes(o.kind)?o.kind:'door',flip:openingDirection==='outside',hingeSide:normalizeHingeSide(o.hingeSide),openingDirection,rot:normalizeOpeningRot(o.rot)};});
+      state.openings=(p.layout.openings||[]).map(o=>{const openingDirection=normalizeOpeningDirection(o.openingDirection,o.flip);return{id:String(o.id),wallId:String(o.wallId),t:clamp(+o.t||.5,0,1),w:clamp(+o.w||.9,.5,3),kind:['door','evac','window','opening'].includes(o.kind)?o.kind:'door',flip:openingDirection==='outside',hingeSide:normalizeHingeSide(o.hingeSide),openingDirection,rot:normalizeOpeningRot(o.rot)};});
       let mx=1;state.nodes.forEach(n=>{const v=parseInt(n.id.slice(1));if(v>=mx)mx=v+1;});nid=mx;
       mx=1;state.walls.forEach(w=>{const v=parseInt(w.id.slice(1));if(v>=mx)mx=v+1;});wid=mx;
       mx=1;state.openings.forEach(o=>{const v=parseInt(o.id.slice(1));if(v>=mx)mx=v+1;});oid=mx;
@@ -3303,7 +3310,7 @@ function buildStatic(){
     });
     ops.forEach(op=>{
       const o=op.o;
-      const door=o.kind==='window'?null:openingDoorGeometry(w,geo,o);
+      const door=o.kind==='window'||o.kind==='opening'?null:openingDoorGeometry(w,geo,o);
       const pose=door&&door.pose;
       const openingYaw=geo.ang-normalizeOpeningRot(o.rot);
       const cM={x:geo.A.x+geo.ux*o.t*geo.len,z:geo.A.z+geo.uz*o.t*geo.len};
@@ -3313,6 +3320,9 @@ function buildStatic(){
         staticRoot.add(bx(o.w,.05,th+.04,M.white,cM.x,H-.04,cM.z,openingYaw));
         const gl=bx(o.w-.08,H-.55,.05,M.glass,cM.x,(H-.55)/2+.42,cM.z,openingYaw);
         gl.castShadow=false;staticRoot.add(gl);
+      }else if(o.kind==='opening'){
+        gp.forEach(p=>staticRoot.add(bx(.07,H,th+.03,M.dark,p.x,H/2,p.z,geo.ang)));
+        staticRoot.add(bx(Math.max(.1,o.w-.14,.1),.08,th+.03,M.dark,cM.x,H-.04,cM.z,openingYaw));
       }else{
         gp.forEach(p=>staticRoot.add(bx(.07,H,th+.03,M.dark,p.x,H/2,p.z,geo.ang)));
         const leafW=Math.max(.1,op.e-op.s-.07);
@@ -3601,8 +3611,9 @@ const TOOL_DEF={
   door:{kind:'door',label:'Дверь'},
   window:{kind:'window',label:'Окно'},
   evac:{kind:'evac',label:'Эвакуационный выход'},
+  opening:{kind:'opening',label:'Обычный проём'},
 };
-const toolW={door:.9,window:1.2,evac:1.0};
+const toolW={door:.9,window:1.2,evac:1.0,opening:1.0};
 let hoverNode=null,hoverErase=null,hoverLabel=null,hoverOpening=null,ghost=null,drawState=null,wallDrag=null,resizeDrag=null,liveLabel=null,rotDrag=null,materialDrag=null,justFinishedDrawing=false;
 
 function planCursor(){
@@ -3725,19 +3736,21 @@ function renderWallBar(){
       '<button data-act="split" title="Разделить стену узлом (двойной клик)"><i data-lucide="scissors"></i>Разделить</button>'+
       '<button data-act="door" class="accent" title="Добавить дверь"><i data-lucide="door-open"></i>Дверь</button>'+
       '<button data-act="window" class="accent" title="Добавить окно"><i data-lucide="blinds"></i>Окно</button>'+
+      '<button data-act="opening" class="accent" title="Добавить обычный проём"><i data-lucide="square-dashed"></i>Проём</button>'+
       '<span class="div"></span>'+
       '<button data-act="del" title="Удалить стену (Del / правый клик)"><i data-lucide="trash-2"></i></button>';
   }else{
     const op=state.openings.find(x=>x.id===o.id);
     if(!op){bar.classList.remove('show');return;}
-    const names={door:'Дверь',evac:'Эвак. выход',window:'Окно'};
+    const names={door:'Дверь',evac:'Эвак. выход',window:'Окно',opening:'Обычный проём'};
     const m=openingMetrics(op);
     const pose=doorState(op);
     bar.innerHTML='<span id="wbName">Проём · '+names[op.kind]+'<em>слева '+fmt2(m.left)+' м · ширина '+fmt2(m.width)+' м · справа '+fmt2(m.right)+' м · поворот '+fmt2(m.rot/D2R)+'°</em></span>'+
       '<button data-act="okind" data-k="door" class="'+(op.kind==='door'?'on':'')+'">Дверь</button>'+
       '<button data-act="okind" data-k="evac" class="'+(op.kind==='evac'?'on':'')+'">Эвак.</button>'+
       '<button data-act="okind" data-k="window" class="'+(op.kind==='window'?'on':'')+'">Окно</button>'+
-      (op.kind!=='window'?'<button data-act="hinge" title="Перенести петли на противоположный конец проёма">Петли: '+(pose.hingeSide==='left'?'слева':'справа')+'</button>'+
+      '<button data-act="okind" data-k="opening" class="'+(op.kind==='opening'?'on':'')+'">Проём</button>'+
+      (op.kind!=='window'&&op.kind!=='opening'?'<button data-act="hinge" title="Перенести петли на противоположный конец проёма">Петли: '+(pose.hingeSide==='left'?'слева':'справа')+'</button>'+
         '<button data-act="flip" title="Разворот 180°: сменить направление открывания"><i data-lucide="flip-horizontal"></i>Открывание: '+(pose.openingDirection==='inside'?'внутрь':'наружу')+'</button>':'')+
       '<span class="div"></span>'+
       '<button data-act="left" title="К началу стены: 5 см, Shift — 1 см (клавиша ←)"><i data-lucide="chevron-left"></i></button>'+
@@ -3766,6 +3779,7 @@ function wallBarAct(act,k,fine){
     if(act==='lenplus'||act==='lenminus'){wallResize(w,act==='lenplus'?.1:-.1);}
     if(act==='door'){const op=addOpening(w,.5,toolW.door,'door');if(op){selectOpening(op);selectWallObj(state.selObj);staticDirty=true;refresh();commit();toast('Дверь '+fmt2(toolW.door)+' м добавлена');}}
     if(act==='window'){const op=addOpening(w,.5,toolW.window,'window');if(op){selectOpening(op);selectWallObj(state.selObj);staticDirty=true;refresh();commit();toast('Окно '+fmt2(toolW.window)+' м добавлено');}}
+    if(act==='opening'){const op=addOpening(w,.5,toolW.opening,'opening');if(op){selectOpening(op);selectWallObj(state.selObj);staticDirty=true;refresh();commit();toast('Обычный проём '+fmt2(toolW.opening)+' м добавлен');}}
     if(act==='del'){deleteWall(w);clampItemsToBounds();refresh();selectWallObj(null);commit();toast('Стена удалена');}
   }else{
     const op=state.openings.find(x=>x.id===o.id);if(!op)return;
@@ -3827,7 +3841,7 @@ function initPlan(){
     const s={x:g.A.x+g.ux*(o.t*g.len-o.w/2),z:g.A.z+g.uz*(o.t*g.len-o.w/2)};
     const e={x:g.A.x+g.ux*(o.t*g.len+o.w/2),z:g.A.z+g.uz*(o.t*g.len+o.w/2)};
     let d=distSeg(p,s,e);
-    if(o.kind==='window'){
+    if(o.kind==='window'||o.kind==='opening'){
       const openRot=normalizeOpeningRot(o.rot),baseAngle=Math.atan2(g.uz,g.ux),ux=Math.cos(baseAngle+openRot),uz=Math.sin(baseAngle+openRot);
       const h1={x:g.A.x+g.ux*o.t*g.len-ux*o.w/2,z:g.A.z+g.uz*o.t*g.len-uz*o.w/2};
       const h2={x:g.A.x+g.ux*o.t*g.len+ux*o.w/2,z:g.A.z+g.uz*o.t*g.len+uz*o.w/2};
@@ -4371,8 +4385,8 @@ function initKeys(){
       if(underlay.calibrating){cancelCalib();return;}
       hideCalPop();select(null);selectWallObj(null);closeModals();return;
     }
-    if(state.mode==='walls'&&/^[1-7]$/.test(e.key)){
-      const tools=['select','wall','outer','door','window','evac','erase'];
+    if(state.mode==='walls'&&/^[1-8]$/.test(e.key)){
+      const tools=['select','wall','outer','door','window','evac','opening','erase'];
       setTool(tools[+e.key-1]);return;
     }
     if(state.mode==='walls'){
@@ -4673,12 +4687,12 @@ function buildDataExport(source,catalog,generatedAt){
   const items=(source.items||[]).map((it,i)=>{const c=catalog[it.type]||{},rot=roundExport(+it.rot||0,6);return{id:String(it.id||'item-'+(i+1)),type:String(it.type),name:c.name||String(it.type),x:roundExport(+it.x||0),z:roundExport(+it.z||0),rot,rotationDeg:roundExport(rot*180/Math.PI),sizeM:{width:roundExport(+c.w||0),depth:roundExport(+c.d||0)}};});
   const count=k=>openings.filter(o=>o.kind===k).length;
   const guidance=projectProfile==='dental'?{applicability:'preliminary',reviewedAt:'2026-09-09',recommendations:['Проверить функциональное зонирование и состав помещений по СП 158.13330.2014 с изменением № 5.','Проверить санитарную эксплуатацию по СП 2.1.3678-20 с изменением от 20.03.2024.','Проверить эвакуацию, доступность и все численные параметры у профильных специалистов.'],sources:[{title:'Каталог Минстроя: запись об изменении № 5 к СП 158.13330.2014',url:'https://minstroyrf.gov.ru/docs/?PAGEN_1=8',publishedAt:'2024-12-28',sourceType:'official-catalog-entry'},{title:'Официальное опубликование: изменение СП 2.1.3678-20 от 20.03.2024',url:'https://publication.pravo.gov.ru/document/0001202407120010',publishedAt:'2024-07-12',publicationId:'0001202407120010'}]}:{applicability:'not-applicable',recommendations:[]};
-  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),projectProfile,units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,guidance,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM,openingHeightM:{...openingHeightsM}}},walls,openings},materials:materialStatements(source),counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
+  return{schema:DATA_EXPORT_SCHEMA,version:DATA_EXPORT_VERSION,generatedAt:generatedAt||new Date().toISOString(),projectProfile,units:{length:'m',area:'m2',rotation:'rad',displayAngle:'deg'},reportType:'geometry-and-equipment',normativeConclusion:null,guidance,layout:{dimensions,contour:{status:contourStatus,points:contourNodes.map(n=>({id:n.id,x:n.x,z:n.z}))},floorAreaM2,wallArea:{grossM2:roundExport(gross),openingsM2:roundExport(deductions),netM2:roundExport(Math.max(0,gross-deductions)),assumptions:{wallHeightM,openingHeightM:{...openingHeightsM}}},walls,openings},materials:materialStatements(source),counts:{doors:count('door'),windows:count('window'),evacuationOpenings:count('evac'),ordinaryOpenings:count('opening'),equipment:items.length,cameras:items.filter(i=>i.type==='camera').length},items};
 }
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function dataExportToCsv(data){
   const assumptions=data.layout.wallArea.assumptions;
-  const rows=[['# calculation','wallHeightM',assumptions.wallHeightM,'doorHeightM',assumptions.openingHeightM.door,'evacHeightM',assumptions.openingHeightM.evac,'windowHeightM',assumptions.openingHeightM.window],['recordType','id','type','name','xM','zM','angleDeg','widthM','depthM','lengthM','heightM','wallId','hingeSide','openingDirection'],['meta','project-profile',data.projectProfile,'','','','','','','','','','','']];
+  const rows=[['# calculation','wallHeightM',assumptions.wallHeightM,'doorHeightM',assumptions.openingHeightM.door,'evacHeightM',assumptions.openingHeightM.evac,'windowHeightM',assumptions.openingHeightM.window,'openingHeightM',assumptions.openingHeightM.opening],['recordType','id','type','name','xM','zM','angleDeg','widthM','depthM','lengthM','heightM','wallId','hingeSide','openingDirection'],['meta','project-profile',data.projectProfile,'','','','','','','','','','','']];
   if(data.projectProfile==='dental')data.guidance.recommendations.forEach((text,i)=>rows.push(['guidance','dental-'+(i+1),'preliminary',text,'','','','','','','','']));
   data.layout.walls.forEach(w=>rows.push(['wall',w.id,w.kind,'',w.start.x,w.start.z,w.angleDeg,'','',w.lengthM,w.heightM,'','','']));
   data.layout.openings.forEach(o=>rows.push(['opening',o.id,o.kind,'',o.center.x,o.center.z,o.rotationDeg,o.widthM,'','',o.heightM,o.wallId,o.hingeSide||'left',o.openingDirection||'inside']));
@@ -4775,8 +4789,8 @@ function buildSheet(){
       const contour=data.layout.contour.status==='closed'?'замкнут':'не замкнут';
       g.fillText('Габариты: '+(dims.widthM??'—')+' × '+(dims.depthM??'—')+' м · контур: '+contour,66,1058);
       const ah=wa.assumptions.openingHeightM;
-      g.fillText('Площадь стен без проёмов: '+fmtM(wa.netM2)+' м² · стена: '+fmtM(wa.assumptions.wallHeightM)+' м · дверь: '+fmtM(ah.door)+' м · эвак.: '+fmtM(ah.evac)+' м · окно: '+fmtM(ah.window)+' м',66,1082);
-      g.fillText('Двери: '+cnt.doors+' · окна: '+cnt.windows+' · эвак. проёмы: '+cnt.evacuationOpenings+' · оборудование: '+cnt.equipment+' · камеры: '+cnt.cameras,66,1106);
+      g.fillText('Площадь стен без проёмов: '+fmtM(wa.netM2)+' м² · стена: '+fmtM(wa.assumptions.wallHeightM)+' м · дверь: '+fmtM(ah.door)+' м · эвак.: '+fmtM(ah.evac)+' м · окно: '+fmtM(ah.window)+' м · обычный проём: '+fmtM(ah.opening)+' м',66,1082);
+      g.fillText('Двери: '+cnt.doors+' · окна: '+cnt.windows+' · эвак. проёмы: '+cnt.evacuationOpenings+' · обычные проёмы: '+cnt.ordinaryOpenings+' · оборудование: '+cnt.equipment+' · камеры: '+cnt.cameras,66,1106);
       const material=data.materials&&data.materials.materials&&data.materials.materials[0];
       if(material){const materialBasis=material.calculationMode==='piece'?'проёмов: '+material.quantity+' '+(material.quantityUnit||'шт.') :fmtM(data.materials.selection.areaM2)+' м²';g.fillText('Материалы: '+material.name+' · '+materialBasis+' · к покупке: '+material.purchaseUnits+' '+material.unit+' · ориентир: '+materialMoney(material.cost)+' ₽',66,1132);}
       g.fillStyle='#8B8371';g.font='11px "IBM Plex Sans",sans-serif';
@@ -4873,7 +4887,7 @@ function initModes(){
 }
 function updateCalculationUI(){
   const c=normalizeCalculationSettings(state.calculation);
-  const fields={calcWallHeight:c.wallHeightM,calcDoorHeight:c.openingHeightsM.door,calcEvacHeight:c.openingHeightsM.evac,calcWindowHeight:c.openingHeightsM.window};
+  const fields={calcWallHeight:c.wallHeightM,calcDoorHeight:c.openingHeightsM.door,calcEvacHeight:c.openingHeightsM.evac,calcWindowHeight:c.openingHeightsM.window,calcOpeningHeight:c.openingHeightsM.opening};
   Object.entries(fields).forEach(([id,v])=>{const el=$('#'+id);if(el)el.value=v;});
 }
 function setCalculationSetting(key,value){
@@ -5185,6 +5199,7 @@ function initCalculation(){
   $('#calcDoorHeight').addEventListener('change',e=>setCalculationSetting('door',Number(e.target.value)));
   $('#calcEvacHeight').addEventListener('change',e=>setCalculationSetting('evac',Number(e.target.value)));
   $('#calcWindowHeight').addEventListener('change',e=>setCalculationSetting('window',Number(e.target.value)));
+  $('#calcOpeningHeight').addEventListener('change',e=>setCalculationSetting('opening',Number(e.target.value)));
 }
 function initRoom(){
   $('#roomW').addEventListener('input',e=>{$('#roomWv').textContent=fmtM(+e.target.value)+' м';});

@@ -64,6 +64,7 @@ assert.match(html, /id="calcWallHeight"/, 'В интерфейсе должна 
 assert.match(html, /id="calcDoorHeight"/, 'В интерфейсе должна быть высота дверей');
 assert.match(html, /id="calcEvacHeight"/, 'В интерфейсе должна быть высота эвакуационных проёмов');
 assert.match(html, /id="calcWindowHeight"/, 'В интерфейсе должна быть высота окон');
+assert.match(html, /id="calcOpeningHeight"/, 'В интерфейсе должна быть высота обычных проёмов');
 assert.match(html, /calculation:normalizeCalculationSettings\(state\.calculation\)/, 'Настройки расчёта должны сохраняться в JSON проекта');
 assert.match(html, /const loadedCalculation=normalizeCalculationSettings\(p\.calculation\)/, 'Настройки должны загружаться до замены проекта');
 assert.match(html, /function openingMetrics\(/, 'Геометрия проёма должна иметь единый расчёт размеров');
@@ -102,7 +103,7 @@ assert.match(html, /function toggleDoorHingeSide\(/, 'Сторону петел�
 assert.match(html, /function toggleDoorOpeningDirection\(/, 'Направление открывания нужно переключать отдельно');
 assert.match(html, /function openingDoorGeometry\(/, 'Геометрия двери должна учитывать петли и направление');
 assert.match(html, /const door=openingDoorGeometry\(wall,g2,\{[\s\S]*?hingeSide,openingDirection\}\)/, '2D-дуга должна использовать выбранную сторону петель и направление');
-assert.match(html, /const door=o\.kind==='window'\?null:openingDoorGeometry\(w,geo,o\)/, '3D-дверь должна использовать ту же геометрию');
+assert.match(html, /const door=o\.kind==='window'\|\|o\.kind==='opening'\?null:openingDoorGeometry\(w,geo,o\)/, '3D-дверь должна использовать общую геометрию только для дверных типов');
 assert.match(html, /data-act="hinge"[^>]*>[^<]*Петли:/, 'Карточка двери должна показывать сторону петель');
 assert.match(html, /data-act="flip"[^>]*>[\s\S]*?Открывание:/, 'Карточка двери должна показывать направление открывания');
 assert.match(html, /if\(act==='hinge'\)[\s\S]*?toggleDoorHingeSide\(op\)/, 'Кнопка петель должна менять только сторону крепления');
@@ -177,7 +178,7 @@ assert.match(html, /id="wallLegend"[^>]*aria-label="Как выбрать эле
 assert.match(html, /#wallLegend\{display:block;margin-top:8px;/, 'Легенда выбора должна занимать место в каталоге, а не перекрывать план');
 assert.match(html, /<p class="ul-hint" id="toolHint" hidden><\/p>\s*<div id="wallLegend"/, 'Легенда выбора должна находиться рядом с подсказкой режима стен');
 assert.match(html, /Линия стены — стена/, 'Легенда должна объяснять выбор стены по линии');
-assert.match(html, /дуга или значок двери\/эвакуационного проёма — проём/, 'Легенда должна объяснять выбор двери и эвакуационного проёма');
+assert.match(html, /дуга двери, значок эвакуационного или обычного проёма — проём/, 'Легенда должна объяснять выбор всех типов проёмов');
 assert.match(html, /линия окна — окно/, 'Легенда должна объяснять выбор окна по линии');
 assert.match(html, /Выбранное подсвечивается красным, карточка с типом/, 'Легенда должна объяснять подтверждение выбора');
 assert.match(html, /\$\('#wallLegend'\)\.hidden=m!==['"]walls['"]/, 'Легенда должна показываться только в режиме стен');
@@ -245,6 +246,10 @@ assert.match(html, /subgroup:'Межкомнатные двери'/, 'В кат�
 assert.match(html, /subgroup:'Оконные блоки'/, 'В каталоге должна быть подкатегория оконных блоков');
 assert.match(html, /calculationMode:'piece'/, 'Двери и оконные блоки должны иметь поштучный режим расчёта');
 assert.match(html, /pieceKind:'window'/, 'Для оконного блока должен сохраняться тип проёма');
+assert.match(html, /data-tool="opening"/, 'На плане должна быть отдельная кнопка обычного проёма');
+assert.match(html, /Обычный проём/, 'Обычный проём должен быть явно назван в интерфейсе');
+assert.match(html, /opening:\{kind:'opening',label:'Обычный проём'\}/, 'Обычный проём должен иметь отдельный инструмент');
+assert.match(html, /openingHeightsM:\{door:2\.1,evac:2\.1,window:1\.5,opening:2\.1\}/, 'Для обычного проёма должна сохраняться отдельная высота');
 assert.match(html, /petrovich\.ru\/catalog\/10050\//, 'Для дверей должен сохраняться источник Петровича');
 assert.match(html, /petrovich\.ru\/catalog\/15635\//, 'Для окон должен сохраняться источник Петровича');
 assert.match(html, /materialCustomSubgroup/, 'Пользовательская позиция должна принимать подкатегорию');
@@ -451,7 +456,7 @@ assert.equal(dataExport.schema, 'dentplan-data-export');
 assert.equal(dataExport.layout.contour.status, 'closed');
 assert.equal(dataExport.layout.floorAreaM2, 12);
 assert.equal(dataExport.layout.wallArea.netM2, 36);
-assert.deepEqual(JSON.parse(JSON.stringify(dataExport.counts)), { doors: 1, windows: 1, evacuationOpenings: 1, equipment: 1, cameras: 0 });
+assert.deepEqual(JSON.parse(JSON.stringify(dataExport.counts)), { doors: 1, windows: 1, evacuationOpenings: 1, ordinaryOpenings: 0, equipment: 1, cameras: 0 });
 assert.equal(dataExport.items[0].rotationDeg, 90);
 assert.equal(dataExport.items[0].rot, 1.570796);
 assert.deepEqual(JSON.parse(JSON.stringify(dataExport.items[0].sizeM)), { width: 1.4, depth: 1.9 });
@@ -462,12 +467,20 @@ assert.equal(dataExport.layout.openings[0].openingDirection, 'inside', 'Выгр
 assert.equal(dataExport.layout.openings[0].flip, false, 'Legacy flip должен совпадать с направлением открывания');
 assert.match(exportSandbox.dataExportToCsv(dataExport), /item,i1,chair/);
 assert.match(exportSandbox.dataExportToCsv(dataExport), /opening,o1,door,[^\n]*,30,/, 'CSV должен содержать угол проёма');
+const ordinaryExport = exportSandbox.buildDataExport({
+  ...exportState,
+  openings: [...exportState.openings, { id: 'o4', wallId: 'w4', t: 0.5, w: 0.8, kind: 'opening' }],
+  calculation: { wallHeightM: 3, openingHeightsM: { door: 2.1, evac: 2.1, window: 1.5, opening: 2.4 } },
+}, exportCatalog, '2026-09-08T00:00:00.000Z');
+assert.equal(ordinaryExport.counts.ordinaryOpenings, 1, 'Экспорт должен считать обычные проёмы отдельно');
+assert.equal(ordinaryExport.layout.openings.find(o => o.id === 'o4').heightM, 2.4, 'Для обычного проёма должна экспортироваться его высота');
+assert.match(exportSandbox.dataExportToCsv(ordinaryExport), /opening,o4,opening/, 'Обычный проём должен попадать в CSV');
 const materialSource = {
   room: { w: 4, d: 3 },
   nodes: exportState.nodes,
   walls: exportState.walls,
   openings: [exportState.openings[0]],
-  calculation: { wallHeightM: 3, openingHeightsM: { door: 2.1, evac: 2.1, window: 1.5 } },
+  calculation: { wallHeightM: 3, openingHeightsM: { door: 2.1, evac: 2.1, window: 1.5, opening: 2.1 } },
   materials: { scope: 'walls', wallIds: ['w1', 'w2'], materialId: 'paint-interior', wastePct: 10 },
 };
 const materialStatements = exportSandbox.materialStatements(materialSource, materialCatalogFixture);
@@ -553,10 +566,10 @@ assert.equal(customSettings.customCatalog[0].consumptionPerM2, 0.25, 'Польз
 const customStatements = exportSandbox.materialStatements({ ...materialSource, materials: { ...materialSource.materials, ...customSettings } });
 assert.equal(customStatements.materials[0].id, customMaterial.id, 'Расчёт должен разрешать пользовательский материал');
 assert.equal(customStatements.totalCost, 500, 'Пользовательская цена и фасовка должны участвовать в расчёте');
-const tunedExport=exportSandbox.buildDataExport({...exportState,calculation:{wallHeightM:4,openingHeightsM:{door:2,evac:3,window:1}}},exportCatalog,'2026-09-08T00:00:00.000Z');
+const tunedExport=exportSandbox.buildDataExport({...exportState,calculation:{wallHeightM:4,openingHeightsM:{door:2,evac:3,window:1,opening:2.5}}},exportCatalog,'2026-09-08T00:00:00.000Z');
 assert.equal(tunedExport.layout.wallArea.netM2,49.8,'Площадь стен должна меняться от настроек');
-assert.deepEqual(JSON.parse(JSON.stringify(tunedExport.layout.wallArea.assumptions)),{wallHeightM:4,openingHeightM:{door:2,evac:3,window:1}});
-assert.match(exportSandbox.dataExportToCsv(tunedExport), /# calculation,wallHeightM,4,doorHeightM,2,evacHeightM,3,windowHeightM,1/);
+assert.deepEqual(JSON.parse(JSON.stringify(tunedExport.layout.wallArea.assumptions)),{wallHeightM:4,openingHeightM:{door:2,evac:3,window:1,opening:2.5}});
+assert.match(exportSandbox.dataExportToCsv(tunedExport), /# calculation,wallHeightM,4,doorHeightM,2,evacHeightM,3,windowHeightM,1,openingHeightM,2.5/);
 assert.equal(dataExport.projectProfile, 'dental', 'Старое состояние без профиля экспортируется как dental');
 assert.match(exportSandbox.dataExportToCsv(dataExport), /meta,project-profile,dental/);
 const generalExport = exportSandbox.buildDataExport({ ...exportState, profile: 'general' }, exportCatalog, '2026-09-08T00:00:00.000Z');
@@ -606,9 +619,18 @@ const validProject = {
   brand: '#0E7C7B',
 };
 assert.equal(sandbox.validateProjectData(validProject), null, 'Корректный проект должен приниматься');
-assert.deepEqual(JSON.parse(JSON.stringify(sandbox.normalizeCalculationSettings())), {wallHeightM:3,openingHeightsM:{door:2.1,evac:2.1,window:1.5}}, 'Старый проект без настроек должен открываться со старыми значениями');
+assert.deepEqual(JSON.parse(JSON.stringify(sandbox.normalizeCalculationSettings())), {wallHeightM:3,openingHeightsM:{door:2.1,evac:2.1,window:1.5,opening:2.1}}, 'Старый проект без настроек должен открываться с настройками обычного проёма по умолчанию');
 assert.equal(sandbox.validateProjectData({...validProject,calculation:{wallHeightM:1.9}}), 'Некорректная высота стен');
 assert.equal(sandbox.validateProjectData({...validProject,calculation:{openingHeightsM:{window:4.1}}}), 'Некорректная высота проёма');
+assert.equal(
+  sandbox.validateProjectData({
+    ...validProject,
+    calculation: { openingHeightsM: { opening: 2.4 } },
+    layout: { ...validProject.layout, openings: [{ id: 'o1', wallId: 'w1', t: 0.5, w: 0.8, kind: 'opening' }] },
+  }),
+  null,
+  'Обычный проём должен приниматься в сохранённом проекте',
+);
 assert.equal(sandbox.validateProjectData({ ...validProject, profile: 'dental' }), null);
 assert.equal(sandbox.validateProjectData({ ...validProject, profile: 'general' }), null);
 assert.equal(
@@ -685,7 +707,7 @@ const engine = {
   fmt2: value => Number(value).toFixed(2).replace('.', ','),
 };
 vm.runInNewContext(`${engineSection}\nthis.api={state,addNode,addWall,addOpening,openingMetrics,openingFits,openingHitDistance,openingMarkerPoint,openingHoverActive,shouldPrioritizeOpeningHit,angleDeviation,angleHintForNode,angleCorrectionText,angleHintText,translateWall,moveOpeningTo,deleteWall,deleteOpening,deleteSelectedOpening,selectOpening,wallHoverLabel,openingVisualColor,pointNearOpeningArc,wallNeighborDistances,wallNeighborDistanceText,wallMotionAxis,wallClearance,wallClearanceText,alignWallToPerpendicular,normalizeOpeningRot,rotateOpening,rotateOpeningHalfTurn,doorPose,doorState,normalizeHingeSide,normalizeOpeningDirection,toggleDoorHingeSide,toggleDoorOpeningDirection,openingWallNormal,doorSwingSign,openingDoorGeometry,wallGeom,projectPointToWall,wallDrawSnapPoint,splitWallAtPoint,shouldFinishDrawingOnDoubleClick};`, engine);
-engine.TOOL_DEF = { door: {}, window: {}, evac: {} };
+engine.TOOL_DEF = { door: {}, window: {}, evac: {}, opening: {} };
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', { id: 'o1' }), true, 'При клике по двери нужно начать её перенос');
 assert.equal(engine.api.shouldPrioritizeOpeningHit('door', null), false, 'Без проёма нужно оставить возможность его добавить');
 assert.equal(engine.api.shouldFinishDrawingOnDoubleClick({ detail: 2 }, { at: 100, x: 20, y: 20 }, { x: 25, y: 23 }, 400), true, 'Двойной клик в той же точке должен завершать рисование');
@@ -696,10 +718,12 @@ assert.equal(engine.api.wallHoverLabel(null, { kind: 'inner' }), 'Перегор
 assert.equal(engine.api.wallHoverLabel({ kind: 'door' }, { kind: 'outer' }), 'Дверь', 'Проём должен иметь приоритет над стеной в hover');
 assert.equal(engine.api.wallHoverLabel({ kind: 'window' }, { kind: 'inner' }), 'Окно');
 assert.equal(engine.api.wallHoverLabel({ kind: 'evac' }, { kind: 'outer' }), 'Эвакуационный проём');
+assert.equal(engine.api.wallHoverLabel({ kind: 'opening' }, { kind: 'inner' }), 'Обычный проём');
 assert.equal(engine.api.wallHoverLabel(null, null), '');
 assert.equal(engine.api.openingVisualColor('door', false, true), '#D97706', 'Дверь при наведении должна выделяться отдельным цветом');
 assert.equal(engine.api.openingVisualColor('window', false, true), '#D97706', 'Окно при наведении должно выделяться тем же контрастом');
 assert.equal(engine.api.openingVisualColor('evac', false, true), '#D97706', 'Эвакуационный проём при наведении должен выделяться тем же контрастом');
+assert.equal(engine.api.openingVisualColor('opening', false, true), '#D97706', 'Обычный проём при наведении должен выделяться тем же контрастом');
 assert.equal(engine.api.openingVisualColor('door', true, true), '#BE4128', 'Выбранная дверь должна оставаться красной поверх hover');
 assert.equal(engine.api.openingHoverActive(true, { id: 'o1' }, { id: 'o1' }), true, 'Дверь должна подсвечиваться при наведении в режиме стен');
 assert.equal(engine.api.openingHoverActive(true, { id: 'o1' }, { id: 'o2' }), false, 'Подсветка не должна переходить на другой проём');
@@ -789,6 +813,15 @@ const nodeHint = engine.api.angleHintForNode(a.id, { x: 0, z: 1 }, null);
 assert.equal(nodeHint.angle, 90, 'Узел с соседней стеной должен давать подсказку');
 const isolated = engine.api.addNode(8, 8);
 assert.equal(engine.api.angleHintForNode(isolated.id, { x: 9, z: 8 }, null), null, 'Без соседней стены нельзя показывать ложную перпендикулярность');
+
+const plainA = engine.api.addNode(0, 6);
+const plainB = engine.api.addNode(4, 6);
+const plainWall = engine.api.addWall(plainA, plainB, 'inner');
+const plainOpening = engine.api.addOpening(plainWall, 0.5, 0.8, 'opening');
+assert.equal(plainOpening.kind, 'opening', 'Обычный проём должен сохраняться отдельным типом');
+assert.equal(engine.api.openingHitDistance(plainOpening, { x: 2, z: 6 }), 0, 'Обычный проём должен попадать в hit-test по линии проёма');
+assert.equal(engine.api.toggleDoorHingeSide(plainOpening), false, 'У обычного проёма не должно быть петель');
+assert.equal(engine.api.toggleDoorOpeningDirection(plainOpening), false, 'У обычного проёма не должно быть направления открывания');
 
 engine.api.state.nodes.length = 0;
 engine.api.state.walls.length = 0;

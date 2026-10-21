@@ -229,6 +229,35 @@ assert.match(html, /data-page="calculations"/, 'Должен быть отдел
 assert.match(html, /data-page="catalog"/, 'Должен быть отдельный раздел каталога');
 assert.match(html, /data-page="statements"/, 'Должен быть отдельный раздел смет');
 assert.match(html, /<span>Сметы<\/span>/, 'Раздел ведомостей должен называться сметами');
+const workspaceNavStart = html.indexOf('<nav class="workspace-nav"');
+const workspaceNavEnd = html.indexOf('</nav>', workspaceNavStart);
+assert(workspaceNavStart >= 0 && workspaceNavEnd > workspaceNavStart, 'Левая навигация должна быть отдельным блоком');
+const workspaceNavHtml = html.slice(workspaceNavStart, workspaceNavEnd);
+const workspaceNavOrder = ['Проекты', 'Планы', 'Расчёты', 'Каталог', 'Сметы'];
+let workspaceNavCursor = -1;
+for (const label of workspaceNavOrder) {
+  const next = workspaceNavHtml.indexOf('>'+label+'<', workspaceNavCursor + 1);
+  assert(next > workspaceNavCursor, `В левой навигации должен быть раздел «${label}» в правильном порядке`);
+  workspaceNavCursor = next;
+}
+assert.match(workspaceNavHtml, /id="btnWorkspaceNavAll"/, 'У левой навигации должна быть общая кнопка сворачивания');
+assert.match(workspaceNavHtml, /class="[^"]*workspace-nav-section[^"]*"[^>]*data-nav-section="projects"/, 'Раздел проектов должен быть сворачиваемым');
+assert.match(workspaceNavHtml, /class="[^"]*workspace-nav-section[^"]*"[^>]*data-nav-section="plan"/, 'Раздел планов должен быть сворачиваемым');
+assert.match(workspaceNavHtml, /class="[^"]*workspace-nav-section[^"]*"[^>]*data-nav-section="calculations"/, 'Раздел расчётов должен быть сворачиваемым');
+assert.match(workspaceNavHtml, /class="[^"]*workspace-nav-section[^"]*"[^>]*data-nav-section="catalog"/, 'Раздел каталога должен быть сворачиваемым');
+assert.match(workspaceNavHtml, /class="[^"]*workspace-nav-section[^"]*"[^>]*data-nav-section="statements"/, 'Раздел смет должен быть сворачиваемым');
+assert.match(workspaceNavHtml, /workspace-nav-section-toggle[^]*aria-expanded=/, 'У разделов должно быть доступное состояние раскрытия');
+assert.match(workspaceNavHtml, /workspace-nav-section-toggle[^]*aria-controls=/, 'Заголовки разделов должны быть связаны с подразделами');
+assert.match(html, /const workspaceSectionOpen=\{/, 'Состояние левой навигации должно жить отдельно от DOM');
+assert.match(html, /function setWorkspaceSectionOpen\(/, 'Раздел навигации должен переключаться отдельно');
+assert.match(html, /function setAllWorkspaceSections\(/, 'У навигации должно быть общее управление разделами');
+assert.match(html, /function refreshWorkspaceNavControls\(/, 'Состояние навигации должно восстанавливаться после переходов');
+assert.match(html, /id="objectInfoPanel"/, 'Справа должна быть отдельная панель информации об объекте');
+assert.match(html, /id="objectInfoTitle"/, 'Панель объекта должна показывать название проекта');
+assert.match(html, /id="objectInfoArea"/, 'Панель объекта должна показывать площадь');
+assert.match(html, /id="objectInfoSelection"/, 'Панель объекта должна показывать текущее выделение');
+assert.match(html, /function updateObjectInfoPanel\(/, 'Информация об объекте должна обновляться отдельной функцией');
+assert.match(html, /updateObjectInfoPanel\(\)/, 'Панель объекта должна обновляться при изменении состояния');
 assert.match(html, /id="catalogPage"/, 'Каталог материалов должен иметь отдельную страницу');
 assert.match(html, /id="statementsPage"/, 'Сметы должны иметь отдельную страницу');
 assert.match(html, /id="materialCatalogSearch"/, 'На странице каталога должен быть поиск материалов');

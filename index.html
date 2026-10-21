@@ -67,24 +67,49 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .sw-custom input{position:absolute;inset:0;opacity:0;cursor:pointer}
 
 #main{display:flex;min-height:0;position:relative}
-#catalog{width:272px;flex:none;background:var(--paper2);border-right:1px solid var(--line);overflow-y:auto;padding:14px 14px 24px}
+#catalog{width:286px;flex:none;background:var(--paper2);border-right:1px solid var(--line);overflow-y:auto;padding:12px 12px 24px}
+#catalogControls{display:block}
 .menu-backdrop{display:none}
 #center{flex:1;display:flex;min-width:0;position:relative}
-.workspace-nav{display:flex;align-items:center;gap:2px;background:var(--oat);border-radius:10px;padding:3px;margin-left:2px}
-.workspace-nav button{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:7px;color:var(--coal2);font-size:12px;font-weight:500;white-space:nowrap;transition:all .15s}
-.workspace-nav button:hover{color:var(--coal);background:rgba(252,250,244,.55)}
-.workspace-nav button.on{background:var(--brand);color:#fff}
-.workspace-nav button svg{width:14px;height:14px}
+.workspace-nav{display:grid;gap:7px;margin:0 0 15px}
+.workspace-nav-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 2px 3px;color:var(--mut);font:600 9px var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.workspace-nav-head button{height:26px;padding:0 7px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--coal2);font:500 9px var(--body);letter-spacing:normal;text-transform:none;white-space:nowrap}
+.workspace-nav-head button:hover{border-color:var(--brand);color:var(--brand)}
+.workspace-nav-section{overflow:hidden;border:1px solid var(--line);border-radius:10px;background:var(--paper);transition:border-color .15s,box-shadow .15s}
+.workspace-nav-section.is-active{border-color:rgba(var(--brand-rgb),.5);box-shadow:0 0 0 2px rgba(var(--brand-rgb),.07)}
+.workspace-nav-section.is-collapsed .workspace-nav-section-items{display:none}
+.workspace-nav-section-toggle{width:100%;display:grid;grid-template-columns:18px minmax(0,1fr) 16px;align-items:center;gap:7px;min-height:42px;padding:7px 9px;text-align:left;color:var(--coal);font:600 13px var(--head);transition:background .15s,color .15s}
+.workspace-nav-section-toggle:hover{background:rgba(var(--brand-rgb),.06);color:var(--brand)}
+.workspace-nav-section-toggle svg{width:15px;height:15px;color:var(--brand)}
+.workspace-nav-section-toggle .nav-chevron{width:13px;height:13px;color:var(--mut);transition:transform .15s}
+.workspace-nav-section:not(.is-collapsed) .nav-chevron{transform:rotate(180deg)}
+.workspace-nav-section-items{display:grid;gap:3px;padding:0 7px 7px}
+.workspace-nav-item{width:100%;display:flex;align-items:center;gap:7px;min-height:32px;padding:6px 8px;border-radius:7px;color:var(--coal2);font-size:11.5px;text-align:left;transition:background .15s,color .15s}
+.workspace-nav-item:hover{background:rgba(var(--brand-rgb),.08);color:var(--coal)}
+.workspace-nav-item.on{background:var(--brand);color:#fff}
+.workspace-nav-item svg{width:14px;height:14px;flex:none}
 .workspace-nav button:focus-visible,.page-toolbar input:focus-visible,.page-toolbar select:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 body[data-page="calculations"] #catalog{width:min(430px,38vw)}
-body[data-page="catalog"] #catalog,body[data-page="catalog"] #center,
-body[data-page="statements"] #catalog,body[data-page="statements"] #center,
-body[data-page="projects"] #catalog,body[data-page="projects"] #center{display:none}
+body[data-page="catalog"] #center,body[data-page="statements"] #center,body[data-page="projects"] #center{display:none}
 body[data-page="catalog"] #statusbar,body[data-page="statements"] #statusbar,body[data-page="projects"] #statusbar{display:none}
 body[data-page="catalog"] #itemBar,body[data-page="catalog"] #wallBar,
 body[data-page="statements"] #itemBar,body[data-page="statements"] #wallBar,
 body[data-page="projects"] #itemBar,body[data-page="projects"] #wallBar{display:none!important}
 .workspace-page{min-width:0;flex:1;overflow:auto}
+#objectInfoPanel{width:286px;flex:none;overflow-y:auto;padding:16px 14px 24px;border-left:1px solid var(--line);background:rgba(252,250,244,.84)}
+.object-info-head{padding:3px 2px 14px;border-bottom:1px solid var(--line)}
+.object-info-kicker{font:600 9px var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--brand);margin-bottom:7px}
+.object-info-head h2{font:600 19px var(--head);line-height:1.1;overflow-wrap:anywhere}
+.object-info-profile{margin-top:6px;color:var(--mut);font-size:10.5px;line-height:1.4}
+.object-info-block{padding:14px 2px 0}
+.object-info-block h3{margin-bottom:8px;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.object-info-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.object-info-stat{padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.object-info-stat span{display:block;color:var(--mut);font-size:9.5px;line-height:1.3}
+.object-info-stat strong{display:block;margin-top:3px;color:var(--coal);font:600 13px var(--mono);overflow-wrap:anywhere}
+.object-info-selection{min-height:64px;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--coal2);font-size:11px;line-height:1.5}
+.object-info-selection strong{display:block;margin-bottom:3px;color:var(--coal);font:600 12px var(--head)}
+.object-info-note{color:var(--mut);font-size:10.5px;line-height:1.5}
 #catalogPage,#statementsPage,#projectsPage{background:rgba(252,250,244,.72);padding:28px clamp(20px,4vw,64px) 44px}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;max-width:1180px;margin:0 auto 22px}
 .page-kicker,.side-kicker{font:600 10px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--brand);margin-bottom:7px}
@@ -399,12 +424,12 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 ::-webkit-scrollbar-thumb{background:var(--oat2);border-radius:5px;border:2px solid var(--paper2)}
 @media (max-width:1180px){#planPane{flex-basis:40%}.st-hint{display:none}}
 @media (max-width:940px){
-  #catalog{width:228px}
+  #catalog{width:252px}
   #topbar,#statusbar{overflow-x:auto}
-  .workspace-nav button{padding:0 7px}
   .catalog-page-layout{grid-template-columns:1fr}
   .page-aside{grid-template-columns:repeat(2,minmax(0,1fr))}
   body[data-page="calculations"] #catalog{width:300px}
+  #objectInfoPanel{width:238px}
 }
 @media (max-width:680px){
   #topbar{gap:2px;padding:0 8px;overflow:hidden}
@@ -412,15 +437,12 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
   .mobile-menu-btn{display:inline-flex;flex:0 0 34px;width:34px;padding:0;justify-content:center;gap:0}
   .mobile-menu-btn span{display:none}
   #btnTemplates,#fireToggle,#btnExport{width:34px;flex:0 0 34px;padding:0;justify-content:center;gap:0;font-size:0}
-  .workspace-nav{flex:0 0 auto;gap:1px;padding:2px}
-  .workspace-nav button{height:29px;padding:0 6px;font-size:10px;gap:3px}
-  .workspace-nav button svg{width:13px;height:13px}
-  .workspace-nav button span{display:none}
   #viewSeg{flex:0 0 auto;gap:1px}
   #viewSeg button{padding:0 5px}
   #viewSeg button[data-view="both"]{display:none}
   #catalog{width:min(300px,calc(100vw - 20px));position:absolute;top:0;bottom:0;left:0;z-index:40;transform:translateX(calc(-100% - 16px));visibility:hidden;transition:transform .22s ease,visibility 0s linear .22s;box-shadow:18px 0 40px rgba(38,36,31,.22)}
   #catalog.open{transform:translateX(0);visibility:visible;transition-delay:0s}
+  #objectInfoPanel{display:none}
   .menu-backdrop{position:absolute;inset:0;z-index:35;display:none;background:rgba(38,36,31,.32);cursor:pointer}
   .menu-backdrop.open{display:block}
   #center{width:100%;flex:1}
@@ -453,13 +475,6 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
   <button class="btn mobile-menu-btn" id="btnCatalogToggle" type="button" aria-expanded="false" aria-controls="catalog" aria-label="Открыть меню"><i data-lucide="menu"></i><span>Меню</span></button>
   <div class="tb-sep"></div>
   <button class="btn" id="btnTemplates" aria-label="Открыть шаблоны"><i data-lucide="layout-template"></i>Шаблоны</button>
-  <nav class="workspace-nav" id="workspaceNav" aria-label="Разделы проекта">
-    <button type="button" data-page="plan" class="on" aria-current="page"><i data-lucide="map"></i><span>План</span></button>
-    <button type="button" data-page="calculations"><i data-lucide="calculator"></i><span>Расчёты</span></button>
-    <button type="button" data-page="catalog"><i data-lucide="library"></i><span>Каталог</span></button>
-    <button type="button" data-page="statements"><i data-lucide="file-spreadsheet"></i><span>Сметы</span></button>
-    <button type="button" data-page="projects" aria-label="Проекты" title="Проекты"><i data-lucide="folder-kanban"></i><span>Проекты</span></button>
-  </nav>
   <div class="seg" id="viewSeg">
     <button data-view="both" class="on"><i data-lucide="columns"></i>Рядом</button>
     <button data-view="plan"><i data-lucide="map"></i>План</button>
@@ -483,6 +498,67 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 
 <div id="main">
   <aside id="catalog">
+    <nav class="workspace-nav" id="workspaceNav" aria-label="Разделы проекта">
+      <div class="workspace-nav-head">
+        <span>Навигация</span>
+        <button type="button" id="btnWorkspaceNavAll" aria-expanded="true" aria-label="Свернуть все разделы">Свернуть всё</button>
+      </div>
+
+      <section class="workspace-nav-section" data-nav-section="projects">
+        <button class="workspace-nav-section-toggle" type="button" data-nav-section-toggle="projects" aria-expanded="true" aria-controls="workspaceNavProjects">
+          <i data-lucide="folder-kanban"></i><span>Проекты</span><i class="nav-chevron" data-lucide="chevron-down"></i>
+        </button>
+        <div class="workspace-nav-section-items" id="workspaceNavProjects">
+          <button class="workspace-nav-item" type="button" data-page="projects" aria-label="Открыть проекты"><i data-lucide="folders"></i><span>Проекты</span></button>
+          <button class="workspace-nav-item" type="button" data-nav-action="new-project"><i data-lucide="file-plus-2"></i><span>Новый проект</span></button>
+        </div>
+      </section>
+
+      <section class="workspace-nav-section is-active" data-nav-section="plan">
+        <button class="workspace-nav-section-toggle" type="button" data-nav-section-toggle="plan" aria-expanded="true" aria-controls="workspaceNavPlan">
+          <i data-lucide="map"></i><span>Планы</span><i class="nav-chevron" data-lucide="chevron-down"></i>
+        </button>
+        <div class="workspace-nav-section-items" id="workspaceNavPlan">
+          <button class="workspace-nav-item on" type="button" data-page="plan" data-nav-mode="items" aria-current="page"><i data-lucide="map"></i><span>План помещения</span></button>
+          <button class="workspace-nav-item" type="button" data-page="plan" data-nav-mode="walls"><i data-lucide="pencil-ruler"></i><span>Стены и проёмы</span></button>
+          <button class="workspace-nav-item" type="button" data-page="plan" data-nav-view="3d"><i data-lucide="box"></i><span>3D-представление</span></button>
+        </div>
+      </section>
+
+      <section class="workspace-nav-section is-collapsed" data-nav-section="calculations">
+        <button class="workspace-nav-section-toggle" type="button" data-nav-section-toggle="calculations" aria-expanded="false" aria-controls="workspaceNavCalculations">
+          <i data-lucide="calculator"></i><span>Расчёты</span><i class="nav-chevron" data-lucide="chevron-down"></i>
+        </button>
+        <div class="workspace-nav-section-items" id="workspaceNavCalculations">
+          <button class="workspace-nav-item" type="button" data-page="calculations" data-nav-scope="room"><i data-lucide="square"></i><span>Площадь помещения</span></button>
+          <button class="workspace-nav-item" type="button" data-page="calculations" data-nav-scope="zone"><i data-lucide="scan"></i><span>Выделенная зона</span></button>
+          <button class="workspace-nav-item" type="button" data-page="calculations" data-nav-scope="walls"><i data-lucide="ruler"></i><span>Стены и участки</span></button>
+        </div>
+      </section>
+
+      <section class="workspace-nav-section is-collapsed" data-nav-section="catalog">
+        <button class="workspace-nav-section-toggle" type="button" data-nav-section-toggle="catalog" aria-expanded="false" aria-controls="workspaceNavCatalog">
+          <i data-lucide="library"></i><span>Каталог</span><i class="nav-chevron" data-lucide="chevron-down"></i>
+        </button>
+        <div class="workspace-nav-section-items" id="workspaceNavCatalog">
+          <button class="workspace-nav-item" type="button" data-page="catalog"><i data-lucide="package-search"></i><span>Материалы</span></button>
+          <button class="workspace-nav-item" type="button" data-page="plan" data-nav-mode="items" data-nav-focus="object-catalog"><i data-lucide="armchair"></i><span>Оборудование</span></button>
+          <button class="workspace-nav-item" type="button" data-nav-action="add-material"><i data-lucide="plus-circle"></i><span>Добавить материал</span></button>
+        </div>
+      </section>
+
+      <section class="workspace-nav-section is-collapsed" data-nav-section="statements">
+        <button class="workspace-nav-section-toggle" type="button" data-nav-section-toggle="statements" aria-expanded="false" aria-controls="workspaceNavStatements">
+          <i data-lucide="file-spreadsheet"></i><span>Сметы</span><i class="nav-chevron" data-lucide="chevron-down"></i>
+        </button>
+        <div class="workspace-nav-section-items" id="workspaceNavStatements">
+          <button class="workspace-nav-item" type="button" data-page="statements"><i data-lucide="list-checks"></i><span>Итоги сметы</span></button>
+          <button class="workspace-nav-item" type="button" data-nav-action="export-statements"><i data-lucide="download"></i><span>Экспорт сметы</span></button>
+        </div>
+      </section>
+    </nav>
+
+    <div id="catalogControls">
     <div class="sec" id="modeSection" data-page-context="plan">
       <div class="sec-title">Режим</div>
       <div class="mode-seg" id="modeSeg">
@@ -658,6 +734,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       </div>
       <div id="catList"></div>
     </div>
+    </div>
   </aside>
   <button id="menuBackdrop" class="menu-backdrop" type="button" aria-label="Закрыть меню"></button>
 
@@ -673,7 +750,7 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
         <button data-tool="door" title="Дверь: клик по стене — 4" aria-label="Добавить дверь"><i data-lucide="door-open"></i></button>
         <button data-tool="window" title="Окно: клик по стене — 5" aria-label="Добавить окно"><i data-lucide="blinds"></i></button>
         <button data-tool="evac" title="Эвакуационный выход — 6" aria-label="Добавить выход"><i data-lucide="door-closed"></i></button>
-        <button data-tool="opening" title="Обычный проём: клик по стене — 7" aria-label="Добавить обычный проём"><i data-lucide="square-dashed"></i></button>
+        <button data-tool="opening" title="Обычный проём: клик по стене — 7" aria-label="Добавить обычный проём"><i data-lucide="square"></i></button>
         <span class="wt-div"></span>
         <button data-tool="erase" title="Стереть: клик по стене / проёму / узлу — 8" aria-label="Стереть элемент"><i data-lucide="eraser"></i></button>
       </div>
@@ -802,6 +879,31 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
       </aside>
     </div>
   </section>
+
+  <aside id="objectInfoPanel" aria-labelledby="objectInfoTitle">
+    <div class="object-info-head">
+      <div class="object-info-kicker">ТЕКУЩИЙ ОБЪЕКТ</div>
+      <h2 id="objectInfoTitle">Новый проект</h2>
+      <p class="object-info-profile" id="objectInfoProfile">Стоматологическое помещение · План</p>
+    </div>
+    <section class="object-info-block" aria-labelledby="objectInfoStatsTitle">
+      <h3 id="objectInfoStatsTitle">Параметры</h3>
+      <div class="object-info-stats">
+        <div class="object-info-stat"><span>Площадь</span><strong id="objectInfoArea">—</strong></div>
+        <div class="object-info-stat"><span>Стены</span><strong id="objectInfoWalls">—</strong></div>
+        <div class="object-info-stat"><span>Проёмы</span><strong id="objectInfoOpenings">—</strong></div>
+        <div class="object-info-stat"><span>Оборудование</span><strong id="objectInfoItems">—</strong></div>
+      </div>
+    </section>
+    <section class="object-info-block" aria-labelledby="objectInfoSelectionTitle">
+      <h3 id="objectInfoSelectionTitle">Текущий выбор</h3>
+      <div class="object-info-selection" id="objectInfoSelection"><strong>Ничего не выбрано</strong><span>Выберите предмет, стену или проём на плане.</span></div>
+    </section>
+    <section class="object-info-block" aria-labelledby="objectInfoCalcTitle">
+      <h3 id="objectInfoCalcTitle">Расчёт</h3>
+      <p class="object-info-note" id="objectInfoCalculation">Переходите в «Расчёты», чтобы выбрать область и материал.</p>
+    </section>
+  </aside>
 
   <div id="itemBar">
     <span id="ibName">—</span>
@@ -1226,6 +1328,7 @@ function setCurrentProjectName(value,dirty=false){
   currentProjectName=normalizeProjectName(value);
   const input=$('#projectName');if(input&&input.value!==currentProjectName)input.value=currentProjectName;
   if(dirty)markDirty();
+  updateObjectInfoPanel();
 }
 
 const state={
@@ -1241,6 +1344,8 @@ const state={
 const SELECT_COLOR='#BE4128';
 const APP_PAGES=['plan','calculations','catalog','statements','projects'];
 let appPage='plan',lastPlanMode='items';
+const WORKSPACE_NAV_SECTIONS=['projects','plan','calculations','catalog','statements'];
+const workspaceSectionOpen={projects:true,plan:true,calculations:false,catalog:false,statements:false};
 let nid=1,wid=1,oid=1;
 function shouldFinishDrawingOnDoubleClick(e,previous,current,now){
   if(!e||Number(e.detail)<2||!previous||!current)return false;
@@ -3099,11 +3204,13 @@ function select(id){
       $('#ibName').textContent=CATALOG[it.type].name;
       $('#itemBar').classList.add('show');
       updateIbDeg();
+      updateObjectInfoPanel();
       return;
     }
   }
   if(selRing)selRing.visible=false;
   $('#itemBar').classList.remove('show');
+  updateObjectInfoPanel();
 }
 function clampItemsToBounds(){
   state.items.forEach(it=>{
@@ -3188,6 +3295,42 @@ function computeStats(){
   const hasExits=exitPoints().length;
   return{a,chairs,cameras,patients,waiting,staff,total,perChair,exitHint,hasExits,closed:b.closed};
 }
+function updateObjectInfoPanel(){
+  const title=$('#objectInfoTitle'),profile=$('#objectInfoProfile'),area=$('#objectInfoArea'),walls=$('#objectInfoWalls'),openings=$('#objectInfoOpenings'),items=$('#objectInfoItems'),selectionEl=$('#objectInfoSelection'),calculation=$('#objectInfoCalculation');
+  if(!title||!profile||!area||!walls||!openings||!items||!selectionEl||!calculation)return;
+  const stats=computeStats(),bounds=roomBounds(),pageLabels={plan:'План',calculations:'Расчёты',catalog:'Каталог',statements:'Сметы',projects:'Проекты'};
+  title.textContent=normalizeProjectName(currentProjectName);
+  profile.textContent=(state.profile==='general'?'Общее помещение':'Стоматологическое помещение')+' · '+(pageLabels[appPage]||'План');
+  area.textContent=fmtM(stats.a)+' м²'+(bounds.closed?'':' · ориентир');
+  walls.textContent=String(state.walls.length);
+  openings.textContent=String(state.openings.length);
+  items.textContent=String(state.items.length);
+  let selectedTitle='Ничего не выбрано',selectedDetail='Выберите предмет, стену или проём на плане.';
+  if(state.selObj){
+    if(state.selObj.type==='wall'){
+      const wall=wById(state.selObj.id);
+      if(wall){selectedTitle=wall.kind==='outer'?'Наружная стена':'Внутренняя перегородка';selectedDetail='Длина '+fmt2(wallGeom(wall).len)+' м';}
+    }else if(state.selObj.type==='opening'){
+      const opening=state.openings.find(item=>item.id===state.selObj.id);
+      if(opening){const names={door:'Дверь',evac:'Эвакуационный выход',window:'Окно',opening:'Обычный проём'},metrics=openingMetrics(opening);selectedTitle=names[opening.kind]||'Проём';selectedDetail='Ширина '+fmt2(metrics.width)+' м';}
+    }
+  }else if(state.sel){
+    const item=state.items.find(value=>value.id===state.sel);
+    if(item&&CATALOG[item.type]){selectedTitle=CATALOG[item.type].name;selectedDetail='Оборудование · '+fmt2(CATALOG[item.type].w)+' × '+fmt2(CATALOG[item.type].d)+' м';}
+  }
+  selectionEl.textContent='';
+  const selectedTitleEl=document.createElement('strong'),selectedDetailEl=document.createElement('span');
+  selectedTitleEl.textContent=selectedTitle;selectedDetailEl.textContent=selectedDetail;selectionEl.append(selectedTitleEl,selectedDetailEl);
+  if(appPage==='calculations'){
+    const scopeLabels={room:'Помещение',zone:'Зона',walls:'Стены и участки'};
+    calculation.textContent='Выделение: '+(scopeLabels[state.materials.scope]||'Помещение')+' · выберите материал в левой панели.';
+  }else if(appPage==='statements'){
+    const statement=materialStatements(state),material=statement.materials[0];
+    calculation.textContent='Смета: '+fmtM(statement.selection.areaM2)+' м² · итог '+materialMoney(statement.totalCost)+' ₽'+(material?' · '+material.name:'');
+  }else{
+    calculation.textContent='Перейдите в «Расчёты», чтобы выбрать область и материал.';
+  }
+}
 function updateRoomInfo(){
   const b=roomBounds();
   $('#roomInfo').textContent=
@@ -3214,7 +3357,7 @@ function updateCapacity(){
 }
 
 function refresh(){
-  updateCapacity();updateRoomInfo();updateMaterialUI();
+  updateCapacity();updateRoomInfo();updateMaterialUI();updateObjectInfoPanel();
   staticDirty=true;
   planRedraw();updateEvac();
 }
@@ -3654,12 +3797,12 @@ function setMode(m){
   if(m!=='walls'){endDraw();selectWallObj(null);materialDrag=null;select(null);}
   else{setTool('select');select(null);}
   if(m==='materials')updateMaterialUI();
-  updateUlUI();planRedraw();
+  updateUlUI();refreshWorkspaceNavSelection();updateObjectInfoPanel();planRedraw();
 }
 function selectWallObj(obj){
   state.selObj=obj;
   renderWallBar();
-  planRedraw();
+  refreshWorkspaceNavSelection();updateObjectInfoPanel();planRedraw();
 }
 function endDraw(){drawState=null;ghost=null;hoverErase=null;hoverLabel=null;hoverOpening=null;liveLabel=null;updateUlUI();planRedraw();}
 function finishWallDrawing(){
@@ -3736,7 +3879,7 @@ function renderWallBar(){
       '<button data-act="split" title="Разделить стену узлом (двойной клик)"><i data-lucide="scissors"></i>Разделить</button>'+
       '<button data-act="door" class="accent" title="Добавить дверь"><i data-lucide="door-open"></i>Дверь</button>'+
       '<button data-act="window" class="accent" title="Добавить окно"><i data-lucide="blinds"></i>Окно</button>'+
-      '<button data-act="opening" class="accent" title="Добавить обычный проём"><i data-lucide="square-dashed"></i>Проём</button>'+
+      '<button data-act="opening" class="accent" title="Добавить обычный проём"><i data-lucide="square"></i>Проём</button>'+
       '<span class="div"></span>'+
       '<button data-act="del" title="Удалить стену (Del / правый клик)"><i data-lucide="trash-2"></i></button>';
   }else{
@@ -4860,7 +5003,7 @@ function applyView(v,moveCamera=true){
   pp.classList.toggle('wide',effective==='plan');
   if(moveCamera&&effective==='plan')camTo(topPreset(),1000);
   if(moveCamera&&effective==='3d')camTo(perspPreset(),1200);
-  resizeAll();
+  refreshWorkspaceNavSelection();updateObjectInfoPanel();resizeAll();
   planRedraw();updateEvacSvg();
 }
 function initView(){
@@ -4999,7 +5142,7 @@ function updateMaterialUI(){
 }
 function setMaterialScope(scope){
   if(!['room','zone','walls'].includes(scope))return;
-  state.materials.scope=scope;markDirty();updateMaterialUI();planRedraw();commit();
+  state.materials.scope=scope;markDirty();updateMaterialUI();refreshWorkspaceNavSelection();updateObjectInfoPanel();planRedraw();commit();
 }
 function clearMaterialSelection(){
   const settings=normalizeMaterialSettings(state.materials);
@@ -5133,13 +5276,57 @@ function openMaterialAdd(){
   const details=$('#materialAddMount .material-add');
   if(details){details.open=true;setTimeout(()=>details.scrollIntoView({behavior:'smooth',block:'start'}),40);}
 }
+function setWorkspaceSectionOpen(section,open){
+  if(!WORKSPACE_NAV_SECTIONS.includes(section))return;
+  workspaceSectionOpen[section]=Boolean(open);
+  refreshWorkspaceNavControls();
+}
+function setAllWorkspaceSections(open){
+  WORKSPACE_NAV_SECTIONS.forEach(section=>{workspaceSectionOpen[section]=Boolean(open);});
+  refreshWorkspaceNavControls();
+}
+function workspaceNavButtonIsActive(button,page){
+  if(button.dataset.page!==page)return false;
+  if(button.dataset.navMode)return page==='plan'&&button.dataset.navMode===state.mode;
+  if(button.dataset.navScope)return page==='calculations'&&button.dataset.navScope===state.materials.scope;
+  if(button.dataset.navView)return page==='plan'&&button.dataset.navView===state.view;
+  return true;
+}
+function refreshWorkspaceNavSelection(page=appPage){
+  $$('#workspaceNav .workspace-nav-item').forEach(button=>button.classList.toggle('on',workspaceNavButtonIsActive(button,page)));
+  $$('#workspaceNav .workspace-nav-section').forEach(section=>section.classList.toggle('is-active',Boolean(section.querySelector('.workspace-nav-item.on'))));
+}
+function refreshWorkspaceNavControls(){
+  $$('#workspaceNav .workspace-nav-section').forEach(section=>{
+    const key=section.dataset.navSection,open=workspaceSectionOpen[key]!==false,toggle=section.querySelector('[data-nav-section-toggle]');
+    section.classList.toggle('is-collapsed',!open);
+    if(toggle){toggle.setAttribute('aria-expanded',String(open));}
+  });
+  const allOpen=WORKSPACE_NAV_SECTIONS.every(section=>workspaceSectionOpen[section]!==false),button=$('#btnWorkspaceNavAll');
+  if(button){button.textContent=allOpen?'Свернуть всё':'Развернуть всё';button.setAttribute('aria-expanded',String(allOpen));button.setAttribute('aria-label',allOpen?'Свернуть все разделы':'Развернуть все разделы');}
+  refreshWorkspaceNavSelection();
+}
+function handleWorkspaceNavItem(button){
+  const action=button.dataset.navAction;
+  if(action==='new-project'){if(newProject())setPage('plan');return;}
+  if(action==='add-material'){openMaterialAdd();return;}
+  if(action==='export-statements'){setPage('statements');openExport();return;}
+  if(button.dataset.page)setPage(button.dataset.page);
+  if(button.dataset.navMode&&state.mode!==button.dataset.navMode)setMode(button.dataset.navMode);
+  if(button.dataset.navScope&&state.materials.scope!==button.dataset.navScope)setMaterialScope(button.dataset.navScope);
+  if(button.dataset.navView)applyView(button.dataset.navView);
+  if(button.dataset.navFocus==='object-catalog'){
+    const input=$('#objectCatalogSearch');
+    if(input){setTimeout(()=>{input.focus();input.scrollIntoView({behavior:'smooth',block:'center'});},40);}
+  }
+}
 function setPage(page){
   if(!APP_PAGES.includes(page))page='plan';
   appPage=page;document.body.dataset.page=page;
-  $$('#workspaceNav button').forEach(button=>{const active=button.dataset.page===page;button.classList.toggle('on',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
+  $$('#workspaceNav .workspace-nav-item').forEach(button=>{if(workspaceNavButtonIsActive(button,page))button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
   const canvasPage=page==='plan'||page==='calculations';
-  const catalog=$('#catalog'),center=$('#center');
-  if(catalog)catalog.hidden=!canvasPage;
+  const catalogControls=$('#catalogControls'),center=$('#center');
+  if(catalogControls)catalogControls.hidden=!canvasPage;
   if(center)center.hidden=!canvasPage;
   $('#catalogPage').hidden=page!=='catalog';
   $('#statementsPage').hidden=page!=='statements';
@@ -5150,7 +5337,7 @@ function setPage(page){
   $('#viewSeg').hidden=!canvasPage;
   $('#btnTemplates').hidden=page!=='plan';
   $('#fireToggle').hidden=page!=='plan';
-  $('#btnCatalogToggle').hidden=!canvasPage;
+  $('#btnCatalogToggle').hidden=false;
   if(page==='calculations'){
     if(state.mode!=='materials'){lastPlanMode=state.mode;setMode('materials');}
   }else if(page==='plan'&&state.mode==='materials'){
@@ -5160,12 +5347,22 @@ function setPage(page){
   if(page==='catalog')buildMaterialCatalogPage();
   if(page==='statements')updateStatementsPage();
   if(page==='projects')buildProjectsPage();
+  refreshWorkspaceNavControls();
+  updateObjectInfoPanel();
   if(canvasPage){resizeAll();planRedraw();}
 }
 function initPageShell(){
   const addForm=$('#materialPanel .material-add'),addMount=$('#materialAddMount');
   if(addForm&&addMount)addMount.appendChild(addForm);
-  $$('#workspaceNav button').forEach(button=>button.addEventListener('click',()=>setPage(button.dataset.page)));
+  $$('#workspaceNav [data-nav-section-toggle]').forEach(button=>button.addEventListener('click',()=>{
+    const section=button.dataset.navSectionToggle;
+    setWorkspaceSectionOpen(section,workspaceSectionOpen[section]===false);
+  }));
+  $('#btnWorkspaceNavAll').addEventListener('click',()=>{
+    const allOpen=WORKSPACE_NAV_SECTIONS.every(section=>workspaceSectionOpen[section]!==false);
+    setAllWorkspaceSections(!allOpen);
+  });
+  $$('#workspaceNav .workspace-nav-item').forEach(button=>button.addEventListener('click',()=>handleWorkspaceNavItem(button)));
   $('#btnCalcCatalog').addEventListener('click',()=>setPage('catalog'));
   $('#btnCalcStatements').addEventListener('click',()=>setPage('statements'));
   $('#btnMaterialCatalog').addEventListener('click',()=>setPage('catalog'));
@@ -5236,7 +5433,7 @@ function initRest(){
     setAllCatalogGroups(!allOpen);
   });
   $('#projectProfile').addEventListener('change',e=>setProjectProfile(e.target.value,true));
-  $('#projectName').addEventListener('input',e=>{currentProjectName=String(e.target.value||'').slice(0,120);markDirty();});
+  $('#projectName').addEventListener('input',e=>{currentProjectName=String(e.target.value||'').slice(0,120);markDirty();updateObjectInfoPanel();});
   $('#projectName').addEventListener('blur',()=>setCurrentProjectName(currentProjectName,true));
   $('#btnTemplates').addEventListener('click',()=>$('#tplModal').classList.add('open'));
   $('#tplClose').addEventListener('click',()=>$('#tplModal').classList.remove('open'));

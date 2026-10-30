@@ -256,6 +256,8 @@ body[data-page="projects"] #itemBar,body[data-page="projects"] #wallBar{display:
 .room-row{display:flex;align-items:center;gap:9px;margin-bottom:9px}
 .room-row svg{width:14px;height:14px;color:var(--mut);flex:none}
 .room-row input[type=range]{flex:1;accent-color:var(--brand);height:3px}
+.room-row input[type=number]{flex:1;min-width:0;width:100%;height:30px;padding:0 8px;border:1px solid var(--line);border-radius:7px;background:var(--paper2);color:var(--coal);font:11px var(--mono)}
+.room-row input[type=number]:focus{outline:none;border-color:var(--brand)}
 .room-row .val{font-family:var(--mono);font-size:11.5px;width:44px;text-align:right;color:var(--coal)}
 .ul-lbl{font-size:11px;color:var(--mut);width:64px;flex:none}
 #roomInfo{font-family:var(--mono);font-size:10.5px;color:var(--mut);border:1px dashed var(--line);border-radius:8px;padding:7px 10px;margin-top:10px;line-height:1.5}
@@ -619,8 +621,8 @@ body[data-profile="general"] [data-profile="dental"]{display:none!important}
 
     <div class="sec" data-page-context="plan">
       <div class="sec-title">Контур помещения</div>
-      <div class="room-row"><i data-lucide="move-horizontal"></i><input type="range" id="roomW" min="8" max="18" step="0.5" value="12"><span class="val" id="roomWv">12,0 м</span></div>
-      <div class="room-row"><i data-lucide="move-vertical"></i><input type="range" id="roomD" min="6" max="14" step="0.5" value="9"><span class="val" id="roomDv">9,0 м</span></div>
+      <div class="room-row"><i data-lucide="move-horizontal"></i><label class="sr-only" for="roomW">Ширина помещения, метры</label><input type="number" id="roomW" min="0.5" step="0.1" value="12" inputmode="decimal" aria-label="Ширина помещения, метры"><span class="val" id="roomWv">12,0 м</span></div>
+      <div class="room-row"><i data-lucide="move-vertical"></i><label class="sr-only" for="roomD">Глубина помещения, метры</label><input type="number" id="roomD" min="0.5" step="0.1" value="9" inputmode="decimal" aria-label="Глубина помещения, метры"><span class="val" id="roomDv">9,0 м</span></div>
       <div class="ul-btns" style="margin-top:2px">
         <button class="mini" id="btnRect"><i data-lucide="square"></i>Перестроить прямоугольник</button>
       </div>
@@ -1364,6 +1366,24 @@ const state={
   materials:{scope:'room',wallIds:[],wallSegments:[],zone:null,materialId:'paint-interior',wastePct:null,customPrices:{},customCatalog:loadCustomMaterialCatalog()},
   brand:'#0E7C7B',fire:false,view:'both',
 };
+const ROOM_DIMENSION_MIN=.5;
+const ROOM_DIMENSION_DEFAULTS={w:12,d:9};
+function normalizeRoomDimension(value,fallback){
+  const n=Number(value);
+  return Number.isFinite(n)&&n>=ROOM_DIMENSION_MIN?Math.round(n*100)/100:fallback;
+}
+function normalizeRoomDimensions(room){
+  const src=room&&typeof room==='object'?room:{};
+  return{
+    w:normalizeRoomDimension(src.w,ROOM_DIMENSION_DEFAULTS.w),
+    d:normalizeRoomDimension(src.d,ROOM_DIMENSION_DEFAULTS.d)
+  };
+}
+function readRoomDimensions(widthValue,depthValue){
+  const room=normalizeRoomDimensions({w:widthValue,d:depthValue});
+  const width=Number(widthValue),depth=Number(depthValue);
+  return Number.isFinite(width)&&Number.isFinite(depth)&&width>=ROOM_DIMENSION_MIN&&depth>=ROOM_DIMENSION_MIN?room:null;
+}
 const SELECT_COLOR='#BE4128';
 const APP_PAGES=['plan','calculations','catalog','statements','projects'];
 let appPage='plan',lastPlanMode='items';
@@ -1424,6 +1444,7 @@ function angleHintForNode(nodeId,point,mainWallId){
 }
 function angleHintText(hint){return hint?'угол '+fmt2(hint.angle)+'° · отклонение '+fmt2(hint.deviation)+'° · '+angleCorrectionText(hint.angle,hint.deviation):'';}
 function buildRectWalls(w,d,withEvac){
+  const room=normalizeRoomDimensions({w,d});w=room.w;d=room.d;
   state.nodes=[];state.walls=[];state.openings=[];
   const a=addNode(-w/2,-d/2),b=addNode(w/2,-d/2),c=addNode(w/2,d/2),e=addNode(-w/2,d/2);
   addWall(a,b,'outer');addWall(b,c,'outer');addWall(c,e,'outer');addWall(e,a,'outer');
@@ -1843,7 +1864,7 @@ function roomBounds(){
   const consider=p=>{minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minZ=Math.min(minZ,p.z);maxZ=Math.max(maxZ,p.z);};
   if(loop&&loop.closed&&loop.pts.length>=3)loop.pts.forEach(consider);
   else{src='nodes';state.nodes.forEach(consider);}
-  if(minX>maxX){const w=clamp(Number(state.room&&state.room.w)||12,6,20),d=clamp(Number(state.room&&state.room.d)||9,4,16);minX=-w/2;maxX=w/2;minZ=-d/2;maxZ=d/2;src='none';}
+  if(minX>maxX){const room=normalizeRoomDimensions(state.room),w=room.w,d=room.d;minX=-w/2;maxX=w/2;minZ=-d/2;maxZ=d/2;src='none';}
   const area=src==='loop'?Math.abs(shoelace(loop.pts)):(maxX-minX)*(maxZ-minZ);
   return{minX,maxX,minZ,maxZ,area,closed:src==='loop',loop};
 }
@@ -2334,6 +2355,14 @@ function drawMaterialSelection(g,X,Y,fit,b){
   g.setLineDash([]);g.restore();
 }
 
+function planGridStep(fit){
+  const target=Math.max(.5,18/Math.max(Number(fit)||0,.0001));
+  const power=10**Math.floor(Math.log10(target));
+  const normalized=target/power;
+  const factor=normalized<=1?1:normalized<=2?2:normalized<=5?5:10;
+  return factor*power;
+}
+
 function drawPlan(g,W,H,opts={}){
   const b=roomBounds();
   const rw=b.maxX-b.minX,rd=b.maxZ-b.minZ;
@@ -2345,15 +2374,16 @@ function drawPlan(g,W,H,opts={}){
   const X=x=>cx+x*fit, Y=z=>cy+z*fit;
 
   g.fillStyle=opts.plain?'#FFFFFF':'#FCFAF4';g.fillRect(0,0,W,H);
-  const step=.5*fit;
+  const gridStep=planGridStep(fit);
+  const step=gridStep*fit;
   const off=((cx%step)+step)%step;
   for(let x=off;x<W;x+=step){
-    g.strokeStyle=(Math.round((x-cx)/fit*2)%2===0)?'rgba(150,134,100,.22)':'rgba(150,134,100,.1)';
+    g.strokeStyle=(Math.round((x-cx)/(fit*gridStep))%2===0)?'rgba(150,134,100,.22)':'rgba(150,134,100,.1)';
     g.lineWidth=1;g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke();
   }
   const offY=((cy%step)+step)%step;
   for(let y=offY;y<H;y+=step){
-    g.strokeStyle=(Math.round((y-cy)/fit*2)%2===0)?'rgba(150,134,100,.22)':'rgba(150,134,100,.1)';
+    g.strokeStyle=(Math.round((y-cy)/(fit*gridStep))%2===0)?'rgba(150,134,100,.22)':'rgba(150,134,100,.1)';
     g.lineWidth=1;g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke();
   }
 
@@ -3132,8 +3162,9 @@ function loadProjectData(p,sourceName='',libraryId=null){
     const fallbackName=String(sourceName||'').trim();
     setCurrentProjectName(p.name||fallbackName,false);
     const loadedCalculation=normalizeCalculationSettings(p.calculation);
-    const loadedW=clamp(Number(p.room&&p.room.w)||12,8,18);
-    const loadedD=clamp(Number(p.room&&p.room.d)||9,6,14);
+    const loadedRoom=normalizeRoomDimensions(p.room);
+    const loadedW=loadedRoom.w;
+    const loadedD=loadedRoom.d;
     setProjectProfile(normalizeProjectProfile(p.profile),false);
     clearItems();
     state.items=[];state.sel=null;state.selObj=null;
@@ -3153,8 +3184,7 @@ function loadProjectData(p,sourceName='',libraryId=null){
       mx=1;state.walls.forEach(w=>{const v=parseInt(w.id.slice(1));if(v>=mx)mx=v+1;});wid=mx;
       mx=1;state.openings.forEach(o=>{const v=parseInt(o.id.slice(1));if(v>=mx)mx=v+1;});oid=mx;
     }else{
-      const w=clamp(+p.room?.w||12,6,20),d=clamp(+p.room?.d||9,4,16);
-      buildRectWalls(w,d,w*d>60);
+      buildRectWalls(loadedW,loadedD,loadedW*loadedD>60);
     }
     if(p.brand)setBrand(p.brand);
     (Array.isArray(p.items)?p.items:[]).forEach(it=>{
@@ -3540,6 +3570,7 @@ function buildStatic(){
     new THREE.MeshBasicMaterial({color:new THREE.Color(SELECT_COLOR),transparent:true,opacity:.9,depthWrite:false}));
   selRing.rotation.x=-Math.PI/2;selRing.position.y=.012;selRing.visible=false;scene.add(selRing);
 
+  camera.far=Math.max(300,bDim()*8+100);camera.updateProjectionMatrix();
   const ex=Math.max(state.room.w,state.room.d)*.72+2;
   dirLight.shadow.camera.left=-ex;dirLight.shadow.camera.right=ex;
   dirLight.shadow.camera.top=ex;dirLight.shadow.camera.bottom=-ex;
@@ -3735,7 +3766,7 @@ function initThree(){
   const end=()=>{if(mode==='drag'&&itemMoved)commit();mode=null;cnv.style.cursor='grab';};
   cnv.addEventListener('pointerup',end);cnv.addEventListener('pointercancel',end);
   cnv.style.cursor='grab';
-  cnv.addEventListener('wheel',e=>{e.preventDefault();cam.radius=clamp(cam.radius*(1+e.deltaY*.0011),4,70);},{passive:false});
+  cnv.addEventListener('wheel',e=>{e.preventDefault();cam.radius=clamp(cam.radius*(1+e.deltaY*.0011),4,cameraRadiusMax());},{passive:false});
 }
 function applyCam(){
   if(!camera||!cam.target)return;
@@ -3756,6 +3787,7 @@ function camTo(preset,dur){
   }});
 }
 function bDim(){const b=roomBounds();return Math.max(b.maxX-b.minX,b.maxZ-b.minZ);}
+function cameraRadiusMax(){return Math.max(70,bDim()*2+20);}
 function topPreset(){return{theta:0,phi:.14,radius:bDim()*1.02+4.5};}
 function perspPreset(){return{theta:.6,phi:1.02,radius:bDim()*.92+4.5};}
 
@@ -5435,14 +5467,25 @@ function initCalculation(){
   $('#calcOpeningHeight').addEventListener('change',e=>setCalculationSetting('opening',Number(e.target.value)));
 }
 function initRoom(){
-  $('#roomW').addEventListener('input',e=>{$('#roomWv').textContent=fmtM(+e.target.value)+' м';});
-  $('#roomD').addEventListener('input',e=>{$('#roomDv').textContent=fmtM(+e.target.value)+' м';});
+  const updateRoomValue=(inputId,viewId)=>{
+    const value=Number($(inputId).value);
+    $(viewId).textContent=Number.isFinite(value)&&value>=ROOM_DIMENSION_MIN?fmtM(value)+' м':'—';
+  };
+  $('#roomW').addEventListener('input',()=>updateRoomValue('#roomW','#roomWv'));
+  $('#roomD').addEventListener('input',()=>updateRoomValue('#roomD','#roomDv'));
   $('#btnRect').addEventListener('click',()=>{
-    const w=+$('#roomW').value,d=+$('#roomD').value;
-    buildRectWalls(w,d,w*d>60);
+    const room=readRoomDimensions($('#roomW').value,$('#roomD').value);
+    if(!room){
+      toast('Размеры помещения должны быть числами не меньше 0,5 м',true);
+      updateRoomValue('#roomW','#roomWv');updateRoomValue('#roomD','#roomDv');
+      return;
+    }
+    $('#roomW').value=room.w;$('#roomD').value=room.d;
+    $('#roomWv').textContent=fmtM(room.w)+' м';$('#roomDv').textContent=fmtM(room.d)+' м';
+    buildRectWalls(room.w,room.d,room.w*room.d>60);
     clampItemsToBounds();
     staticDirty=true;refresh();commit();
-    toast('Контур перестроен в прямоугольник '+fmtM(w)+'×'+fmtM(d)+' м — предметы сохранены');
+    toast('Контур перестроен в прямоугольник '+fmtM(room.w)+'×'+fmtM(room.d)+' м — предметы сохранены');
   });
 }
 function initBrand(){

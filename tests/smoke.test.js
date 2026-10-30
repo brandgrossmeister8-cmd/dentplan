@@ -60,6 +60,37 @@ assert.deepEqual(
   [{ name: 'Стоматология на Ленина' }],
   'Поиск проектов должен находить название без учёта регистра',
 );
+assert.match(html, /<input type="number" id="roomW" min="0\.5" step="0\.1" value="12"/, 'Ширина помещения должна вводиться числом без верхнего ограничения');
+assert.match(html, /<input type="number" id="roomD" min="0\.5" step="0\.1" value="9"/, 'Глубина помещения должна вводиться числом без верхнего ограничения');
+assert.doesNotMatch(html, /id="roomW"[^>]*max=/, 'У ширины помещения не должно быть искусственного max');
+assert.doesNotMatch(html, /id="roomD"[^>]*max=/, 'У глубины помещения не должно быть искусственного max');
+assert.match(html, /function normalizeRoomDimensions\(/, 'Размеры помещения должны нормализоваться одной функцией');
+const roomHelpers = script[1].match(/function normalizeRoomDimension\(value,fallback\)\{[\s\S]*?\n\}\nfunction normalizeRoomDimensions\(room\)\{[\s\S]*?\n\}/);
+assert(roomHelpers, 'Не найдены чистые функции размеров помещения');
+const roomHelperSandbox = {};
+vm.runInNewContext(`const ROOM_DIMENSION_MIN=.5;const ROOM_DIMENSION_DEFAULTS={w:12,d:9};\n${roomHelpers[0]}\nthis.normalizeRoomDimensions=normalizeRoomDimensions;`, roomHelperSandbox);
+assert.deepEqual(
+  JSON.parse(JSON.stringify(roomHelperSandbox.normalizeRoomDimensions({w:24.567,d:20.25}))),
+  {w:24.57,d:20.25},
+  'Размеры помещения больше прежних диапазонов должны сохраняться',
+);
+assert.deepEqual(
+  JSON.parse(JSON.stringify(roomHelperSandbox.normalizeRoomDimensions({w:-2,d:'не число'}))),
+  {w:12,d:9},
+  'Некорректные размеры должны безопасно возвращаться к значениям по умолчанию',
+);
+assert.match(html, /const loadedRoom=normalizeRoomDimensions\(p\.room\)/, 'Загрузка проекта должна сохранять произвольные размеры помещения');
+assert.match(html, /buildRectWalls\(loadedW,loadedD,loadedW\*loadedD>60\)/, 'Старый проект без layout должен восстанавливаться с сохранёнными размерами');
+assert.doesNotMatch(html, /clamp\(Number\(p\.room&&p\.room\.w\)\|\|12,8,18\)/, 'При загрузке не должно быть старого ограничения ширины 18 м');
+assert.doesNotMatch(html, /clamp\(Number\(p\.room&&p\.room\.d\)\|\|9,6,14\)/, 'При загрузке не должно быть старого ограничения глубины 14 м');
+assert.match(html, /function planGridStep\(/, 'Для больших помещений нужен адаптивный шаг сетки');
+const gridRule = script[1].match(/function planGridStep\(fit\)\{[\s\S]*?\n\}/);
+assert(gridRule, 'Не найден расчёт адаптивного шага сетки');
+const gridSandbox = {};
+vm.runInNewContext(`${gridRule[0]}\nthis.planGridStep=planGridStep;`, gridSandbox);
+assert.ok(gridSandbox.planGridStep(.5)>gridSandbox.planGridStep(50), 'Для большого помещения сетка должна укрупняться при уменьшении масштаба');
+assert.ok(gridSandbox.planGridStep(.5)*.5>=18, 'Клетка сетки должна оставаться различимой на экране');
+assert.match(html, /const gridStep=planGridStep\(fit\)/, 'Отрисовка плана должна использовать адаптивный шаг сетки');
 assert.match(html, /id="calcWallHeight"/, 'В интерфейсе должна быть высота стен');
 assert.match(html, /id="calcDoorHeight"/, 'В интерфейсе должна быть высота дверей');
 assert.match(html, /id="calcEvacHeight"/, 'В интерфейсе должна быть высота эвакуационных проёмов');
